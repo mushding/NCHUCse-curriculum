@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import time
+import sqlite3
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
@@ -34,8 +35,28 @@ time_to_hour = {
     "8": "16",
 }
 
-def store_in_db(name, days, classroom, teacher, grade):
-    print(name, days, classroom, teacher, grade)
+# connect to db
+dbfile = "curriculum.db"
+conn = sqlite3.connect(dbfile)
+
+# clear db when operate
+sql_str = "delete from curriculum"
+conn.execute(sql_str)
+conn.commit()
+
+def store_in_db(class_id, name, days, classroom, teacher, grade):
+    if len(classroom) != 3:
+        return
+
+    print(class_id, name, days, classroom, teacher, grade)
+
+    for day in days:
+        week = day[0]
+        times = day[1:]            
+        sql_str = "insert into curriculum(class_id, name, grade, week, time, classroom, teacher) values({},'{}','{}','{}','{}','{}','{}');".format(class_id, name, index_to_grade[grade], week, times, classroom[1], teacher)
+        print(sql_str)
+        conn.execute(sql_str)
+        conn.commit()
 
 session = requests.Session()
 
@@ -49,11 +70,16 @@ for career, postdata in enumerate(postdatas):
 
     # each grade
     for index, table in enumerate(tables):
+        # if is 碩專
+        if career == 1:
+            index = 4
         # each classes
         for row in table.findAll('tr')[1:]:
             classes = [class_info.text.replace('\u3000', '') for class_info in row.findAll('td')]
             # test if is 實習
             if classes[8] == "":
-                store_in_db(classes[2].split(" ")[0], classes[9].split(","), re.split('(\d+)', classes[11]), classes[13], index)
+                store_in_db(classes[1], classes[2].split(" ")[0], classes[9].split(","), re.split('(\d+)', classes[11]), classes[13], index)
             else:
-                store_in_db(classes[2].split(" ")[0], classes[8].split(","), re.split('(\d+)', classes[10]), classes[12], index)
+                store_in_db(classes[1], classes[2].split(" ")[0], classes[8].split(","), re.split('(\d+)', classes[10]), classes[12], index)
+    
+conn.close()
