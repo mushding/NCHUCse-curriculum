@@ -14,9 +14,6 @@
   </header>
 
   <div class="class-btn-center">
-    <form>
-      <input type="button" onclick="window.location.href='http://127.0.0.1:8000/schedule-template/';" value="w3docs" />
-    </form>
     <button class="btn" onclick="selectClassroom('241')">241</button>
     <button class="btn" onclick="selectClassroom('242')">242</button>
     <button class="btn" onclick="selectClassroom('803')">803</button>
@@ -27,6 +24,7 @@
     <button class="btn" onclick="selectClassroom('336')">336</button>
     <button class="btn" onclick="selectClassroom('337')">337</button>
     <button class="btn" onclick="selectClassroom('338')">338</button>
+    <button class="btn btn-refresh" style="color: white; background-color:hsl(0, 0%, 50%);" onclick="refreshPage()">重新整理</button>
   </div>
   
   <div class="cd-schedule cd-schedule--loading margin-top-lg margin-bottom-lg js-cd-schedule">

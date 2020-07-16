@@ -1,4 +1,4 @@
-(function(){
+(async function(){
   var global_room = "821"
   var initSqlJs = window.initSqlJs;
   const weekname = {
@@ -19,8 +19,8 @@
     "8": 16,
     "9": 17,
   }
-  async function fetch_to_db(room){
-    await initSqlJs().then(function(SQL){
+  function fetch_to_db(room){
+    initSqlJs().then(function(SQL){
       var xhr = new XMLHttpRequest();
       xhr.open('GET', 'curriculum.db', true);
       xhr.responseType = 'arraybuffer';
@@ -35,8 +35,8 @@
         }
       };
       xhr.send();
-      console.log("db")
     });
+
   }
   
   function define_class_time(times){
@@ -57,7 +57,7 @@
       var a = document.createElement("a");
       a.setAttribute("data-start", time_section[0]);
       a.setAttribute("data-end", time_section[1]);
-      // a.setAttribute("data-content", "event-abs-circuit");
+      a.setAttribute("data-content", "event-abs-circuit");
       a.setAttribute("data-event", "event-1");
       
       var em = document.createElement("em");
@@ -70,7 +70,7 @@
     }
   }
 
-  selectClassroom = function(room){
+  selectClassroom = async function(room){
     var script = document.getElementById("main")
     script.remove()
     document.getElementById("monday").innerHTML = "";
@@ -78,20 +78,19 @@
     document.getElementById("wednesday").innerHTML = "";
     document.getElementById("thursday").innerHTML = "";
     document.getElementById("friday").innerHTML = "";
-    fetch_to_db(room).then(() => {
-      console.log("main")
-      var script = document.createElement("script")
-      script.src = "assets/js/main.js"
-      script.id = "main"
-      document.body.appendChild(script)
-    })
+    await fetch_to_db(room)
+    await create_main_js()
   }
-  fetch_to_db(global_room).then(() => {
+  
+  create_main_js = function(){
     var script = document.createElement("script")
     script.src = "assets/js/main.js"
     script.id = "main"
     document.body.appendChild(script)
-  })
+  }
 
   // main 
+  await fetch_to_db(global_room)
+  await create_main_js()
+
 }());
