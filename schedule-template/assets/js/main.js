@@ -38,7 +38,8 @@
 		var mq = this.mq(),
 			loaded = Util.hasClass(this.element, 'js-schedule-loaded'),
 			modalOpen = Util.hasClass(this.modal, 'cd-schedule-modal--open');
-		if( mq == 'desktop' && !loaded ) {
+		if( mq == 'desktop') {
+			console.log("execute")
 			Util.addClass(this.element, 'js-schedule-loaded');
 			this.placeEvents();
 			modalOpen && this.checkEventModal(modalOpen);
@@ -332,7 +333,6 @@
 		var timeStamp = parseInt(timeArray[0])*60 + parseInt(timeArray[1]);
 		return timeStamp;
 	};
-	
 	var scheduleTemplate = document.getElementsByClassName('js-cd-schedule'),	
 		scheduleTemplateArray = [],
 		resizing = false;
@@ -340,7 +340,6 @@
 	if( scheduleTemplate.length > 0 ) { // init ScheduleTemplate objects
 		for( var i = 0; i < scheduleTemplate.length; i++) {
 			(function(i){
-				console.log(scheduleTemplate[i])
 				scheduleTemplateArray.push(new ScheduleTemplate(scheduleTemplate[i]));
 			})(i);
 		}

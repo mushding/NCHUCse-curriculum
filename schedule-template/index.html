@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script>document.getElementsByTagName("html")[0].className += " js";</script>
   <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/costom.css">
   <title>中興大學資工系教室使用狀況</title>
 </head>
 <body>
@@ -12,6 +13,22 @@
     <h1 class="margin-top-md text-xl">中興大學資工系教室使用狀況</h1>
   </header>
 
+  <div class="class-btn-center">
+    <form>
+      <input type="button" onclick="window.location.href='http://127.0.0.1:8000/schedule-template/';" value="w3docs" />
+    </form>
+    <button class="btn" onclick="selectClassroom('241')">241</button>
+    <button class="btn" onclick="selectClassroom('242')">242</button>
+    <button class="btn" onclick="selectClassroom('803')">803</button>
+    <button class="btn" onclick="selectClassroom('821')">821</button>
+    <button class="btn" onclick="selectClassroom('1007')">1007</button>
+    <button class="btn" onclick="selectClassroom('1019')">1019</button>
+    <button class="btn" onclick="selectClassroom('335')">335</button>
+    <button class="btn" onclick="selectClassroom('336')">336</button>
+    <button class="btn" onclick="selectClassroom('337')">337</button>
+    <button class="btn" onclick="selectClassroom('338')">338</button>
+  </div>
+  
   <div class="cd-schedule cd-schedule--loading margin-top-lg margin-bottom-lg js-cd-schedule">
     <div class="cd-schedule__timeline">
       <ul>
@@ -55,11 +72,7 @@
           <div class="cd-schedule__top-info"><span>Wednesday</span></div>
   
           <ul id="wednesday">
-            <li class="cd-schedule__event">
-              <a data-start="14:00" data-end="15:15" data-event="event-3">
-                <em class="cd-schedule__name">Yoga Level 1</em>
-              </a>
-            </li>
+            
           </ul>
         </li>
   
@@ -101,10 +114,9 @@
   
     <div class="cd-schedule__cover-layer"></div>
   </div> <!-- .cd-schedule -->
-
+  
   <script src="assets/js/sql-wasm.js"></script>
   <script src="assets/js/db.js"></script>
   <script src="assets/js/util.js"></script> <!-- util functions included in the CodyHouse framework -->
-  <script src="assets/js/main.js"></script>
 </body>
 </html>

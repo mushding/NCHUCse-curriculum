@@ -1,4 +1,6 @@
 (function(){
+  var global_room = "821"
+  var initSqlJs = window.initSqlJs;
   const weekname = {
     "1": "monday",
     "2": "tuesday",
@@ -7,27 +9,19 @@
     "5": "friday",
   }
   const timestamps = {
-    "1": "08:00",
-    "2": "09:00",
-    "3": "10:00",
-    "4": "11:00",
-    "5": "13:00",
-    "6": "14:00",
-    "7": "15:00",
-    "8": "16:00",
-    "9": "17:00",
+    "1": 8,
+    "2": 9,
+    "3": 10,
+    "4": 11,
+    "5": 13,
+    "6": 14,
+    "7": 15,
+    "8": 16,
+    "9": 17,
   }
-  
-  window.addEventListener('load', function () {
-    
-    config = {
-      locateFile: filename => `/assets/js/${filename}`
-    }
-    // The `initSqlJs` function is globally provided by all of the main dist files if loaded in the browser.
-    // We must specify this locateFile function if we are loading a wasm file from anywhere other than the current html page's folder.
-    initSqlJs(config).then(function(SQL){
+  async function fetch_to_db(room){
+    await initSqlJs().then(function(SQL){
       var xhr = new XMLHttpRequest();
-      // For example: https://github.com/lerocha/chinook-database/raw/master/ChinookDatabase/DataSources/Chinook_Sqlite.sqlite
       xhr.open('GET', 'curriculum.db', true);
       xhr.responseType = 'arraybuffer';
     
@@ -37,22 +31,23 @@
         var contents = db.exec("SELECT * FROM curriculum");
         for (i = 0; i < contents[0]["values"].length; i++){
           var time_section = define_class_time(contents[0]["values"][i][4])
-          add_to_schedule(contents[0]["values"][i], time_section)
+          add_to_schedule(contents[0]["values"][i], time_section, room)
         }
       };
       xhr.send();
+      console.log("db")
     });
-  })
+  }
   
   function define_class_time(times){
     if (times[0] == times.slice(times.length - 1)){
-      return [timestamps[times[0]], timestamps[String(Number(times[0]) + 1)]]
+      return [String(timestamps[times[0]]) + ":00", String(timestamps[times[0]] + 1) + ":00"]
     }
-    return [timestamps[times[0]], timestamps[String(Number(times.slice(times.length - 1)) + 1)]]
+    return [String(timestamps[times[0]]) + ":00", String(timestamps[times.slice(times.length - 1)] + 1 + ":00")]
   }
   
-  function add_to_schedule(data, time_section){
-    if (data[5] == "242"){
+  function add_to_schedule(data, time_section, room){
+    if (data[5] == room){
 
       var ul = document.getElementById(weekname[data[3]]);
       var li = document.createElement("li");
@@ -74,4 +69,29 @@
       ul.appendChild(li);
     }
   }
+
+  selectClassroom = function(room){
+    var script = document.getElementById("main")
+    script.remove()
+    document.getElementById("monday").innerHTML = "";
+    document.getElementById("tuesday").innerHTML = "";
+    document.getElementById("wednesday").innerHTML = "";
+    document.getElementById("thursday").innerHTML = "";
+    document.getElementById("friday").innerHTML = "";
+    fetch_to_db(room).then(() => {
+      console.log("main")
+      var script = document.createElement("script")
+      script.src = "assets/js/main.js"
+      script.id = "main"
+      document.body.appendChild(script)
+    })
+  }
+  fetch_to_db(global_room).then(() => {
+    var script = document.createElement("script")
+    script.src = "assets/js/main.js"
+    script.id = "main"
+    document.body.appendChild(script)
+  })
+
+  // main 
 }());
