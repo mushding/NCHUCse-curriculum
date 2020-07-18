@@ -135,7 +135,9 @@
         db.run("INSERT INTO regular_curriculum VALUES(?, ?, ?, ?, ?)", [form_name, form_office, form_week, form_time, form_classroom])
         var contents = db.exec("SELECT * FROM regular_curriculum");
         console.log(contents)
-        var binaryArray = db.export();
+        var data = db.export();
+        var buffer = new Buffer(data);
+        
       };
       xhr.send();
     });
