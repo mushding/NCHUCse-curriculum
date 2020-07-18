@@ -19,7 +19,7 @@
     "8": 16,
     "9": 17,
   }
-  function fetch_to_db(room){
+  function fetch_school_db(room){
     initSqlJs().then(function(SQL){
       var xhr = new XMLHttpRequest();
       xhr.open('GET', 'curriculum.db', true);
@@ -36,7 +36,25 @@
       };
       xhr.send();
     });
+  }
 
+  function fetch_other_db(room){
+    initSqlJs().then(function(SQL){
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', 'curriculum.db', true);
+      xhr.responseType = 'arraybuffer';
+    
+      xhr.onload = e => {
+        var uInt8Array = new Uint8Array(xhr.response);
+        var db = new SQL.Database(uInt8Array);
+        var contents = db.exec("SELECT * FROM regular_curriculum");
+        for (i = 0; i < contents[0]["values"].length; i++){
+          var time_section = define_class_time(contents[0]["values"][i][4])
+          add_to_schedule(contents[0]["values"][i], time_section, room)
+        }
+      };
+      xhr.send();
+    });
   }
   
   function define_class_time(times){
@@ -63,7 +81,11 @@
       var em = document.createElement("em");
       em.setAttribute("class", "cd-schedule__name");
       em.appendChild(document.createTextNode(data[1]));
-      
+      em.appendChild(document.createElement("br"));
+      em.appendChild(document.createTextNode(data[2]));
+      em.appendChild(document.createElement("br"));
+      em.appendChild(document.createTextNode(data[6]));
+
       a.appendChild(em);
       li.appendChild(a);
       ul.appendChild(li);
@@ -78,7 +100,8 @@
     document.getElementById("wednesday").innerHTML = "";
     document.getElementById("thursday").innerHTML = "";
     document.getElementById("friday").innerHTML = "";
-    await fetch_to_db(room)
+    await fetch_school_db(room)
+    await fetch_other_db(room)
     await create_main_js()
   }
   
@@ -89,8 +112,47 @@
     document.body.appendChild(script)
   }
 
+  submitForm = function(){
+    var form_name = document.getElementById("form-element-name").value
+    var form_office = document.getElementById("form-element-office").value
+    var form_week = document.getElementById("form-element-week").value
+    var form_time = document.getElementById("form-element-time").value
+    var form_classroom = document.getElementById("form-element-classroom").value
+    
+    if (!form_name || !form_office || !form_week || !form_time || !form_classroom){
+      alert("所有欄位不能為空白")
+      return
+    }
+
+    initSqlJs().then(function(SQL){
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', 'curriculum.db', true);
+      xhr.responseType = 'arraybuffer';
+    
+      xhr.onload = e => {
+        var uInt8Array = new Uint8Array(xhr.response);
+        var db = new SQL.Database(uInt8Array);
+        db.run("INSERT INTO regular_curriculum VALUES(?, ?, ?, ?, ?)", [form_name, form_office, form_week, form_time, form_classroom])
+        var contents = db.exec("SELECT * FROM regular_curriculum");
+        console.log(contents)
+        var binaryArray = db.export();
+      };
+      xhr.send();
+    });
+
+    // close popup
+    document.getElementById("popup-1").classList.toggle("active");
+
+    document.getElementById("form-element-name").value = ""
+    document.getElementById("form-element-office").value = ""
+    document.getElementById("form-element-week").value = ""
+    document.getElementById("form-element-time").value = ""
+    document.getElementById("form-element-classroom").value = ""
+  }
+
   // main 
-  await fetch_to_db(global_room)
+  await fetch_school_db(global_room)
+  await fetch_other_db(global_room)
   await create_main_js()
 
 }());

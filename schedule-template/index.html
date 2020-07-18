@@ -13,6 +13,38 @@
     <h1 class="margin-top-md text-xl">中興大學資工系教室使用狀況</h1>
   </header>
 
+  <div class="popup" id="popup-1">
+    <div class="overlay"></div>
+    <div class="content">
+      <div class="close-btn" onclick="togglePopup()">&times;</div>
+        <div class="front">
+          <div class="signin">
+            <div class="title">
+              新增課表
+            </div>
+            <div class="form-element">
+              <input id="form-element-name" type="text" value="" placeholder="借用用途">
+            </div>
+            <div class="form-element">
+              <input id="form-element-office" type="text" value="" placeholder="借用單位">
+            </div>
+            <div class="form-element">
+              <input id="form-element-week" type="text" value="" placeholder="借用星期 ex: 1">
+            </div>
+            <div class="form-element">
+              <input id="form-element-time" type="text" value="" placeholder="借用時間 ex: 0800 1200">
+            </div>
+            <div class="form-element">
+              <input id="form-element-classroom" type="text" value="" placeholder="地點 ex: 821">
+            </div>
+            <div class="form-element">
+              <button onclick="submitForm()">新增</button>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+
   <div class="class-btn-center">
     <button class="btn" onclick="selectClassroom('241')">241</button>
     <button class="btn" onclick="selectClassroom('242')">242</button>
@@ -25,6 +57,7 @@
     <button class="btn" onclick="selectClassroom('337')">337</button>
     <button class="btn" onclick="selectClassroom('338')">338</button>
     <button class="btn btn-refresh" style="color: white; background-color:hsl(0, 0%, 50%);" onclick="refreshPage()">重新整理</button>
+    <button class="btn btn-add-class" style="color: white; background-color:hsl(0, 0%, 50%);" onclick="togglePopup()">新增課表</button>
   </div>
   
   <div class="cd-schedule cd-schedule--loading margin-top-lg margin-bottom-lg js-cd-schedule">
