@@ -36,7 +36,7 @@ time_to_hour = {
 }
 
 # connect to db
-dbfile = "curriculum.db"
+dbfile = "../schedule-template/curriculum.db"
 conn = sqlite3.connect(dbfile)
 
 # clear db when operate

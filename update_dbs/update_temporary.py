@@ -34,7 +34,7 @@ weeknum = datetime.date(int(year), int(month), int(date)).isocalendar()[1]
 week = datetime.date(int(year), int(month), int(date)).weekday()
 
 # connect to db
-dbfile = "schedule-template/curriculum.db"
+dbfile = "../schedule-template/curriculum.db"
 conn = sqlite3.connect(dbfile)
 
 sql_str = "insert into temporary_purpose(name, office, weeknum, week, start_time, end_time, classroom) values('{}','{}','{}','{}','{}','{}','{}');".format(name, office, weeknum, week + 1, time_to_number[start_time], time_to_number[end_time], classroom)
