@@ -294,14 +294,14 @@
 		httpRequest = new XMLHttpRequest();
 		httpRequest.onreadystatechange = function() {
 			if (httpRequest.readyState === XMLHttpRequest.DONE) {
-	      if (httpRequest.status === 200) {
-	      	self.modal.getElementsByClassName('cd-schedule-modal__event-info')[0].innerHTML = self.getEventContent(httpRequest.responseText); 
-	      	Util.addClass(self.modal, 'cd-schedule-modal--content-loaded');
-	      }
-	    }
+				if (httpRequest.status === 200) {
+					self.modal.getElementsByClassName('cd-schedule-modal__event-info')[0].innerHTML = self.getEventContent(httpRequest.responseText); 
+					Util.addClass(self.modal, 'cd-schedule-modal--content-loaded');
+				}
+			}
 		};
 		httpRequest.open('GET', 'event-info/'+content+'.html');
-    httpRequest.send();
+    	httpRequest.send();
 	};
 
 	ScheduleTemplate.prototype.getEventContent = function(string) {
