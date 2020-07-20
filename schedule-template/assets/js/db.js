@@ -11,6 +11,8 @@
     "3": "wednesday",
     "4": "thursday",
     "5": "friday",
+    "6": "saturday",
+    "7": "sunday",
   }
   const timestamps = {
     "1": 8,
@@ -186,6 +188,8 @@
     document.getElementById("wednesday").innerHTML = "";
     document.getElementById("thursday").innerHTML = "";
     document.getElementById("friday").innerHTML = "";
+    document.getElementById("saturday").innerHTML = "";
+    document.getElementById("sunday").innerHTML = "";
   }
   
   selectClassroom = async function(room){
