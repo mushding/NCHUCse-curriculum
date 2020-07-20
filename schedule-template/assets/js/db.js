@@ -228,7 +228,7 @@
     var day = today.getDay()
     var diff = today.getDate() - day + (day == 0 ? -6 : 1);
     var start_day = new Date(today.setDate(diff))
-    var end_day = new Date(today.setDate(diff + 4))
+    var end_day = new Date(today.setDate(diff + 6))
     
     start = get_month_date(start_day)
     end = get_month_date(end_day)
