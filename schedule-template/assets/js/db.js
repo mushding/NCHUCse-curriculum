@@ -29,7 +29,12 @@
     "12": 20,
     "13": 21,
     "14": 22,
+    "A": 18,
+    "B": 19,
+    "C": 20,
   }
+  const classroomName = ["241", "242", "803", "821", "1002", "1007", "1019", "335", "336", "337", "338"]
+  
   function get_week(year, month, date) {
     const today = new Date(year, month - 1, date);
     const firstDayOfYear = new Date(today.getFullYear(), 0, 1);
@@ -200,8 +205,19 @@
     await fetch_static_db(room)
     await fetch_temporary_db(yyyy, mm, dd, room)
     await create_main_js()
+
+    clear_button_color()
+    document.getElementById("btn-" + room).style.backgroundColor = "hsl(0, 0%, 30%)"
+    document.getElementById("btn-" + room).style.color = "white"
   }
   
+  clear_button_color = function(){
+    for (var room_index = 0; room_index < classroomName.length; room_index++){
+      document.getElementById("btn-" + classroomName[room_index]).style.backgroundColor = "hsl(0, 0%, 75%)"
+      document.getElementById("btn-" + classroomName[room_index]).style.color = "black"
+    }
+  }
+
   create_main_js = function(){
     var script = document.createElement("script")
     script.src = "assets/js/main.js"

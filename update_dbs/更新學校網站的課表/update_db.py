@@ -15,14 +15,19 @@ postdatas = [
     {
         'v_career': 'G',
         'v_dept': 'G56',
-    }
+    },
+    {
+        'v_career': 'W',
+        'v_dept': 'W56',
+    },
 ]
 index_to_grade = {
     0: "大一",
     1: "大二",
     2: "大三",
     3: "大四",
-    4: "碩專",
+    4: "碩士",
+    5: "碩專",
 }
 time_to_hour = {
     "1": "8",
@@ -33,10 +38,14 @@ time_to_hour = {
     "6": "14",
     "7": "15",
     "8": "16",
+    "A": "18",
+    "B": "19",
+    "C": "20",
+    
 }
 
 # connect to db
-dbfile = "../schedule-template/curriculum.db"
+dbfile = "../../schedule-template/curriculum.db"
 conn = sqlite3.connect(dbfile)
 
 # clear db when operate
@@ -70,9 +79,11 @@ for career, postdata in enumerate(postdatas):
 
     # each grade
     for index, table in enumerate(tables):
-        # if is 碩專
+        # if is 碩士
         if career == 1:
             index = 4
+        elif career == 2:       # if is 碩專
+            index = 5
         # each classes
         for row in table.findAll('tr')[1:]:
             classes = [class_info.text.replace('\u3000', '') for class_info in row.findAll('td')]

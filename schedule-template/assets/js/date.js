@@ -15,7 +15,12 @@
     start = get_month_date(start_day)
     end = get_month_date(end_day)
 
-    var day_string = start[0] + "/" + start[1] + " ~ " + end[0] + "/" + end[1]
+    var day_string = start_day.getFullYear() + "/" + start[0] + "/" + start[1] + " ~ " + end_day.getFullYear() + "/" + end[0] + "/" + end[1]
 
     document.getElementById("text-date").innerHTML = day_string
+
+    var span = document.createElement("span")
+    span.appendChild(document.createTextNode())
+    var monday = document.getElementById("date-monday")
+    monday.appendChild(span)
 }());

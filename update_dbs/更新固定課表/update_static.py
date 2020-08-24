@@ -28,7 +28,7 @@ end_time = input("結束借用時間 (ex: 1200): ")
 classroom = input("地點 (ex: 821): ")
 
 # connect to db
-dbfile = "../schedule-template/curriculum.db"
+dbfile = "../../schedule-template/curriculum.db"
 conn = sqlite3.connect(dbfile)
 
 sql_str = "insert into static_purpose(name, office, week, start_time, end_time, classroom) values('{}','{}','{}','{}','{}','{}');".format(name, office, week, time_to_number[start_time], time_to_number[end_time], classroom)
