@@ -7,9 +7,9 @@ NCHUCSE_curriculum
 ![](https://i.imgur.com/w0L67K1.png)
 
 ## 使用方法
-:::info
+```
 直接雙擊 execute.bat
-:::
+```
 或
 * 進入 schedule-template/
 * 開起一個簡單的 server
@@ -27,9 +27,9 @@ python -m SimpleHTTPServer
 日期 / 開始時間 / 結束時間 / 目的 / 接用單位 / 接用教室
 ex: 2020-01-01 1200 2200 宿營迎新籌備 資工系系學會 241
 ```
-* 最後雙擊 update_txtfile_classroom.bat 
+* 最後雙擊 「雙擊更新課表.bat」
 
-## 如何更改固定課表
+## 如何新增固定課表
 > 固定課表指的是開學後固定 meeting 時間或是固定上課的時間
 * 進入 update_dbs/固定臨時課表
 * 執行打開 add_new_classroom.txt
@@ -38,4 +38,9 @@ ex: 2020-01-01 1200 2200 宿營迎新籌備 資工系系學會 241
 星期 / 開始時間 / 結束時間 / 目的 / 接用單位 / 接用教室
 ex: 3 1300 1700 meeting 吳俊霖老師 337
 ```
-* 最後雙擊 update_txtfile_classroom.bat 
+* 最後雙擊 「雙擊更新課表.bat」 
+
+## 如何更新學校網站的課表
+* 學校網站的課表指的是自動排教務處網頁的課表
+* 只要雙擊 「雙擊更新課表.bat」 
+* 就可以自動排課表更新了
