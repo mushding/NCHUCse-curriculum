@@ -239,18 +239,28 @@
     mm = form_month
     dd = form_date
   
-    var today = new Date(yyyy, mm - 1, dd);
+    var curr = new Date(yyyy, mm - 1, dd);
+    var first = curr.getDate() - curr.getDay() + 1; // First day is the day of the month - the day of the week
+    var last = first + 6; // last day is the first day + 6
     
-    var day = today.getDay()
-    var diff = today.getDate() - day + (day == 0 ? -6 : 1);
-    var start_day = new Date(today.setDate(diff))
-    var end_day = new Date(today.setDate(diff + 6))
+    var firstday = new Date(curr.setDate(first))
+    var lastday = new Date(curr.setDate(firstday.getDate()+1))
     
-    start = get_month_date(start_day)
-    end = get_month_date(end_day)
+    start = get_month_date(firstday)
+    end = get_month_date(lastday)
 
-    var day_string = start[0] + "/" + start[1] + " ~ " + end[0] + "/" + end[1]
-    
+    var day_string = firstday.getFullYear() + "/" + start[0] + "/" + start[1] + " ~ " + lastday.getFullYear() + "/" + end[0] + "/" + end[1]
+
+    const week = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+
+    for (var week_index = 0; week_index < week.length; week_index++){
+      curr = new Date(yyyy, mm - 1, dd);
+      first = curr.getDate() - curr.getDay() + 6;
+      firstday = new Date(curr.setDate(first))
+      date = get_month_date(new Date(firstday.setDate(firstday.getDate()+week_index)))
+      document.getElementById("date-" + week[week_index]).innerHTML = date[0] + "/" + date[1]
+    }
+
     clear_schedual()
     await fetch_school_db(global_room)
     await fetch_static_db(global_room)
