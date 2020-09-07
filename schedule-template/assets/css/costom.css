@@ -108,3 +108,33 @@
   font-size:15px;
   font-weight:600;
 }
+
+@media only screen and (min-width: 1020px){
+  .next-week-bt {
+    position: fixed;
+    bottom: 50%;
+    right: 0;
+    z-index: 0;
+  }
+}
+
+@media only screen and (min-width: 1020px){
+  .last-week-bt {
+    position: fixed;
+    bottom: 50%;
+    left: 0;
+    z-index: 0;
+  }
+}
+
+@media only screen and (max-width: 1020px){
+  .next-week-bt {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 1020px){
+  .last-week-bt {
+    display: none;
+  }
+}

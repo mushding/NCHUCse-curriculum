@@ -13,7 +13,7 @@
 </head>
 <body>
   <header class="cd-main-header text-center flex flex-column flex-center">
-    <h1 class="margin-top-md text-xl">中興大學資工系教室使用狀況</h1>
+    <h1 class="margin-top-md text-xl">中興大學資工系教室使用狀況 v1.1</h1>
     <h1 class="margin-top-md text-xl" id="text-date"></h1>
   </header>
 
@@ -24,7 +24,7 @@
         <div class="front">
           <div class="signin">
             <div class="title">
-              查詢課表
+              時間查訊
             </div>
             <div class="form-element">
               <input id="form-element-year" type="text" value="" placeholder="年份">
@@ -41,6 +41,13 @@
           </div>
         </div>
       </div>
+  </div>
+
+  <div>
+    <button id="next-week-bt" class="btn next-week-bt" onclick="changeWeek(1)">&#8250;</button>
+  </div>
+  <div>
+    <button id="last-week-bt" class="btn last-week-bt" onclick="changeWeek(2)">&#8249;</button>
   </div>
 
   <div class="class-btn-center">

@@ -150,7 +150,7 @@
     a.setAttribute("data-start", data[3]);
     a.setAttribute("data-end", data[4]);
     a.setAttribute("data-content", "event-abs-circuit");
-    a.setAttribute("data-event", "event-3");
+    a.setAttribute("data-event", "event-4");
     
     var em = document.createElement("em");
     em.setAttribute("class", "cd-schedule__name");
@@ -244,7 +244,7 @@
     var last = first + 6; // last day is the first day + 6
     
     var firstday = new Date(curr.setDate(first))
-    var lastday = new Date(curr.setDate(firstday.getDate()+1))
+    var lastday = new Date(curr.setDate(firstday.getDate()+6))
     
     start = get_month_date(firstday)
     end = get_month_date(lastday)
@@ -255,7 +255,7 @@
 
     for (var week_index = 0; week_index < week.length; week_index++){
       curr = new Date(yyyy, mm - 1, dd);
-      first = curr.getDate() - curr.getDay() + 6;
+      first = curr.getDate() - curr.getDay() + 1;
       firstday = new Date(curr.setDate(first))
       date = get_month_date(new Date(firstday.setDate(firstday.getDate()+week_index)))
       document.getElementById("date-" + week[week_index]).innerHTML = date[0] + "/" + date[1]
@@ -276,6 +276,59 @@
     document.getElementById("text-date").innerHTML = day_string
   }
 
+  changeWeek = async (index) => {
+    var curr = new Date(yyyy, mm - 1, dd);
+    var nextWeek;
+    // next week
+    if (index === 1){
+      nextWeek = new Date(curr.getTime() + 7 * 24 * 60 * 60 * 1000);
+    }
+    // last week
+    else if (index === 2){
+      nextWeek = new Date(curr.getTime() - 7 * 24 * 60 * 60 * 1000);
+    }
+    dd = String(nextWeek.getDate()).padStart(2, '0');
+    mm = String(nextWeek.getMonth() + 1).padStart(2, '0');
+    yyyy = nextWeek.getFullYear();
+
+    var first = nextWeek.getDate() - nextWeek.getDay() + 1; // First day is the day of the month - the day of the week
+    var last = first + 6; // last day is the first day + 6
+    
+    var firstday = new Date(nextWeek.setDate(first))
+    var lastday = new Date(nextWeek.setDate(firstday.getDate()+6))
+    
+    start = get_month_date(firstday)
+    end = get_month_date(lastday)
+
+    var day_string = firstday.getFullYear() + "/" + start[0] + "/" + start[1] + " ~ " + lastday.getFullYear() + "/" + end[0] + "/" + end[1]
+
+    const week = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+    
+    for (var week_index = 0; week_index < week.length; week_index++){
+      nextWeek = new Date(yyyy, mm - 1, dd);
+      first = nextWeek.getDate() - nextWeek.getDay() + 1;
+      firstday = new Date(nextWeek.setDate(first))
+      date = get_month_date(new Date(firstday.setDate(firstday.getDate()+week_index)))
+      document.getElementById("date-" + week[week_index]).innerHTML = date[0] + "/" + date[1]
+    }
+    clear_schedual()
+    await fetch_school_db(global_room)
+    await fetch_static_db(global_room)
+    await fetch_temporary_db(yyyy, mm, dd, global_room)
+    await create_main_js()
+    // change title
+    document.getElementById("text-date").innerHTML = day_string
+  }
+
+  window.addEventListener('keyup', function(event){
+    // close event modal when pressing escape key
+    if( event.keyCode && event.keyCode == 37 || event.key && event.key.toLowerCase() == 'ArrowLeft' ) {
+      changeWeek(2)
+    }
+    if( event.keyCode && event.keyCode == 39 || event.key && event.key.toLowerCase() == 'ArrowRight' ) {
+      changeWeek(1)
+    }
+  });
 
   // main 
   await fetch_school_db(global_room)

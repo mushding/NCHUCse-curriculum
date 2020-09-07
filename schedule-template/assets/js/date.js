@@ -21,7 +21,10 @@
     const week = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 
     for (var week_index = 0; week_index < week.length; week_index++){
-        date = get_month_date(new Date(curr.setDate(firstday.getDate()+week_index)))
+        curr = new Date();
+        first = curr.getDate() - curr.getDay() + 1;
+        firstday = new Date(curr.setDate(first))
+        date = get_month_date(new Date(firstday.setDate(firstday.getDate()+week_index)))
         document.getElementById("date-" + week[week_index]).innerHTML = date[0] + "/" + date[1]
     }
 }());
