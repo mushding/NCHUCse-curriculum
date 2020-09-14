@@ -34,7 +34,7 @@
 </head>
 
 <body>
-    <div id="doc" class="markdown-body container-fluid comment-enabled" data-hard-breaks="false"><h1 id="NCHUCSE_curriculum" data-id="NCHUCSE_curriculum"><a class="anchor hidden-xs" href="#NCHUCSE_curriculum" title="NCHUCSE_curriculum"><span class="octicon octicon-link"></span></a><span>NCHUCSE_curriculum</span></h1><h6 id="tags-github-READMEmd" data-id="tags-github-READMEmd"><a class="anchor hidden-xs" href="#tags-github-READMEmd" title="tags-github-READMEmd"><span class="octicon octicon-link"></span></a><span>tags: </span><code>github README.md</code></h6><p><span>全自動爬蟲更新課表並安排教室時間</span></p><p><img src="https://i.imgur.com/w0L67K1.png" alt=""></p><h2 id="使用方法" data-id="使用方法"><a class="anchor hidden-xs" href="#使用方法" title="使用方法"><span class="octicon octicon-link"></span></a><span>使用方法</span></h2><pre><code>直接雙擊 execute.bat
+    <div id="doc" class="markdown-body container-fluid comment-enabled" data-hard-breaks="false"><h1 id="NCHUCSE_curriculum" data-id="NCHUCSE_curriculum"><a class="anchor hidden-xs" href="#NCHUCSE_curriculum" title="NCHUCSE_curriculum"><span class="octicon octicon-link"></span></a><span>NCHUCSE_curriculum</span></h1><h6 id="tags-github-READMEmd" data-id="tags-github-READMEmd"><a class="anchor hidden-xs" href="#tags-github-READMEmd" title="tags-github-READMEmd"><span class="octicon octicon-link"></span></a><span>tags: </span><code>github README.md</code></h6><p><span>全自動爬蟲更新課表並安排教室時間</span></p><p><img src="https://i.imgur.com/w0L67K1.png" alt=""></p><h2 id="使用方法" data-id="使用方法"><a class="anchor hidden-xs" href="#使用方法" title="使用方法"><span class="octicon octicon-link"></span></a><span>使用方法</span></h2><pre><code>直接雙擊 執行網站.bat
 </code></pre><p><span>或</span></p><ul>
 <li><span>進入 schedule-template/</span></li>
 <li><span>開起一個簡單的 server</span></li>
@@ -44,8 +44,8 @@
 </ul><h2 id="如何新增臨時課表" data-id="如何新增臨時課表"><a class="anchor hidden-xs" href="#如何新增臨時課表" title="如何新增臨時課表"><span class="octicon octicon-link"></span></a><span>如何新增臨時課表</span></h2><blockquote>
 <p><span>臨時課表指的是借用次數不多且臨時借用的課表</span></p>
 </blockquote><ul>
-<li><span>進入 update_dbs/更新臨時課表</span></li>
-<li><span>執行打開 add_new_classroom.txt</span></li>
+<li><span>進入 更新課表/更新臨時課表</span></li>
+<li><span>執行打開 新增固定課表.txt</span></li>
 <li><span>照著以下格式打在最底下</span></li>
 </ul><pre><code>日期 / 開始時間 / 結束時間 / 目的 / 接用單位 / 接用教室
 ex: 2020-01-01 1200 2200 宿營迎新籌備 資工系系學會 241
@@ -54,8 +54,8 @@ ex: 2020-01-01 1200 2200 宿營迎新籌備 資工系系學會 241
 </ul><h2 id="如何新增固定課表" data-id="如何新增固定課表"><a class="anchor hidden-xs" href="#如何新增固定課表" title="如何新增固定課表"><span class="octicon octicon-link"></span></a><span>如何新增固定課表</span></h2><blockquote>
 <p><span>固定課表指的是開學後固定 meeting 時間或是固定上課的時間</span></p>
 </blockquote><ul>
-<li><span>進入 update_dbs/固定臨時課表</span></li>
-<li><span>執行打開 add_new_classroom.txt</span></li>
+<li><span>進入 更新課表/固定臨時課表</span></li>
+<li><span>執行打開 新增臨時課表.txt</span></li>
 <li><span>照著以下格式打在最底下</span></li>
 </ul><pre><code>星期 / 開始時間 / 結束時間 / 目的 / 接用單位 / 接用教室
 ex: 3 1300 1700 meeting 吳俊霖老師 337
@@ -63,6 +63,7 @@ ex: 3 1300 1700 meeting 吳俊霖老師 337
 <li><span>最後雙擊 「雙擊更新課表.bat」</span></li>
 </ul><h2 id="如何更新學校網站的課表" data-id="如何更新學校網站的課表"><a class="anchor hidden-xs" href="#如何更新學校網站的課表" title="如何更新學校網站的課表"><span class="octicon octicon-link"></span></a><span>如何更新學校網站的課表</span></h2><ul>
 <li><span>學校網站的課表指的是自動排教務處網頁的課表</span></li>
+<li><span>加上固定課表中的資訊(每學期 meeting 時間…等)</span></li>
 <li><span>只要雙擊 「雙擊更新課表.bat」</span></li>
 <li><span>就可以自動排課表更新了</span></li>
 </ul></div>
@@ -77,7 +78,7 @@ ex: 3 1300 1700 meeting 吳俊霖老師 337
 <li class=""><a href="#使用方法" title="使用方法">使用方法</a></li>
 <li><a href="#如何新增臨時課表" title="如何新增臨時課表">如何新增臨時課表</a></li>
 <li><a href="#如何新增固定課表" title="如何新增固定課表">如何新增固定課表</a></li>
-<li><a href="#如何更新學校網站的課表" title="如何更新學校網站的課表">如何更新學校網站的課表</a></li>
+<li class=""><a href="#如何更新學校網站的課表" title="如何更新學校網站的課表">如何更新學校網站的課表</a></li>
 </ul>
 </li>
 </ul>
@@ -91,7 +92,7 @@ ex: 3 1300 1700 meeting 吳俊霖老師 337
 <li class=""><a href="#使用方法" title="使用方法">使用方法</a></li>
 <li><a href="#如何新增臨時課表" title="如何新增臨時課表">如何新增臨時課表</a></li>
 <li><a href="#如何新增固定課表" title="如何新增固定課表">如何新增固定課表</a></li>
-<li><a href="#如何更新學校網站的課表" title="如何更新學校網站的課表">如何更新學校網站的課表</a></li>
+<li class=""><a href="#如何更新學校網站的課表" title="如何更新學校網站的課表">如何更新學校網站的課表</a></li>
 </ul>
 </li>
 </ul>
