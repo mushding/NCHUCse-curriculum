@@ -13,7 +13,7 @@
 </head>
 <body>
   <header class="cd-main-header text-center flex flex-column flex-center">
-    <h1 class="margin-top-md text-xl">中興大學資工系教室使用狀況 v1.1</h1>
+    <h1 class="margin-top-md text-xl">中興大學資工系教室使用狀況 v1.2</h1>
     <h1 class="margin-top-md text-xl" id="text-date"></h1>
   </header>
 
@@ -44,10 +44,10 @@
   </div>
 
   <div>
-    <button id="next-week-bt" class="btn next-week-bt" onclick="changeWeek(1)">&#8250;</button>
+    <button id="next-week-bt" class="btn next-week-bt" onclick="changeWeek(1)" title="按(->)">&#8250;</button>
   </div>
   <div>
-    <button id="last-week-bt" class="btn last-week-bt" onclick="changeWeek(2)">&#8249;</button>
+    <button id="last-week-bt" class="btn last-week-bt" onclick="changeWeek(2)" title="按(<-)">&#8249;</button>
   </div>
 
   <div class="class-btn-center">
@@ -62,8 +62,9 @@
     <button id="btn-336" class="btn" onclick="selectClassroom('336')">336</button>
     <button id="btn-337" class="btn" onclick="selectClassroom('337')">337</button>
     <button id="btn-338" class="btn" onclick="selectClassroom('338')">338</button>
-    <button class="btn btn-refresh" style="color: white; background-color:hsl(0, 0%, 50%);" onclick="refreshPage()">重新整理</button>
+    <button class="btn btn-refresh" style="color: white; background-color:hsl(0, 0%, 50%);" onclick="refreshPage()" title="按(R)">重新整理(R)</button>
     <button class="btn btn-add-class" style="color: white; background-color:hsl(0, 0%, 50%);" onclick="togglePopup()">查詢時間</button>
+    <a class="btn btn-add-class" style="color: white; background-color:hsl(0, 0%, 50%);" href="../README 使用方法.html" target="_blank">使用方法</a>
   </div>
   
   <div class="cd-schedule cd-schedule--loading margin-top-lg margin-bottom-lg js-cd-schedule">

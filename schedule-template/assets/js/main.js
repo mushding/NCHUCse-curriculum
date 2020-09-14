@@ -359,6 +359,9 @@
 					scheduleTemplateArray[i].closeModal();
 				}
 			}
+			if( event.keyCode && event.keyCode == 82 || event.key && event.key.toLowerCase() == 'r' ) {
+				refreshPage()
+			}
 		});
 
 		function checkResize(){
