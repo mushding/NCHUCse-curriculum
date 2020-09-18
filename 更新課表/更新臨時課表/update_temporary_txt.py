@@ -21,7 +21,7 @@ sql_str = "delete from temporary_purpose"
 conn.execute(sql_str)
 conn.commit()
 
-with open("add_new_classroom.txt", "r", encoding="utf-8") as fileHandler:  
+with open("新增臨時課表.txt", "r", encoding="utf-8") as fileHandler:  
     lines = fileHandler.readlines()
     for line in lines:
         if line.strip().split(' ')[0] != '':
