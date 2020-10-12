@@ -4,16 +4,29 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "server": "nodemon server.js"
+    "client-install": "cd client && npm intall",
+    "start": "npx babel-node ./server/server.js",
+    "server": "npm run build && npm run start-build",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server \" \"npm run client\"",
+    "build": "babel server -d lib",
+    "start-build": "nodemon ./lib/server.js"
   },
   "author": "mushding",
   "license": "ISC",
   "dependencies": {
+    "@types/mysql": "^2.15.15",
     "concurrently": "^5.3.0",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "mysql": "^2.18.1"
   },
   "devDependencies": {
+    "@babel/cli": "^7.11.6",
+    "@babel/core": "^7.11.6",
+    "@babel/node": "^7.10.5",
+    "@babel/plugin-transform-runtime": "^7.11.5",
+    "@babel/preset-env": "^7.11.5",
     "nodemon": "^2.0.4"
-  }
+  },
+  "proxy": "http://localhost:5000"
 }

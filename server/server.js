@@ -1,10 +1,10 @@
-const express = require('express');
-const apiRouter = require('./router.js')
+import express from 'express'
+import apiRouter from './router'
 
 const app = express();
 
 app.use(express.static('public'));
 app.use(apiRouter);
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`Server listening on port: ${port}`));
