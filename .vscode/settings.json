@@ -2,6 +2,7 @@
     "emmet.extensionsPath": "",
     "emmet.includeLanguages": {
        "javascript": "javascriptreact"
-    }
+    },
+    "python.pythonPath": "/usr/local/opt/python/bin/python3.7"
     
 }
