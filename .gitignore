@@ -2,4 +2,5 @@ node_modules
 server/config
 lib
 
-*/__pycache__
+__pycache__/
+*.py[cod]
