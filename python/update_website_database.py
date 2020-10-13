@@ -67,7 +67,7 @@ db = pymysql.connect(host, user, password, database)
 cursor = db.cursor()
 
 # clear db
-sql_str = "delete from website_curriculum;"
+sql_str = "TRUNCATE TABLE website_curriculum;"
 try:
     cursor.execute(sql_str)
     db.commit()
@@ -130,11 +130,13 @@ sql_str = "select * from static_purpose"
 try:
     cursor.execute(sql_str)
     results = cursor.fetchall()
-    for row in results:
-        for time in range(time_to_hour[row[3][:2]], time_to_hour[row[4][:2]]):
-            datas[row[2] - 1]['application_' + str(row[5]) + "_" + str(row[2]) + "_" + str(time)] = (row[0] + "\r\n" + row[1] + "\r\n").encode("Big5")
 except:
     print("Error: umable to fetch data")
+finally:
+    for row in results:
+        print(row)
+        for time in range(time_to_hour[row[5][:2]], time_to_hour[row[6][:2]]):
+            datas[int(row[4]) - 1]['application_' + row[7] + "_" + row[4] + "_" + str(time)] = (row[2] + "\r\n" + row[3] + "\r\n").encode("Big5")
 
 # close db
 db.close()

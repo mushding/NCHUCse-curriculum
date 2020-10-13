@@ -1,5 +1,5 @@
 import express from 'express';
-import DB from './db';
+import DB from './db/curriculum';
 
 const router = express.Router();
 
@@ -11,9 +11,9 @@ router.get('/getData', (req, res, next) => {
     res.json(data);
 });
 
-router.get('/api/getAll', async (req, res) => {
-    try{
-        let curriculum = await DB.curriculum.all;
+router.get('/getAll', async (req, res) => {
+    try {
+        let curriculum = await DB.all();
         res.json(curriculum);
     } catch (err) {
         res.sendStatus(500);
