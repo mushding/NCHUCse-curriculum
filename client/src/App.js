@@ -1,4 +1,5 @@
 import React from 'react';
+import DashBoard from './Pages/DashBoard/DashBoard'
 
 export default class App extends React.Component{
     constructor(props){
@@ -15,6 +16,7 @@ export default class App extends React.Component{
     render(){
         return(
             <div>
+                <DashBoard/>
                 <ul className="list-group">
                     {this.state.currirulums.map((curriculum, index) => {
                         return <li key={index} className="list-group-item">{curriculum.name}</li>
