@@ -1,5 +1,4 @@
 import React from 'react'
-import Paper from '@material-ui/core/Paper';
 import { ViewState } from '@devexpress/dx-react-scheduler';
 import {
     Scheduler,
@@ -10,13 +9,19 @@ import {
     TodayButton,
     AppointmentTooltip
 } from '@devexpress/dx-react-scheduler-material-ui';
-import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 
 // import icon
 import AlarmAddIcon from '@material-ui/icons/AlarmAdd';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
+import { 
+    Paper,
+    Grid,
+    RadioGroup, 
+    FormControlLabel,
+    Radio
+} from '@material-ui/core';
 
 // import curriculum data
 // import { curriculums } from '../../Data/SchedulerData'
@@ -33,6 +38,21 @@ const style = ({ palette }) => ({
         backgroundSize: 'cover',
     },
 }); 
+
+const Appointment = ({
+    children, style, ...restProps
+}) => (
+    <Appointments.Appointment
+        {...restProps}
+        style={{
+            ...style,
+            borderRadius: '0px',
+            fontSize: '15px'
+        }}
+    >
+        {children}
+    </Appointments.Appointment>
+);
 
 const Content = withStyles(style, { name: 'Content' })(({
     children, appointmentData, classes, ...restProps
@@ -67,12 +87,36 @@ const Content = withStyles(style, { name: 'Content' })(({
     </AppointmentTooltip.Content>
 ));
 
+const ExternalClassroomSelector = ({
+    currentClassroom,
+    onChange
+}) => (
+    <RadioGroup
+        aria-label="Classrooms"
+        style={{ flexDirection: "row" }}
+        name="classrooms"
+        value={ currentClassroom }
+        onChange={ onChange }
+    >
+        <FormControlLabel value="803" control={<Radio/>} label="803"/>
+        <FormControlLabel value="821" control={<Radio/>} label="821"/>
+        <FormControlLabel value="1002" control={<Radio/>} label="1002"/>
+        <FormControlLabel value="1007" control={<Radio/>} label="1007"/>
+        <FormControlLabel value="1019" control={<Radio/>} label="1019"/>
+        <FormControlLabel value="335" control={<Radio/>} label="335"/>
+        <FormControlLabel value="336" control={<Radio/>} label="336"/>
+        <FormControlLabel value="337" control={<Radio/>} label="337"/>
+        <FormControlLabel value="338" control={<Radio/>} label="338"/>
+    </RadioGroup>
+);
+
 export default class DashBoard extends React.Component{
     
     constructor(props){
         super(props);
         this.state = {
             currirulums: [],
+            currentClassroom: '821'
         };
     }
     
@@ -82,10 +126,19 @@ export default class DashBoard extends React.Component{
         this.setState({ currirulums });
     }
 
+    async currentClassroomChange = (e) => {
+        this.setState({ currentClassroom: e.target.value });
+        
+    }
+
     render(){
-        const { currirulums } = this.state;
+        const { currirulums, currentClassroom } = this.state;
         return(
             <div>
+                <ExternalClassroomSelector
+                    currentClassroom={currentClassroom}
+                    onChange={this.currentClassroomChange}
+                />
                 <Paper>
                     <Scheduler
                         data={currirulums}
@@ -98,7 +151,9 @@ export default class DashBoard extends React.Component{
                         <Toolbar />
                         <DateNavigator />
                         <TodayButton />
-                        <Appointments/>
+                        <Appointments
+                            appointmentComponent={Appointment} 
+                        />
                         <AppointmentTooltip
                             contentComponent={Content}
                             showCloseButton

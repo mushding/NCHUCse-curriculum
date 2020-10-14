@@ -36,6 +36,7 @@ const weekIndex = {
 
 router.get('/getWebsite', async (req, res) => {
     let curriculum = [], result;    
+    let classroom = req.param.classroom;
     try {
         result = await DB.select_website_curriculum();
     } catch (err) {
@@ -45,7 +46,7 @@ router.get('/getWebsite', async (req, res) => {
         let start_time = timestamps[result[i]["time"][0]];
         let end_time = timestamps[result[i]["time"].slice(-1)];
         curriculum.push({
-            title: result[i]["name"] + result[i]["grade"] + result[i]["teacher"],
+            title: result[i]["name"] + "\n" + result[i]["grade"] + "\n" + result[i]["teacher"],
             startDate: '2020-09-01T' + start_time + ":00",
             endDate: '2020-09-01T' + end_time + ":00",
             rRule: 'RRULE:FREQ=WEEKLY;COUNT=18;WKST=MO;BYDAY=' + weekIndex[result[i]["week"]],
