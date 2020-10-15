@@ -3,10 +3,12 @@ import { ViewState } from '@devexpress/dx-react-scheduler';
 import {
     Scheduler,
     WeekView,
+    MonthView,
     Appointments,
     Toolbar,
     DateNavigator,
     TodayButton,
+    Resources,
     AppointmentTooltip
 } from '@devexpress/dx-react-scheduler-material-ui';
 import { withStyles } from '@material-ui/core/styles';
@@ -23,8 +25,10 @@ import {
     Radio
 } from '@material-ui/core';
 
-// import curriculum data
-// import { curriculums } from '../../Data/SchedulerData'
+// import color
+import {
+    indigo, teal, green
+} from '@material-ui/core/colors';
 
 const style = ({ palette }) => ({
     icon: {
@@ -47,7 +51,8 @@ const Appointment = ({
         style={{
             ...style,
             borderRadius: '0px',
-            fontSize: '15px'
+            fontSize: '15px',
+            whiteSpace: 'pre-wrap'
         }}
     >
         {children}
@@ -69,13 +74,7 @@ const Content = withStyles(style, { name: 'Content' })(({
                 <AssignmentIcon className={classes.icon} />
             </Grid>
             <Grid item xs={10}>
-                <span>{appointmentData.grade}</span>
-            </Grid>
-            <Grid item xs={2} className={classes.textCenter}>
-                <AssignmentIndIcon className={classes.icon} />
-            </Grid>
-            <Grid item xs={10}>
-                <span>{appointmentData.teacher}</span>
+                <span>{appointmentData.otherFormat}</span>
             </Grid>
             <Grid item xs={2} className={classes.textCenter}>
                 <AlarmAddIcon className={classes.icon} />
@@ -86,6 +85,22 @@ const Content = withStyles(style, { name: 'Content' })(({
         </Grid>
     </AppointmentTooltip.Content>
 ));
+
+const ExternalViewSwitcher = ({
+    currentViewName,
+    onChange,
+}) => (
+    <RadioGroup
+        aria-label="Views"
+        style={{ flexDirection: 'row' }}
+        name="views"
+        value={currentViewName}
+        onChange={onChange}
+    >
+        <FormControlLabel value="Week" control={<Radio />} label="週" />
+        <FormControlLabel value="Month" control={<Radio />} label="月" />
+    </RadioGroup>
+);
 
 const ExternalClassroomSelector = ({
     currentClassroom,
@@ -103,6 +118,8 @@ const ExternalClassroomSelector = ({
         <FormControlLabel value="1002" control={<Radio/>} label="1002"/>
         <FormControlLabel value="1007" control={<Radio/>} label="1007"/>
         <FormControlLabel value="1019" control={<Radio/>} label="1019"/>
+        <FormControlLabel value="241" control={<Radio/>} label="241"/>
+        <FormControlLabel value="242" control={<Radio/>} label="242"/>
         <FormControlLabel value="335" control={<Radio/>} label="335"/>
         <FormControlLabel value="336" control={<Radio/>} label="336"/>
         <FormControlLabel value="337" control={<Radio/>} label="337"/>
@@ -116,38 +133,75 @@ export default class DashBoard extends React.Component{
         super(props);
         this.state = {
             currirulums: [],
-            currentClassroom: '821'
+            currentClassroom: '821',
+            currentViewName: 'Week',
+            screenHeight: window.innerHeight,
+            resources: [
+                {
+                    fieldName: 'curriculumType',
+                    title: 'CurriculumType',
+                    instances: [
+                        { id: 1, text: '網頁課表', color: indigo },
+                        { id: 2, text: '固定借用', color: teal },
+                        { id: 3, text: '臨時借用', color: green },
+                    ]
+                }
+            ]
         };
     }
     
-    async componentWillMount(){
-        let res = await fetch('/getWebsite');
+    componentWillMount(){
+        this.getBackendCurriculumData();
+    }
+
+    getBackendCurriculumData = async () => {
+        let res = await fetch('/getWebsite/' + this.state.currentClassroom);
         let currirulums = await res.json();
+        res = await fetch('/getStatic/' + this.state.currentClassroom);
+        currirulums.push(...await res.json());
+        res = await fetch('/getTemporary/' + this.state.currentClassroom);
+        currirulums.push(...await res.json());
         this.setState({ currirulums });
     }
 
-    async currentClassroomChange = (e) => {
-        this.setState({ currentClassroom: e.target.value });
-        
+    currentClassroomChange = async (e) => {
+        let classroom = e.target.value;
+        await this.setState({ currentClassroom: classroom });
+        this.getBackendCurriculumData();
+    }
+
+    currentViewNameChange = (e) => {
+        this.setState({ currentViewName: e.target.value });
     }
 
     render(){
-        const { currirulums, currentClassroom } = this.state;
+        const { currirulums, currentViewName ,currentClassroom, resources, screenHeight } = this.state;
         return(
             <div>
-                <ExternalClassroomSelector
-                    currentClassroom={currentClassroom}
-                    onChange={this.currentClassroomChange}
-                />
+                <Paper>
+                    <ExternalClassroomSelector
+                        currentClassroom={currentClassroom}
+                        onChange={this.currentClassroomChange}
+                    />
+                    <ExternalViewSwitcher
+                        currentViewName={currentViewName}
+                        onChange={this.currentViewNameChange}
+                    />
+                </Paper>
                 <Paper>
                     <Scheduler
                         data={currirulums}
+                        // height={screenHeight}
+                        firstDayOfWeek={1}
                     >
-                        <ViewState/>
+                        <ViewState
+                            currentViewName={currentViewName}
+                        />
                         <WeekView
                             startDayHour={8}
-                            endDayHour={22}
+                            endDayHour={23}
                         />
+                        <MonthView/>
                         <Toolbar />
                         <DateNavigator />
                         <TodayButton />
@@ -157,6 +211,9 @@ export default class DashBoard extends React.Component{
                         <AppointmentTooltip
                             contentComponent={Content}
                             showCloseButton
+                        />
+                        <Resources
+                            data={resources}
                         />
                     </Scheduler>
                 </Paper>
