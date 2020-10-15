@@ -41,6 +41,9 @@ const style = ({ palette }) => ({
         height: '260px',
         backgroundSize: 'cover',
     },
+    radioPaper: {
+        padding: '3px'
+    }
 }); 
 
 const Appointment = ({
@@ -179,14 +182,19 @@ export default class DashBoard extends React.Component{
         return(
             <div>
                 <Paper>
-                    <ExternalClassroomSelector
-                        currentClassroom={currentClassroom}
-                        onChange={this.currentClassroomChange}
-                    />
-                    <ExternalViewSwitcher
-                        currentViewName={currentViewName}
-                        onChange={this.currentViewNameChange}
-                    />
+                    <div style={{ paddingLeft: '20px', paddingTop: '10px', float: 'left' }}>
+                        <ExternalClassroomSelector
+                            currentClassroom={currentClassroom}
+                            onChange={this.currentClassroomChange}
+                        />
+                    </div>
+                    <h4 style={{ paddingRight: '20px', float: 'right' }}>中興大學資工系教室借用表 v2.0</h4>
+                    <div style={{ paddingRight: '10px', paddingTop: '10px', float: 'right' }}>
+                        <ExternalViewSwitcher
+                            currentViewName={currentViewName}
+                            onChange={this.currentViewNameChange}
+                        />
+                    </div>
                 </Paper>
                 <Paper>
                     <Scheduler
