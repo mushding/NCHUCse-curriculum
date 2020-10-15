@@ -27,7 +27,7 @@ import {
 
 // import color
 import {
-    indigo, teal, green
+    indigo, teal, green, purple
 } from '@material-ui/core/colors';
 
 const style = ({ palette }) => ({
@@ -36,14 +36,8 @@ const style = ({ palette }) => ({
     },
     textCenter: {
         textAlign: 'center',
+        padding: '8px'
     },
-    header: {
-        height: '260px',
-        backgroundSize: 'cover',
-    },
-    radioPaper: {
-        padding: '3px'
-    }
 }); 
 
 const Appointment = ({
@@ -67,18 +61,6 @@ const Content = withStyles(style, { name: 'Content' })(({
 }) => (
     <AppointmentTooltip.Content {...restProps} appointmentData={appointmentData}>
         <Grid container alignItems="center">
-            <Grid item xs={2} className={classes.textCenter}>
-                <AssignmentIcon className={classes.icon} />
-            </Grid>
-            <Grid item xs={10}>
-                <span>{appointmentData.name}</span>
-            </Grid>
-            <Grid item xs={2} className={classes.textCenter}>
-                <AssignmentIcon className={classes.icon} />
-            </Grid>
-            <Grid item xs={10}>
-                <span>{appointmentData.otherFormat}</span>
-            </Grid>
             <Grid item xs={2} className={classes.textCenter}>
                 <AlarmAddIcon className={classes.icon} />
             </Grid>
@@ -144,9 +126,9 @@ export default class DashBoard extends React.Component{
                     fieldName: 'curriculumType',
                     title: 'CurriculumType',
                     instances: [
-                        { id: 1, text: '網頁課表', color: indigo },
-                        { id: 2, text: '固定借用', color: teal },
-                        { id: 3, text: '臨時借用', color: green },
+                        { id: 1, text: '網頁課表', color: "#838bb2" },
+                        { id: 2, text: '固定借用', color: "#e4a99b" },
+                        { id: 3, text: '臨時借用', color: "#cb8a90" },
                     ]
                 }
             ]
