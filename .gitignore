@@ -4,3 +4,5 @@ lib
 
 __pycache__/
 *.py[cod]
+
+*.txt
