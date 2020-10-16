@@ -5,23 +5,23 @@ import DB from './db/curriculum';
 const router = express.Router();
 
 const timestamps = {
-    "1": "08",
-    "2": "09",
-    "3": "10",
-    "4": "11",
-    "5": "13",
-    "6": "14",
-    "7": "15",
-    "8": "16",
-    "9": "17",
-    "10": "18",
-    "11": "19",
-    "12": "20",
-    "13": "21",
-    "14": "22",
-    "A": "18",
-    "B": "19",
-    "C": "20",
+    "1": 08,
+    "2": 09,
+    "3": 10,
+    "4": 11,
+    "5": 13,
+    "6": 14,
+    "7": 15,
+    "8": 16,
+    "9": 17,
+    "10": 18,
+    "11": 19,
+    "12": 20,
+    "13": 21,
+    "14": 22,
+    "A": 18,
+    "B": 19,
+    "C": 20,
 }
 
 const weekIndex = {
@@ -45,8 +45,7 @@ router.get('/getWebsite/:classroom', async (req, res) => {
     for (let i = 0; i < result.length; i++){
         let start_time = timestamps[result[i]["time"][0]];
         let end_time = timestamps[result[i]["time"].slice(-1)];
-        if (start_time == end_time)
-            end_time = String(Number(end_time) + 1);
+        end_time += 1;
         curriculum.push({
             title: result[i]["name"] + "\n" + result[i]["grade"] + "\n" + result[i]["teacher"],
             startDate: '2020-09-01T' + start_time + ":00",
