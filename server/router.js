@@ -45,6 +45,8 @@ router.get('/getWebsite/:classroom', async (req, res) => {
     for (let i = 0; i < result.length; i++){
         let start_time = timestamps[result[i]["time"][0]];
         let end_time = timestamps[result[i]["time"].slice(-1)];
+        if (start_time == end_time)
+            end_time = String(Number(end_time) + 1);
         curriculum.push({
             title: result[i]["name"] + "\n" + result[i]["grade"] + "\n" + result[i]["teacher"],
             startDate: '2020-09-01T' + start_time + ":00",
