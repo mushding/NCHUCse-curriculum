@@ -122,7 +122,7 @@ export default class DashBoard extends React.Component{
                     instances: [
                         { id: 1, text: '網頁課表', color: "#838bb2" },
                         { id: 2, text: '固定借用', color: "#e4a99b" },
-                        { id: 3, text: '臨時借用', color: "#ada142" },
+                        { id: 3, text: '臨時借用', color: "#BEC23F" },
                     ]
                 }
             ]
