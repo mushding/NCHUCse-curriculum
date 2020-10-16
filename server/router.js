@@ -48,8 +48,8 @@ router.get('/getWebsite/:classroom', async (req, res) => {
         end_time += 1;
         curriculum.push({
             title: result[i]["name"] + "\n" + result[i]["grade"] + "\n" + result[i]["teacher"],
-            startDate: '2020-09-01T' + start_time + ":00",
-            endDate: '2020-09-01T' + end_time + ":00",
+            startDate: '2020-09-01T' + String(start_time) + ":00",
+            endDate: '2020-09-01T' + String(end_time) + ":00",
             rRule: 'RRULE:FREQ=WEEKLY;COUNT=18;WKST=MO;BYDAY=' + weekIndex[result[i]["week"]],
             addtime: result[i]["timestamp"],
             name: result[i]["name"],
