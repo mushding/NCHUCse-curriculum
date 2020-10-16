@@ -14,9 +14,8 @@ import {
 import { withStyles } from '@material-ui/core/styles';
 
 // import icon
+import GitHubIcon from '@material-ui/icons/GitHub';
 import AlarmAddIcon from '@material-ui/icons/AlarmAdd';
-import AssignmentIcon from '@material-ui/icons/Assignment';
-import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import { 
     Paper,
     Grid,
@@ -24,11 +23,6 @@ import {
     FormControlLabel,
     Radio
 } from '@material-ui/core';
-
-// import color
-import {
-    indigo, teal, green, purple
-} from '@material-ui/core/colors';
 
 const style = ({ palette }) => ({
     icon: {
@@ -120,7 +114,7 @@ export default class DashBoard extends React.Component{
             currirulums: [],
             currentClassroom: '821',
             currentViewName: 'Week',
-            screenHeight: window.innerHeight,
+            // screenHeight: window.innerHeight,
             resources: [
                 {
                     fieldName: 'curriculumType',
@@ -160,7 +154,7 @@ export default class DashBoard extends React.Component{
     }
 
     render(){
-        const { currirulums, currentViewName ,currentClassroom, resources, screenHeight } = this.state;
+        const { currirulums, currentViewName ,currentClassroom, resources } = this.state;
         return(
             <div>
                 <Paper>
@@ -170,7 +164,10 @@ export default class DashBoard extends React.Component{
                             onChange={this.currentClassroomChange}
                         />
                     </div>
-                    <h4 style={{ paddingRight: '20px', float: 'right' }}>中興大學資工系教室借用表 v2.0</h4>
+                    <div style={{ padding: "20px", float: 'right' }}>
+                        <a target="_blank" rel="noopener noreferrer" href="https://github.com/mushding/NCHUCse-curriculum"><GitHubIcon/></a>
+                    </div>
+                    <h4 style={{float: 'right' }}>中興大學資工系教室借用表 v2.0</h4>
                     <div style={{ paddingRight: '10px', paddingTop: '10px', float: 'right' }}>
                         <ExternalViewSwitcher
                             currentViewName={currentViewName}
@@ -207,6 +204,7 @@ export default class DashBoard extends React.Component{
                         />
                     </Scheduler>
                 </Paper>
+                <p style={{ textAlign: "center", color: "#808080", fontSize: "12px" }}>© 中興大學資工系教室借用表 - made by <a href="mailto:ajy1005464@gmail.com?subject=回報課表系統相關 bug" style={{ color: "#808080" }}>mushding</a></p>
             </div>
         )
     }
