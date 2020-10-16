@@ -6,9 +6,20 @@ import constData from './const';
 
 const router = express.Router();
 
+// try get start date of school and check is summer or winter
+let start_month, start_date;
+try {
+    getStartOfSchool().then((startOfSchool) => {
+        let d = new Date();
+        start_month = startOfSchool[constData.isSummerWinter[d.getMonth() + 1]]["month"];
+        start_date = startOfSchool[constData.isSummerWinter[d.getMonth() + 1]]["date"];
+    });
+} catch (err) {
+    console.log(err);
+}
+
 router.get('/getWebsite/:classroom', async (req, res) => {
     let curriculum = [], result;
-    let start_month, start_date;
     let classroom = req.params.classroom;
 
     // try connect DB and select from DB
@@ -18,15 +29,6 @@ router.get('/getWebsite/:classroom', async (req, res) => {
         res.sendStatus(500);
     }
 
-    // try get start date of school and check is summer or winter
-    try {
-        const startOfSchool = await getStartOfSchool();
-        let d = new Date();
-        start_month = startOfSchool[constData.isSummerWinter[d.getMonth() + 1]]["month"];
-        start_date = startOfSchool[constData.isSummerWinter[d.getMonth() + 1]]["date"];
-    } catch (err) {
-        console.log(err);
-    }
     for (let i = 0; i < result.length; i++){
         let start_time = constData.startTimestamps[result[i]["time"][0]];
         let end_time = constData.endTimestamps[result[i]["time"].slice(-1)];
@@ -46,7 +48,6 @@ router.get('/getWebsite/:classroom', async (req, res) => {
 
 router.get('/getStatic/:classroom', async (req, res) => {
     let curriculum = [], result;
-    let start_month, start_date;
     let classroom = req.params.classroom;
     
     // try connect DB and select from DB
@@ -56,15 +57,6 @@ router.get('/getStatic/:classroom', async (req, res) => {
         res.sendStatus(500);
     }
     
-    // try get start date of school and check is summer or winter
-    try {
-        const startOfSchool = await getStartOfSchool();
-        let d = new Date();
-        start_month = startOfSchool[constData.isSummerWinter[d.getMonth() + 1]]["month"];
-        start_date = startOfSchool[constData.isSummerWinter[d.getMonth() + 1]]["date"];
-    } catch (err) {
-        console.log(err);
-    }
     for (let i = 0; i < result.length; i++){
         curriculum.push({
             title: result[i]["name"] + "\n" + result[i]["office"],
