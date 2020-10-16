@@ -5,8 +5,8 @@ import DB from './db/curriculum';
 const router = express.Router();
 
 const timestamps = {
-    "1": 08,
-    "2": 09,
+    "1": 8,
+    "2": 9,
     "3": 10,
     "4": 11,
     "5": 13,
