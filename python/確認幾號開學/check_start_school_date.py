@@ -10,7 +10,13 @@ headers = {
 
 session = requests.Session()
 
-resp = session.get('https://www.nchu.edu.tw/calendar/', headers = headers)
+try:
+    resp = session.get('https://www.nchu.edu.tw/calendar/', headers = headers)
+except:
+    print({})
+    sys.stdout.flush()
+    exit()
+
 resp.encoding = 'utf-8'
 soup = BeautifulSoup(resp.text, 'lxml')
 

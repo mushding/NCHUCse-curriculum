@@ -8,15 +8,15 @@ const router = express.Router();
 
 // try get start date of school and check is summer or winter
 let start_month, start_date;
-try {
-    getStartOfSchool().then((startOfSchool) => {
-        let d = new Date();
-        start_month = startOfSchool[constData.isSummerWinter[d.getMonth() + 1]]["month"];
-        start_date = startOfSchool[constData.isSummerWinter[d.getMonth() + 1]]["date"];
-    });
-} catch (err) {
-    console.log(err);
-}
+getStartOfSchool().then((startOfSchool) => {
+    let d = new Date();
+    start_month = startOfSchool[constData.isSummerWinter[d.getMonth() + 1]]["month"];
+    start_date = startOfSchool[constData.isSummerWinter[d.getMonth() + 1]]["date"];
+}).catch(e => {
+    console.log("No Internet Connection.")
+    start_month = new Date().getMonth() + 1;
+    start_date = "01";
+});
 
 router.get('/getWebsite/:classroom', async (req, res) => {
     let curriculum = [], result;
