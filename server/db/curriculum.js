@@ -72,6 +72,8 @@ const insert_temporary_purpose_classroom = async (data) => {
             }
             console.log("insert success");
         })
+    }).catch(err => {
+        console.log(err)
     })
 }
 
