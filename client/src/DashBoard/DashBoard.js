@@ -1,10 +1,12 @@
 import React from 'react'
-import { ViewState } from '@devexpress/dx-react-scheduler';
+import { ViewState, EditingState, IntegratedEditing } from '@devexpress/dx-react-scheduler';
 import {
     Scheduler,
     WeekView,
     MonthView,
     Appointments,
+    AppointmentForm,
+    ConfirmationDialog,
     Toolbar,
     DateNavigator,
     TodayButton,
@@ -23,6 +25,9 @@ import {
     FormControlLabel,
     Radio
 } from '@material-ui/core';
+
+// import const data
+import constData from '../Data/const';
 
 const style = ({ palette }) => ({
     icon: {
@@ -65,6 +70,60 @@ const Content = withStyles(style, { name: 'Content' })(({
     </AppointmentTooltip.Content>
 ));
 
+const TextEditor = (props, { ...restProps }) => {
+    if (props.type === "multilineTextEditor") {
+        return null;
+    }
+    return <AppointmentForm.TextEditor {...props} />;
+};
+
+const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
+    const onOfficeChange = (nextValue) => {
+        onFieldChange({ office: nextValue });
+    };
+    const onWeekChange = (nextValue) => {
+        onFieldChange({ week: nextValue });
+    };
+    const onClassroomChange = (nextValue) => {
+        onFieldChange({ classroom: nextValue });
+    };
+    return (
+        <AppointmentForm.BasicLayout
+            appointmentData={appointmentData}
+            onFieldChange={onFieldChange}
+            {...restProps}
+        >
+            <AppointmentForm.Label
+                text="借用單位"
+                type="title"
+            />
+            <AppointmentForm.TextEditor
+                value={appointmentData.office}
+                onValueChange={onOfficeChange}
+                placeholder="借用單位"
+            />
+            <AppointmentForm.Label
+                text="借用教室"
+                type="title"
+            />
+            <AppointmentForm.TextEditor
+                value={appointmentData.classroom}
+                onValueChange={onClassroomChange}
+                placeholder="ex: 821"
+            />
+            <AppointmentForm.Label
+                text="借用星期(固定課表專用)"
+                type="title"
+            />
+            <AppointmentForm.TextEditor
+                value={appointmentData.week}
+                onValueChange={onWeekChange}
+                placeholder="ex: 3"
+            />
+        </AppointmentForm.BasicLayout>
+    );
+};
+
 const ExternalViewSwitcher = ({
     currentViewName,
     onChange,
@@ -92,17 +151,11 @@ const ExternalClassroomSelector = ({
         value={ currentClassroom }
         onChange={ onChange }
     >
-        <FormControlLabel value="803" control={<Radio/>} label="803"/>
-        <FormControlLabel value="821" control={<Radio/>} label="821"/>
-        <FormControlLabel value="1002" control={<Radio/>} label="1002"/>
-        <FormControlLabel value="1007" control={<Radio/>} label="1007"/>
-        <FormControlLabel value="1019" control={<Radio/>} label="1019"/>
-        <FormControlLabel value="241" control={<Radio/>} label="241"/>
-        <FormControlLabel value="242" control={<Radio/>} label="242"/>
-        <FormControlLabel value="335" control={<Radio/>} label="335"/>
-        <FormControlLabel value="336" control={<Radio/>} label="336"/>
-        <FormControlLabel value="337" control={<Radio/>} label="337"/>
-        <FormControlLabel value="338" control={<Radio/>} label="338"/>
+        {constData.classroomIndex.map((classroom, index) => {
+            return (
+                <FormControlLabel value={classroom} control={<Radio/>} label={classroom} key={index} />
+            )
+        })}
     </RadioGroup>
 );
 
@@ -115,17 +168,7 @@ export default class DashBoard extends React.Component{
             currentClassroom: '821',
             currentViewName: 'Week',
             // screenHeight: window.innerHeight,
-            resources: [
-                {
-                    fieldName: 'curriculumType',
-                    title: 'CurriculumType',
-                    instances: [
-                        { id: 1, text: '網頁課表', color: "#838bb2" },
-                        { id: 2, text: '固定借用', color: "#e4a99b" },
-                        { id: 3, text: '臨時借用', color: "#BEC23F" },
-                    ]
-                }
-            ]
+            resources: constData.resourceData
         };
     }
     
@@ -151,6 +194,45 @@ export default class DashBoard extends React.Component{
 
     currentViewNameChange = (e) => {
         this.setState({ currentViewName: e.target.value });
+    }
+
+    commitEditChanges = ({ added, changed, deleted }) => {
+        added.startDate = new Date(added.startDate.getTime() - added.startDate.getTimezoneOffset()*60000);
+        added.endDate = new Date(added.endDate.getTime() - added.endDate.getTimezoneOffset()*60000);
+        // static 
+        console.log(added)
+        if (added.curriculumType === 2){
+            if (added.title === undefined || added.office === undefined || added.classroom === undefined || added.week === undefined){
+                alert("有資料欄位沒有填入！");
+            } else {
+                fetch('/addStatic', {
+                    method: 'POST',
+                    body: JSON.stringify(added),
+                    headers: new Headers({
+                        'Content-Type': 'application/json'
+                    })
+                })
+                window.location.reload();
+            }
+        }
+        // temporary
+        else if (added.curriculumType === 3){
+            if (added.title === undefined || added.office === undefined || added.classroom === undefined){
+                alert("有資料欄位沒有填入！");
+            } else {
+                fetch('/addTemporary', {
+                    method: 'POST',
+                    body: JSON.stringify(added),
+                    headers: new Headers({
+                        'Content-Type': 'application/json'
+                    })
+                })
+                window.location.reload();
+            }
+        }
+        else {
+            alert("請選擇借用類別！")
+        }
     }
 
     render(){
@@ -189,6 +271,11 @@ export default class DashBoard extends React.Component{
                             endDayHour={23}
                         />
                         <MonthView/>
+                        <EditingState
+                            onCommitChanges={this.commitEditChanges}
+                        />
+                        <IntegratedEditing/>
+                        <ConfirmationDialog />
                         <Toolbar />
                         <DateNavigator />
                         <TodayButton />
@@ -201,6 +288,11 @@ export default class DashBoard extends React.Component{
                         />
                         <Resources
                             data={resources}
+                        />
+                        <AppointmentForm
+                            basicLayoutComponent={BasicLayout}
+                            textEditorComponent={TextEditor}
+                            messages={constData.messages}
                         />
                     </Scheduler>
                 </Paper>

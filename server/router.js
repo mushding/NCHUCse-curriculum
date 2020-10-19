@@ -1,10 +1,12 @@
 import express from 'express';
+import bodyParser from 'body-parser'
 import { spawn } from 'child_process';
 import curriculum from './db/curriculum';
 import DB from './db/curriculum';
 import constData from './const';
 
 const router = express.Router();
+router.use(bodyParser.json());
 
 // try get start date of school and check is summer or winter
 let start_month, start_date;
@@ -92,6 +94,24 @@ router.get('/getTemporary/:classroom', async (req, res) => {
         })
     }
     res.json(curriculum);
+})
+
+// add static data
+router.post('/addStatic', async (req, res) => {
+    try {
+        result = await DB.insert_static_purpose_classroom(req.body);
+    } catch (err) {
+        res.sendStatus(500);
+    }
+})
+
+// add temporary data
+router.post('/addTemporary', async (req, res) => {
+    try {
+        result = await DB.insert_temporary_purpose_classroom(req.body);
+    } catch (err) {
+        res.sendStatus(500);
+    }
 })
 
 // Get the start date of school from python
