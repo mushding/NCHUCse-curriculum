@@ -65,7 +65,7 @@ const insert_temporary_purpose_classroom = async (data) => {
     let startDate = data.startDate.split("T")[1].slice(0, 5);
     let endDate = data.endDate.split("T")[1].slice(0, 5);
     return new Promise((resolve, reject) => {
-        let sql_str = "INSERT INTO temporary_purpose(name, office, date, start_time, end_time, classroom) SELECT {0},{1},{2},{3},{4},{5} FROM dual WHERE not exists (select * from temporary_purpose where temporary_purpose.classroom = {6} and temporary_purpose.date = {7} and temporary_purpose.start_time = {8} and temporary_purpose.end_time = {9});".format(data.title, data.office, date, startDate, endDate, data.classroom, data,classroom, date, startDate, endDate);
+        let sql_str = "INSERT INTO temporary_purpose(name, office, date, start_time, end_time, classroom) SELECT '{0}','{1}','{2}','{3}','{4}','{5}' FROM dual WHERE not exists (select * from temporary_purpose where temporary_purpose.classroom = '{6}' and temporary_purpose.date = '{7}' and temporary_purpose.start_time = '{8}' and temporary_purpose.end_time = '{9}');".format(data.title, data.office, date, startDate, endDate, data.classroom, data,classroom, date, startDate, endDate);
         Connection.query(sql_str, (err, results) => {
             if (err) {
                 return reject(err);
