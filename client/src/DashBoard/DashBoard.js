@@ -48,7 +48,6 @@ const Appointment = ({
             ...style,
             borderRadius: '0px',
             fontSize: '15px',
-            whiteSpace: 'pre-wrap'
         }}
     >
         {children}
@@ -77,15 +76,19 @@ const TextEditor = (props, { ...restProps }) => {
     return <AppointmentForm.TextEditor {...props} />;
 };
 
+const BooleanEditor = (props, { ...restProps }) => {
+    if (props.label === "All Day") {
+        return null;
+    } 
+    if (props.label === "Repeat") {
+        return null;
+    }
+    return <AppointmentForm.BooleanEditor {...props} />;
+};
+
 const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
     const onOfficeChange = (nextValue) => {
         onFieldChange({ office: nextValue });
-    };
-    const onWeekChange = (nextValue) => {
-        onFieldChange({ week: nextValue });
-    };
-    const onClassroomChange = (nextValue) => {
-        onFieldChange({ classroom: nextValue });
     };
     return (
         <AppointmentForm.BasicLayout
@@ -101,24 +104,6 @@ const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
                 value={appointmentData.office}
                 onValueChange={onOfficeChange}
                 placeholder="借用單位"
-            />
-            <AppointmentForm.Label
-                text="借用教室"
-                type="title"
-            />
-            <AppointmentForm.TextEditor
-                value={appointmentData.classroom}
-                onValueChange={onClassroomChange}
-                placeholder="ex: 821"
-            />
-            <AppointmentForm.Label
-                text="借用星期(固定課表專用)"
-                type="title"
-            />
-            <AppointmentForm.TextEditor
-                value={appointmentData.week}
-                onValueChange={onWeekChange}
-                placeholder="ex: 3"
             />
         </AppointmentForm.BasicLayout>
     );
@@ -197,42 +182,44 @@ export default class DashBoard extends React.Component{
     }
 
     commitEditChanges = ({ added, changed, deleted }) => {
-        added.startDate = new Date(added.startDate.getTime() - added.startDate.getTimezoneOffset()*60000);
-        added.endDate = new Date(added.endDate.getTime() - added.endDate.getTimezoneOffset()*60000);
-        // static 
-        console.log(added)
-        if (added.curriculumType === 2){
-            if (added.title === undefined || added.office === undefined || added.classroom === undefined || added.week === undefined){
-                alert("有資料欄位沒有填入！");
-            } else {
-                fetch('/addStatic', {
-                    method: 'POST',
-                    body: JSON.stringify(added),
-                    headers: new Headers({
-                        'Content-Type': 'application/json'
+        console.log(added, changed, deleted);
+        if (changed || deleted !== undefined)
+            alert("目前不開放此功能");
+        else if (added){
+            added.startDate = new Date(added.startDate.getTime() - added.startDate.getTimezoneOffset()*60000);
+            added.endDate = new Date(added.endDate.getTime() - added.endDate.getTimezoneOffset()*60000);
+            added.classroom = this.state.currentClassroom;
+            // static 
+            if (added.curriculumType === 2){
+                if (added.title === undefined || added.office === undefined){
+                    alert("有資料欄位沒有填入！");
+                } else {
+                    fetch('/addStatic', {
+                        method: 'POST',
+                        body: JSON.stringify(added),
+                        headers: new Headers({
+                            'Content-Type': 'application/json'
+                        })
                     })
-                })
-                window.location.reload();
-            }
-        }
-        // temporary
-        else if (added.curriculumType === 3){
-            if (added.title === undefined || added.office === undefined || added.classroom === undefined){
-                alert("有資料欄位沒有填入！");
-            } else {
-                fetch('/addTemporary', {
-                    method: 'POST',
-                    body: JSON.stringify(added),
-                    headers: new Headers({
-                        'Content-Type': 'application/json'
+                    window.location.reload();
+                }   // temporary
+            } else if (added.curriculumType === 3){
+                if (added.title === undefined || added.office === undefined){
+                    alert("有資料欄位沒有填入！");
+                } else {
+                    fetch('/addTemporary', {
+                        method: 'POST',
+                        body: JSON.stringify(added),
+                        headers: new Headers({
+                            'Content-Type': 'application/json'
+                        })
                     })
-                })
-                window.location.reload();
+                    window.location.reload();
+                }
+            } else {
+                alert("請選擇借用類別！");
             }
-        }
-        else {
-            alert("請選擇借用類別！")
-        }
+        } 
     }
 
     render(){
@@ -249,7 +236,7 @@ export default class DashBoard extends React.Component{
                     <div style={{ padding: "20px", float: 'right' }}>
                         <a target="_blank" rel="noopener noreferrer" href="https://github.com/mushding/NCHUCse-curriculum"><GitHubIcon/></a>
                     </div>
-                    <h4 style={{float: 'right' }}>中興大學資工系教室借用表 v2.0</h4>
+                    <h4 style={{ float: 'right' }}>中興大學資工系教室借用表 v2.0</h4>
                     <div style={{ paddingRight: '10px', paddingTop: '10px', float: 'right' }}>
                         <ExternalViewSwitcher
                             currentViewName={currentViewName}
@@ -280,7 +267,7 @@ export default class DashBoard extends React.Component{
                         <DateNavigator />
                         <TodayButton />
                         <Appointments
-                            appointmentComponent={Appointment} 
+                            appointmentComponent={Appointment}
                         />
                         <AppointmentTooltip
                             contentComponent={Content}
@@ -292,6 +279,7 @@ export default class DashBoard extends React.Component{
                         <AppointmentForm
                             basicLayoutComponent={BasicLayout}
                             textEditorComponent={TextEditor}
+                            booleanEditorComponent={BooleanEditor}
                             messages={constData.messages}
                         />
                     </Scheduler>

@@ -44,19 +44,22 @@ const select_temporary_purpose_classroom = async (classroom) => {
 }
 
 const insert_static_purpose_classroom = async (data) => {
+    let week = new Date(data.startDate).getDay();
+    // check if sunday
+    if (week === 0)
+        week = 7;
+    
     let date = data.startDate.split("T")[0];
     let startDate = data.startDate.split("T")[1].slice(0, 5);
     let endDate = data.endDate.split("T")[1].slice(0, 5);
     return new Promise((resolve, reject) => {
-        let sql_str = "INSERT INTO static_purpose(name, office, week, start_time, end_time, classroom) SELECT '{0}','{1}','{2}','{3}','{4}','{5}' FROM dual WHERE not exists (select * from static_purpose where static_purpose.classroom = '{6}' and static_purpose.week = '{7}' and static_purpose.start_time = '{8}' and static_purpose.end_time = '{9}');".format(data.title, data.office, data.week, startDate, endDate, data.classroom, data.classroom, data.week, startDate, endDate);
+        let sql_str = "INSERT INTO static_purpose(name, office, week, start_time, end_time, classroom) SELECT '{0}','{1}','{2}','{3}','{4}','{5}' FROM dual WHERE not exists (select * from static_purpose where static_purpose.classroom = '{6}' and static_purpose.week = '{7}' and static_purpose.start_time = '{8}' and static_purpose.end_time = '{9}');".format(data.title, data.office, week, startDate, endDate, data.classroom, data.classroom, week, startDate, endDate);
         Connection.query(sql_str, (err, results) => {
             if (err) {
                 return reject(err);
             }
             console.log("insert success");
         })
-    }).catch(err => {
-        console.log(err)
     })
 }
 
@@ -71,6 +74,32 @@ const insert_temporary_purpose_classroom = async (data) => {
                 return reject(err);
             }
             console.log("insert success");
+        })
+    })
+}
+
+const drop_static_purpose_classroom = async (id) => {
+    return new Promise((resolve, reject) => {
+        let sql_str = "DELETE FROM static_purpose WHERE (`id` = '{0}');".format(id);
+        Connection.query(sql_str, (err, results) => {
+            if (err) {
+                return reject(err);
+            }
+            console.log("drop success");
+        })
+    }).catch(err => {
+        console.log(err)
+    })
+}
+
+const drop_temporary_purpose_classroom = async (id) => {
+    return new Promise((resolve, reject) => {
+        let sql_str = "DELETE FROM temporary_purpose WHERE (`id` = '{0}');".format(id);
+        Connection.query(sql_str, (err, results) => {
+            if (err) {
+                return reject(err);
+            }
+            console.log("drop success");
         })
     }).catch(err => {
         console.log(err)

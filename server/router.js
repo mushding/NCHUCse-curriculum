@@ -10,12 +10,14 @@ router.use(bodyParser.json());
 
 // try get start date of school and check is summer or winter
 let start_month, start_date;
+start_month = new Date().getMonth() + 1;
+start_date = "01";
 getStartOfSchool().then((startOfSchool) => {
     let d = new Date();
     start_month = startOfSchool[constData.isSummerWinter[d.getMonth() + 1]]["month"];
     start_date = startOfSchool[constData.isSummerWinter[d.getMonth() + 1]]["date"];
 }).catch(e => {
-    console.log("No Internet Connection.")
+    console.log("No Internet Connection.");
     start_month = new Date().getMonth() + 1;
     start_date = "01";
 });
@@ -35,9 +37,10 @@ router.get('/getWebsite/:classroom', async (req, res) => {
         let start_time = constData.startTimestamps[result[i]["time"][0]];
         let end_time = constData.endTimestamps[result[i]["time"].slice(-1)];
         curriculum.push({
+            pkId: result[i]["id"],
             title: result[i]["name"] + "\n" + result[i]["grade"] + "\n" + result[i]["teacher"],
-            startDate: '2020-' + start_month + '-' + start_date + 'T' + start_time + ":00",
-            endDate: '2020-' + start_month + '-' + start_date + 'T' + end_time + ":00",
+            startDate: new Date('2020-' + start_month + '-' + start_date + 'T' + start_time + ":00"),
+            endDate: new Date('2020-' + start_month + '-' + start_date + 'T' + end_time + ":00"),
             rRule: 'RRULE:FREQ=WEEKLY;COUNT=18;WKST=MO;BYDAY=' + constData.weekIndex[result[i]["week"]],
             addtime: result[i]["timestamp"],
             name: result[i]["name"],
@@ -61,9 +64,10 @@ router.get('/getStatic/:classroom', async (req, res) => {
     
     for (let i = 0; i < result.length; i++){
         curriculum.push({
+            pkId: result[i]["id"],
             title: result[i]["name"] + "\n" + result[i]["office"],
-            startDate: '2020-' + start_month + '-' + start_date + 'T' + result[i]["start_time"],
-            endDate: '2020-' + start_month + '-' + start_date + 'T' + result[i]["end_time"],
+            startDate: new Date('2020-' + start_month + '-' + start_date + 'T' + result[i]["start_time"]),
+            endDate: new Date('2020-' + start_month + '-' + start_date + 'T' + result[i]["end_time"]),
             rRule: 'RRULE:FREQ=WEEKLY;COUNT=18;WKST=MO;BYDAY=' + constData.weekIndex[result[i]["week"]],
             addtime: result[i]["timestamp"],
             name: result[i]["name"],
@@ -84,9 +88,10 @@ router.get('/getTemporary/:classroom', async (req, res) => {
     }
     for (let i = 0; i < result.length; i++){
         curriculum.push({
+            pkId: result[i]["id"],
             title: result[i]["name"] + "\n" + result[i]["office"],
-            startDate: result[i]["date"] + 'T' + result[i]["start_time"],
-            endDate: result[i]["date"] + 'T' + result[i]["end_time"],
+            startDate: new Date(result[i]["date"] + 'T' + result[i]["start_time"]),
+            endDate: new Date(result[i]["date"] + 'T' + result[i]["end_time"]),
             addtime: result[i]["timestamp"],
             name: result[i]["name"],
             otherFormat: result[i]["office"],
@@ -109,6 +114,26 @@ router.post('/addStatic', async (req, res) => {
 router.post('/addTemporary', async (req, res) => {
     try {
         result = await DB.insert_temporary_purpose_classroom(req.body);
+    } catch (err) {
+        res.sendStatus(500);
+    }
+})
+
+// drop static data
+router.get('/dropStatic/:id', async (req, res) => {
+    let id = req.params.id;
+    try {
+        result = await DB.drop_static_purpose_classroom(id);
+    } catch (err) {
+        res.sendStatus(500);
+    }
+})
+
+// drop temporary data
+router.get('/dropTemporary/:id', async (req, res) => {
+    let id = req.params.id;
+    try {
+        result = await DB.drop_temporary_purpose_classroom(id);
     } catch (err) {
         res.sendStatus(500);
     }

@@ -25,12 +25,10 @@ const resourceData = [
 ]
 
 const messages = {
+    moreInformationLabel: '',
     titleLabel: '借用目的',
     detailsLabel: '借用目的',
     commitCommand: '儲存',
-    moreInformationLabel: '',
-    allDayLabel: '一整天',
-    repeatLabel: '重複',
     never: '不重複',
     daily: '以日為單位重複',
     weekly: '以週為單位重複',
