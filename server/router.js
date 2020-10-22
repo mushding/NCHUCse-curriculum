@@ -22,6 +22,22 @@ getStartOfSchool().then((startOfSchool) => {
     start_date = "01";
 });
 
+router.get('/getAllData', async (req, res) => {
+    // try connect DB and select from DB
+    let result;
+    try {
+        result = await DB.select_website_curriculum();
+        result.push(...await DB.select_static_curriculum());
+        result.push(...await DB.select_temporary_curriculum());
+        for (let i = 0; i < result.length; i++){
+            result[i]["id"] = i;
+        }
+    } catch (err) {
+        res.sendStatus(500);
+    }
+    res.json(result);
+})
+
 router.get('/getWebsite/:classroom', async (req, res) => {
     let curriculum = [], result;
     let classroom = req.params.classroom;

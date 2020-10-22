@@ -1,0 +1,44 @@
+diff --git a/node_modules/@devexpress/dx-react-scheduler-material-ui/dist/dx-react-scheduler-material-ui.cjs.js b/node_modules/@devexpress/dx-react-scheduler-material-ui/dist/dx-react-scheduler-material-ui.cjs.js
+index 9138718..0d837e7 100644
+--- a/node_modules/@devexpress/dx-react-scheduler-material-ui/dist/dx-react-scheduler-material-ui.cjs.js
++++ b/node_modules/@devexpress/dx-react-scheduler-material-ui/dist/dx-react-scheduler-material-ui.cjs.js
+@@ -1752,7 +1752,7 @@ var styles$a = function styles(_ref) {
+       fontWeight: 'bold',
+       overflow: 'hidden',
+       textOverflow: 'ellipsis',
+-      whiteSpace: 'nowrap'
++      whiteSpace: 'pre-wrap'
+     },
+     textContainer: {
+       lineHeight: 1,
+diff --git a/node_modules/@devexpress/dx-react-scheduler-material-ui/dist/dx-react-scheduler-material-ui.es.js b/node_modules/@devexpress/dx-react-scheduler-material-ui/dist/dx-react-scheduler-material-ui.es.js
+index 51a0f8d..eff5f43 100644
+--- a/node_modules/@devexpress/dx-react-scheduler-material-ui/dist/dx-react-scheduler-material-ui.es.js
++++ b/node_modules/@devexpress/dx-react-scheduler-material-ui/dist/dx-react-scheduler-material-ui.es.js
+@@ -368,7 +368,7 @@ var SMALL_LAYOUT_MEDIA_QUERY = "@media (max-width: ".concat(XS_LAYOUT_WIDTH, "px
+ var LAYOUT_MEDIA_QUERY = "@media (max-width: ".concat(SMALL_LAYOUT_WIDTH, "px)");
+ var GROUPING_PANEL_VERTICAL_CELL_WIDTH = 12.5;
+ var DEFAULT_SPACING = 8;
+-var SPACING_CELL_HEIGHT = (_SPACING_CELL_HEIGHT = {}, _defineProperty(_SPACING_CELL_HEIGHT, VIEW_TYPES.MONTH, 12.5), _defineProperty(_SPACING_CELL_HEIGHT, VIEW_TYPES.WEEK, 6), _defineProperty(_SPACING_CELL_HEIGHT, VIEW_TYPES.DAY, 6), _defineProperty(_SPACING_CELL_HEIGHT, VIEW_TYPES.ALL_DAY_PANEL, 5.75), _SPACING_CELL_HEIGHT);
++var SPACING_CELL_HEIGHT = (_SPACING_CELL_HEIGHT = {}, _defineProperty(_SPACING_CELL_HEIGHT, VIEW_TYPES.MONTH, 12.5), _defineProperty(_SPACING_CELL_HEIGHT, VIEW_TYPES.WEEK, 3), _defineProperty(_SPACING_CELL_HEIGHT, VIEW_TYPES.DAY, 6), _defineProperty(_SPACING_CELL_HEIGHT, VIEW_TYPES.ALL_DAY_PANEL, 5.75), _SPACING_CELL_HEIGHT);
+ var BASIC_CELL_HEIGHT = (_BASIC_CELL_HEIGHT = {}, _defineProperty(_BASIC_CELL_HEIGHT, VIEW_TYPES.MONTH, SPACING_CELL_HEIGHT[VIEW_TYPES.MONTH] * DEFAULT_SPACING), _defineProperty(_BASIC_CELL_HEIGHT, VIEW_TYPES.WEEK, SPACING_CELL_HEIGHT[VIEW_TYPES.WEEK] * DEFAULT_SPACING), _defineProperty(_BASIC_CELL_HEIGHT, VIEW_TYPES.DAY, SPACING_CELL_HEIGHT[VIEW_TYPES.DAY] * DEFAULT_SPACING), _defineProperty(_BASIC_CELL_HEIGHT, VIEW_TYPES.ALL_DAY_PANEL, SPACING_CELL_HEIGHT[VIEW_TYPES.ALL_DAY_PANEL] * DEFAULT_SPACING), _BASIC_CELL_HEIGHT);
+ var SPACING_LABEL_HEIGHT = SPACING_CELL_HEIGHT[VIEW_TYPES.WEEK];
+ var LEFT_PANEL_WIDTH_SPACING = 10;
+@@ -1743,7 +1743,7 @@ var styles$a = function styles(_ref) {
+       fontWeight: 'bold',
+       overflow: 'hidden',
+       textOverflow: 'ellipsis',
+-      whiteSpace: 'nowrap'
++      whiteSpace: 'pre-wrap'
+     },
+     textContainer: {
+       lineHeight: 1,
+@@ -3793,7 +3793,7 @@ var LayoutBase$4 = function LayoutBase(_ref2) {
+     return createElement(Fragment, {
+       key: resource.fieldName
+     }, createElement(Label, {
+-      text: resource.title,
++      text: "借用類別",
+       type: TITLE,
+       className: classes.labelWithMargins
+     }), createElement(ResourceEditor, {

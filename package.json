@@ -5,12 +5,13 @@
   "main": "server.js",
   "scripts": {
     "client-install": "cd client && npm intall",
-    "start": "npx babel-node ./server/server.js",
-    "server": "npm run build && npm run start-build",
+    "start": "npx babel-node ./lib/server.js",
+    "server": "npm run build_backend && npm run start-build",
     "client": "npm start --prefix client",
     "dev": "concurrently \"npm run server \" \"npm run client\"",
-    "build": "babel server -d lib",
-    "start-build": "nodemon ./lib/server.js"
+    "build_backend": "babel server -d lib",
+    "build": "concurrently \"babel server -d lib \" \"cd client && npm run build\"",
+    "start-build": "nodemon ./lib/server.js",
   },
   "author": "mushding",
   "license": "ISC",
