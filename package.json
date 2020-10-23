@@ -11,7 +11,7 @@
     "dev": "concurrently \"npm run server \" \"npm run client\"",
     "build_backend": "babel server -d lib",
     "build": "concurrently \"babel server -d lib \" \"cd client && npm run build\"",
-    "start-build": "nodemon ./lib/server.js",
+    "start-build": "nodemon ./lib/server.js"
   },
   "author": "mushding",
   "license": "ISC",

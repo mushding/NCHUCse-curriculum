@@ -12,15 +12,19 @@ router.use(bodyParser.json());
 let start_month, start_date;
 start_month = new Date().getMonth() + 1;
 start_date = "01";
-getStartOfSchool().then((startOfSchool) => {
-    let d = new Date();
-    start_month = startOfSchool[constData.isSummerWinter[d.getMonth() + 1]]["month"];
-    start_date = startOfSchool[constData.isSummerWinter[d.getMonth() + 1]]["date"];
-}).catch(e => {
-    console.log("No Internet Connection.");
-    start_month = new Date().getMonth() + 1;
-    start_date = "01";
-});
+// getStartOfSchool().then((startOfSchool) => {
+//     let d = new Date();
+//     start_month = startOfSchool[constData.isSummerWinter[d.getMonth() + 1]]["month"];
+//     start_date = startOfSchool[constData.isSummerWinter[d.getMonth() + 1]]["date"];
+// }).catch(e => {
+//     console.log("No Internet Connection.");
+//     start_month = new Date().getMonth() + 1;
+//     start_date = "01";
+// });
+
+router.get('/test', (req, res) => {
+    res.json("TESTTEST");
+})
 
 router.get('/getAllData', async (req, res) => {
     // try connect DB and select from DB
@@ -156,18 +160,18 @@ router.get('/dropTemporary/:id', async (req, res) => {
 })
 
 // Get the start date of school from python
-function getStartOfSchool() {
-    const python = spawn('python3', ['./python/確認幾號開學/check_start_school_date.py']);
-    let date;
-    return new Promise((resolve, rejects) => {
-        python.stdout.on('data', (data) => {
-            if (data === {}){
-                reject(data);
-            } else {
-                resolve(JSON.parse(data))
-            }
-        });
-    })
-}
+// function getStartOfSchool() {
+//     const python = spawn('python3', ['./python/確認幾號開學/check_start_school_date.py']);
+//     let date;
+//     return new Promise((resolve, rejects) => {
+//         python.stdout.on('data', (data) => {
+//             if (data === {}){
+//                 reject(data);
+//             } else {
+//                 resolve(JSON.parse(data))
+//             }
+//         });
+//     })
+// }
 
 export default router
