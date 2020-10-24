@@ -4,13 +4,13 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "client-install": "cd client && npm intall",
+    "client-install": "cd ../client/ && npm intall",
     "start": "npx babel-node ./lib/server.js",
     "server": "npm run build_backend && npm run start-build",
-    "client": "npm start --prefix client",
+    "client": "cd ../client/ && npm start",
     "dev": "concurrently \"npm run server \" \"npm run client\"",
     "build_backend": "babel server -d lib",
-    "build": "concurrently \"babel server -d lib \" \"cd client && npm run build\"",
+    "build": "concurrently \"babel server -d lib \" \"cd ../client/ && npm run build\"",
     "start-build": "nodemon ./lib/server.js"
   },
   "author": "mushding",
