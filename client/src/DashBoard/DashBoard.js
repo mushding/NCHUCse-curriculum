@@ -18,6 +18,8 @@ import { withStyles } from '@material-ui/core/styles';
 // import icon
 import GitHubIcon from '@material-ui/icons/GitHub';
 import AlarmAddIcon from '@material-ui/icons/AlarmAdd';
+import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered';
+
 import { 
     Paper,
     Grid,
@@ -59,6 +61,12 @@ const Content = withStyles(style, { name: 'Content' })(({
 }) => (
     <AppointmentTooltip.Content {...restProps} appointmentData={appointmentData}>
         <Grid container alignItems="center">
+            <Grid item xs={2} className={classes.textCenter}>
+                <FormatListNumberedIcon className={classes.icon} />
+            </Grid>
+            <Grid item xs={10}>
+                <span>ID：{appointmentData.pkId}</span>
+            </Grid>
             <Grid item xs={2} className={classes.textCenter}>
                 <AlarmAddIcon className={classes.icon} />
             </Grid>
