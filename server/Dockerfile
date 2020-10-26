@@ -12,6 +12,6 @@ COPY ./server /server/server
 # build lib
 RUN npm run build_backend
 # Make port 80 available to the world outside this container
-EXPOSE 5000
+EXPOSE 80
 # Run the app when the container launches
 CMD ["npm", "run", "server"]

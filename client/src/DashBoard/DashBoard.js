@@ -162,11 +162,11 @@ export default class DashBoard extends React.Component{
     }
 
     getBackendCurriculumData = async () => {
-        let res = await fetch('/getWebsite/' + this.state.currentClassroom);
+        let res = await fetch('/api/getWebsite/' + this.state.currentClassroom);
         let currirulums = await res.json();
-        res = await fetch('/getStatic/' + this.state.currentClassroom);
+        res = await fetch('/api/getStatic/' + this.state.currentClassroom);
         currirulums.push(...await res.json());
-        res = await fetch('/getTemporary/' + this.state.currentClassroom);
+        res = await fetch('/api/getTemporary/' + this.state.currentClassroom);
         currirulums.push(...await res.json());
         this.setState({ currirulums });
     }
@@ -194,7 +194,7 @@ export default class DashBoard extends React.Component{
                 if (added.title === undefined || added.office === undefined){
                     alert("有資料欄位沒有填入！");
                 } else {
-                    fetch('/addStatic', {
+                    fetch('/api/addStatic', {
                         method: 'POST',
                         body: JSON.stringify(added),
                         headers: new Headers({
@@ -207,7 +207,7 @@ export default class DashBoard extends React.Component{
                 if (added.title === undefined || added.office === undefined){
                     alert("有資料欄位沒有填入！");
                 } else {
-                    fetch('/addTemporary', {
+                    fetch('/api/addTemporary', {
                         method: 'POST',
                         body: JSON.stringify(added),
                         headers: new Headers({

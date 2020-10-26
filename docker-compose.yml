@@ -10,6 +10,10 @@ services:
     image: "expressapp:1.0.0"
     networks:
       - sub-etha
+    links:
+      - db
+    environment: 
+      TZ: Asia/Taipei
   revproxy:
     build: ./nginx
     image: "reverseproxy:1.0.0"
@@ -17,5 +21,29 @@ services:
       - sub-etha
     ports:
       - "80:80"
+    links:
+      - db
+  db:
+    image: mysql/mysql-server:5.7
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_USER: nchucse
+      MYSQL_PASSWORD: NCHUCse801
+      MYSQL_ROOT_PASSWORD: NCHUCse801
+      MYSQL_DATABASE: curriculum
+      TZ: Asia/Taipei
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
+      - dbdata:/var/lib/mysql
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
+    ports:
+      - 3306:3306
+    networks:
+      - sub-etha
 networks:
   sub-etha:
+    driver: bridge
+volumes:
+  dbdata:
+    driver: local

@@ -22,11 +22,11 @@ start_date = "01";
 //     start_date = "01";
 // });
 
-router.get('/test', (req, res) => {
+router.get('/api/test', (req, res) => {
     res.json("TESTTEST");
 })
 
-router.get('/getAllData', async (req, res) => {
+router.get('/api/getAllData', async (req, res) => {
     // try connect DB and select from DB
     let result;
     try {
@@ -42,7 +42,7 @@ router.get('/getAllData', async (req, res) => {
     res.json(result);
 })
 
-router.get('/getWebsite/:classroom', async (req, res) => {
+router.get('/api/getWebsite/:classroom', async (req, res) => {
     let curriculum = [], result;
     let classroom = req.params.classroom;
 
@@ -71,7 +71,7 @@ router.get('/getWebsite/:classroom', async (req, res) => {
     res.json(curriculum);
 });
 
-router.get('/getStatic/:classroom', async (req, res) => {
+router.get('/api/getStatic/:classroom', async (req, res) => {
     let curriculum = [], result;
     let classroom = req.params.classroom;
     
@@ -98,7 +98,7 @@ router.get('/getStatic/:classroom', async (req, res) => {
     res.json(curriculum);
 })
 
-router.get('/getTemporary/:classroom', async (req, res) => {
+router.get('/api/getTemporary/:classroom', async (req, res) => {
     let curriculum = [], result;    
     let classroom = req.params.classroom;
     try {
@@ -122,7 +122,7 @@ router.get('/getTemporary/:classroom', async (req, res) => {
 })
 
 // add static data
-router.post('/addStatic', async (req, res) => {
+router.post('/api/addStatic', async (req, res) => {
     try {
         result = await DB.insert_static_purpose_classroom(req.body);
     } catch (err) {
@@ -131,7 +131,7 @@ router.post('/addStatic', async (req, res) => {
 })
 
 // add temporary data
-router.post('/addTemporary', async (req, res) => {
+router.post('/api/addTemporary', async (req, res) => {
     try {
         result = await DB.insert_temporary_purpose_classroom(req.body);
     } catch (err) {
@@ -140,7 +140,7 @@ router.post('/addTemporary', async (req, res) => {
 })
 
 // drop static data
-router.get('/dropStatic/:id', async (req, res) => {
+router.get('/api/dropStatic/:id', async (req, res) => {
     let id = req.params.id;
     try {
         result = await DB.drop_static_purpose_classroom(id);
@@ -150,7 +150,7 @@ router.get('/dropStatic/:id', async (req, res) => {
 })
 
 // drop temporary data
-router.get('/dropTemporary/:id', async (req, res) => {
+router.get('/api/dropTemporary/:id', async (req, res) => {
     let id = req.params.id;
     try {
         result = await DB.drop_temporary_purpose_classroom(id);
