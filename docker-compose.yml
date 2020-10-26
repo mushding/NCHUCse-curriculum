@@ -23,6 +23,9 @@ services:
       - "80:80"
     links:
       - db
+    depends_on: 
+      - frontend
+      - backend
   db:
     image: mysql/mysql-server:5.7
     restart: always
