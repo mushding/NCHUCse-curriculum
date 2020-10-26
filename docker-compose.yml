@@ -28,15 +28,14 @@ services:
     restart: always
     command: --default-authentication-plugin=mysql_native_password
     environment:
-      MYSQL_USER: nchucse
-      MYSQL_PASSWORD: NCHUCse801
-      MYSQL_ROOT_PASSWORD: NCHUCse801
-      MYSQL_DATABASE: curriculum
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
       TZ: Asia/Taipei
     volumes:
       - ./sql:/docker-entrypoint-initdb.d
       - dbdata:/var/lib/mysql
-      - ./mysql/my.cnf:/etc/mysql/my.cnf
     ports:
       - 3306:3306
     networks:
