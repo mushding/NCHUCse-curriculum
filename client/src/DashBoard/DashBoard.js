@@ -35,9 +35,13 @@ const style = ({ palette }) => ({
     icon: {
         color: palette.action.active,
     },
-    textCenter: {
+    textCenterFirst: {
         textAlign: 'center',
         padding: '8px'
+    },
+    textCenter: {
+        textAlign: 'center',
+        padding: '4px'
     },
 }); 
 
@@ -61,7 +65,7 @@ const Content = withStyles(style, { name: 'Content' })(({
 }) => (
     <AppointmentTooltip.Content {...restProps} appointmentData={appointmentData}>
         <Grid container alignItems="center">
-            <Grid item xs={2} className={classes.textCenter}>
+            <Grid item xs={2} className={classes.textCenterFirst}>
                 <FormatListNumberedIcon className={classes.icon} />
             </Grid>
             <Grid item xs={10}>
