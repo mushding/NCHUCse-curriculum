@@ -1,7 +1,7 @@
 中興大學資工系教室借用表 v2.0
 ===
 <p align="center">
-<img src="https://i.imgur.com/hRdt4iV.png" alt="image-20201027164029288" style="zoom:30%;" />
+<img src="https://i.imgur.com/hRdt4iV.png" alt="image-20201027164029288" style="zoom:10%;" />
 </p>
 本系統僅限中興大學資工系系辦工讀生使用
 
