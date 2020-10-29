@@ -19,7 +19,7 @@
     ```
     D: -> 0812 -> classroom -> 課表系統好讀版v2.0
     ```
-    * 雙擊`執行網站.bat`
+    * 雙擊 [執行系統.bat](執行系統.bat)
     * 課表系統就會開在 [http://localhost/](http://localhost/)
 <!-- * 指令法：
     * 打開 cmd 後 cd 至課表資料夾
