@@ -73,7 +73,7 @@ for i in range(7):
 session = requests.Session()
 
 for career, postdata in enumerate(postdatas):
-    def post_to_website(name, days, classroom, teacher, grade):
+    def store_and_website(class_id, name, days, classroom, teacher, grade):
         if len(classroom) != 3:
             return
         if career == 1:
@@ -83,6 +83,10 @@ for career, postdata in enumerate(postdatas):
         for day in days:
             week = day[0]
             times = day[1:]
+            sql_str = "insert into curriculum(class_id, name, grade, week, time, classroom, teacher) values({},'{}','{}','{}','{}','{}','{}');".format(class_id, name, index_to_grade[grade], week, times, classroom[1], teacher)
+            print(sql_str)
+            conn.execute(sql_str)
+            conn.commit()
             for classtime in times:
                 datas[int(week) - 1]['application_' + classroom[1] + "_" + week + "_" + time_to_hour[classtime]] = (name + "\r\n" + teacher + "\r\n" + index_to_grade[grade]).encode("Big5")
 
@@ -100,9 +104,9 @@ for career, postdata in enumerate(postdatas):
             classes = [class_info.text.replace('\u3000', '') for class_info in row.findAll('td')]
             # test if is 實習
             if classes[8] == "":
-                post_to_website(classes[2].split(" ")[0], classes[9].split(","), re.split('(\d+)', classes[11]), classes[13], index)
+                store_and_website(classes[1], classes[2].split(" ")[0], classes[9].split(","), re.split('(\d+)', classes[11]), classes[13], index)
             else:
-                post_to_website(classes[2].split(" ")[0], classes[8].split(","), re.split('(\d+)', classes[10]), classes[12], index)
+                store_and_website(classes[1], classes[2].split(" ")[0], classes[8].split(","), re.split('(\d+)', classes[10]), classes[12], index)
 
 # select data
 c = conn.cursor()
