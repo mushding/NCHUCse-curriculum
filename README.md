@@ -14,10 +14,17 @@
 
 ## 使用方法
 ### 啟動系統
-* 指令法：
+* 簡單法：
+    * 進入課表系統資料夾
+    ```
+    D: -> 0812 -> classroom -> 課表系統好讀版v2.0
+    ```
+    * 雙擊`執行網站.bat`
+    * 課表系統就會開在 [http://localhost/](http://localhost/)
+<!-- * 指令法：
     * 打開 cmd 後 cd 至課表資料夾
     ```
-    cd D:\0812\classroom\NCHUCse-curriculum
+    cd D:\0812\classroom\課表系統好讀版v2.0
     ```
     * 啟動 docker-compose
     ```
@@ -28,7 +35,7 @@
     * 在桌面上有 Docker Desktop 雙擊點開後
     * 選左方的「Containers/Apps」
     * nchucse-curriculum 這個 container 按下右方三角形「Start」鍵
-    * 課表系統就會開在 [http://localhost/](http://localhost/)
+    * 課表系統就會開在 [http://localhost/](http://localhost/) -->
 ### 新增課表
 * 在要新增的教室下
 * 對著要新增課表開始時間按兩下滑鼠左鍵
@@ -63,16 +70,14 @@
     ```
     use curriculum;
     ```
+    > 如要刪除臨時課表
     ```
-    delete from [table] where (`id` = '[number]');
+    delete from temporary_purpose where (`id` = '');
     ```
-    > 注意事項：
-    > 
-    > 如要刪除臨時課表，將 [table] 改為 temporary_purpose
-    > 
-    > 如要刪除固定課表，將 [table] 改為 static_purpose
-    >  
-    > 後面 [number] 打入相對應的 id number
+    > 如要刪除固定課表
+    ```
+    delete from static_purpose where (`id` = '');
+    ```
 ### 其它
 * 右上新增「週」「月」切換功能，在暑假口試週更實用
 * 每個課表都可單獨點擊
