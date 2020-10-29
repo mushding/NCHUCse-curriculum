@@ -2,9 +2,8 @@
 ===
 ###### tags: `github README.md`
 
-<p align="center">
-<img src="https://i.imgur.com/hRdt4iV.png" alt="image-20201027164029288" style="zoom:10%;" />
-</p>
+<img src="https://i.imgur.com/hRdt4iV.png" alt="image-20201027164029288" width="200" />
+
 本系統僅限中興大學資工系系辦工讀生使用
 
 ## Feature
