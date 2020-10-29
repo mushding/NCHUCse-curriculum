@@ -34,7 +34,11 @@ except:
 # reassure
 print("\n要刪除的課表：" + type_table_zh[curriculum_type])
 print("課表 ID：" + pid)
-print("課表借用目的 & 單位：" + str(results[0][2]) + " " + str(results[0][3]))
+try:
+    print("課表借用目的 & 單位：" + str(results[0][2]) + " " + str(results[0][3]))
+except:
+    print("沒有這個 ID！請重新使用")
+    exit()
 continue_flag = input("請確認資料是否正確並且確認刪除課表？(Y/N)：")
 
 if continue_flag == 'N' or continue_flag == 'n':
