@@ -3,11 +3,13 @@ services:
   frontend:
     build: ./client
     image: "reactapp:1.0.0"
+    restart: unless-stopped
     networks:
       - sub-etha
   backend:
     build: ./server
     image: "expressapp:1.0.0"
+    restart: unless-stopped
     networks:
       - sub-etha
     links:
@@ -17,6 +19,7 @@ services:
   revproxy:
     build: ./nginx
     image: "reverseproxy:1.0.0"
+    restart: unless-stopped
     networks:
       - sub-etha
     ports:
@@ -28,7 +31,7 @@ services:
       - backend
   db:
     image: mysql/mysql-server:5.7
-    restart: always
+    restart: unless-stopped
     command: --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_USER: ${DB_USER}
