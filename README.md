@@ -21,21 +21,7 @@
     ```
     * 雙擊 [執行系統.bat](執行系統.bat)
     * 課表系統就會開在 [http://localhost/](http://localhost/)
-<!-- * 指令法：
-    * 打開 cmd 後 cd 至課表資料夾
-    ```
-    cd D:\0812\classroom\課表系統好讀版v2.0
-    ```
-    * 啟動 docker-compose
-    ```
-    docker-compose up -d
-    ```
-    * 課表系統就會開在 [http://localhost/](http://localhost/)
-* docker 桌面法：
-    * 在桌面上有 Docker Desktop 雙擊點開後
-    * 選左方的「Containers/Apps」
-    * nchucse-curriculum 這個 container 按下右方三角形「Start」鍵
-    * 課表系統就會開在 [http://localhost/](http://localhost/) -->
+
 ### 新增課表
 * 在要新增的教室下
 * 對著要新增課表開始時間按兩下滑鼠左鍵
@@ -54,30 +40,18 @@
     * 借用單位
 * 按下「儲存」後即成功新增課表
 ### 刪除課表
+* 小心！
 * 為了防止課表被意外刪除
 * 本課表並沒有提供刪除相關的 API
 * 如果仍要刪除
     * 先在網頁上單擊要刪的課表把它的 id 記下來
-    * 在桌面上有 Docker Desktop 雙擊點開後
-    * 選左方的「Containers/Apps」
-    * 點開 nchucse-curriculum 這個 container
-    * 裡面有個 nchucse-curriculum_db_1
-    * 滑鼠放在上面，按下右現出現「CLI」按鈕，進入 db 的 container 中
-    * 接下來依序打入以下指令：
+    * 進入 python 資料夾中
+    * 再進入刪除課表
     ```
-    mysql -uroot -p    //會要求輸入密碼，密碼為系上管理員密碼
+    D: -> 0812 -> classroom -> 課表系統好讀版v2.0 -> python -> 刪除課表
     ```
-    ```
-    use curriculum;
-    ```
-    > 如要刪除臨時課表
-    ```
-    delete from temporary_purpose where (`id` = '');
-    ```
-    > 如要刪除固定課表
-    ```
-    delete from static_purpose where (`id` = '');
-    ```
+    * 雙擊 [雙擊刪除課表.bat](./python/刪除課表/雙擊刪除課表.bat)
+    * 輸入要刪除的類別以及 ID 即可刪除
 ### 其它
 * 右上新增「週」「月」切換功能，在暑假口試週更實用
 * 每個課表都可單獨點擊
