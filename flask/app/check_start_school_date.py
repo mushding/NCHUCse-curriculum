@@ -18,12 +18,10 @@ def home():
     try:
         resp = session.get('https://www.nchu.edu.tw/calendar/', headers = headers)
     except:
-        print({})
-        sys.stdout.flush()
         exit()
 
     resp.encoding = 'utf-8'
-    soup = BeautifulSoup(resp.text, 'lxml')
+    soup = BeautifulSoup(resp.text, 'html.parser')
 
     start_of_school = dict()
 
@@ -35,10 +33,10 @@ def home():
                 date = row.split(':')[-1]
                 if date[0] == '9':
                     month_date_list = date.split('/')
-                    start_of_school["summer"] = {"month": month_date_list[0].zfill(2), "date": month_date_list[1].zfill(2)}
+                    start_of_school["9"] = {"month": month_date_list[0].zfill(2), "date": month_date_list[1].zfill(2)}
                 elif date[0] == '2':
                     month_date_list = date.split('/')
-                    start_of_school["winter"] = {"month": month_date_list[0].zfill(2), "date": month_date_list[1].zfill(2)}
+                    start_of_school["2"] = {"month": month_date_list[0].zfill(2), "date": month_date_list[1].zfill(2)}
 
     # return result to node.js
     return json.dumps(start_of_school)

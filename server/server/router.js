@@ -4,23 +4,25 @@ import { spawn } from 'child_process';
 import curriculum from './db/curriculum';
 import DB from './db/curriculum';
 import constData from './const';
+const fetch = require('node-fetch');
 
 const router = express.Router();
 router.use(bodyParser.json());
 
 // try get start date of school and check is summer or winter
 let start_month, start_date;
-start_month = constData.isSummerWinter[new Date().getMonth() + 1].padStart(2, "0");
-start_date = "01";
-// getStartOfSchool().then((startOfSchool) => {
-//     let d = new Date();
-//     start_month = startOfSchool[constData.isSummerWinter[d.getMonth() + 1]]["month"];
-//     start_date = startOfSchool[constData.isSummerWinter[d.getMonth() + 1]]["date"];
-// }).catch(e => {
-//     console.log("No Internet Connection.");
-//     start_month = new Date().getMonth() + 1;
-//     start_date = "01";
-// });
+fetch('/api_flask/getStartSchoolDate').then((response) => {
+    console.log(response.json());
+    return response.json(); 
+}).then((jsonData) => {
+    let d = new Date();
+    start_month = startOfSchool[constData.isSummerWinter[d.getMonth() + 1]]["month"];
+    start_date = startOfSchool[constData.isSummerWinter[d.getMonth() + 1]]["date"];
+}).catch(e => {
+    console.log("No Internet Connection.");
+    start_month = constData.isSummerWinter[new Date().getMonth() + 1].padStart(2, "0");
+    start_date = "01";
+})
 
 router.get('/api/test', (req, res) => {
     res.json("TESTTEST");
@@ -158,20 +160,5 @@ router.get('/api/dropTemporary/:id', async (req, res) => {
         res.sendStatus(500);
     }
 })
-
-// Get the start date of school from python
-// function getStartOfSchool() {
-//     const python = spawn('python3', ['./python/確認幾號開學/check_start_school_date.py']);
-//     let date;
-//     return new Promise((resolve, rejects) => {
-//         python.stdout.on('data', (data) => {
-//             if (data === {}){
-//                 reject(data);
-//             } else {
-//                 resolve(JSON.parse(data))
-//             }
-//         });
-//     })
-// }
 
 export default router
