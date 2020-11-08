@@ -8,4 +8,4 @@ __pycache__/
 *.py[cod]
 
 *.txt
-!requirement.txt
+!requirements.txt
