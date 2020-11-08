@@ -29,6 +29,15 @@ services:
     depends_on: 
       - frontend
       - backend
+      - flask
+  flask:
+    build: ./flask
+    image: "flaskapp:1.0.0"
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    networks:
+      - sub-etha
   db:
     image: mysql/mysql-server:5.7
     restart: unless-stopped
