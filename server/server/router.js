@@ -10,7 +10,7 @@ router.use(bodyParser.json());
 
 // try get start date of school and check is summer or winter
 let start_month, start_date;
-start_month = new Date().getMonth() + 1;
+start_month = constData.isSummerWinter[new Date().getMonth() + 1];
 start_date = "01";
 // getStartOfSchool().then((startOfSchool) => {
 //     let d = new Date();

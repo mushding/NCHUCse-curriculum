@@ -45,18 +45,18 @@ const weekIndex = {
 }
 
 const isSummerWinter = {
-    9: "summer",
-    10: "summer",
-    11: "summer",
-    12: "summer",
-    1: "summer",
-    2: "winter",
-    3: "winter",
-    4: "winter",
-    5: "winter",
-    6: "winter",
-    7: "winter",
-    8: "winter",
+    9: "9",
+    10: "9",
+    11: "9",
+    12: "9",
+    1: "9",
+    2: "2",
+    3: "2",
+    4: "2",
+    5: "2",
+    6: "2",
+    7: "2",
+    8: "9",
 }
 
 export default {
