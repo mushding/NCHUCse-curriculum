@@ -169,8 +169,24 @@ export default class DashBoard extends React.Component{
         };
     }
     
-    componentWillMount(){
-        this.getBackendCurriculumData();
+    async componentWillMount(){
+        await this.initDate();
+        await this.getBackendCurriculumData();
+    }
+
+    initDate = async () => {
+        let start_month, start_date;
+        try {
+            let response = await fetch('api_flask/getStartSchoolDate');
+            let jsonData = await response.json();  
+            start_month = jsonData[constData.isSummerWinter[new Date().getMonth() + 1]]["month"];
+            start_date = jsonData[constData.isSummerWinter[new Date().getMonth() + 1]]["date"];
+        } catch (e) {
+            console.log(e);
+            start_month = constData.isSummerWinter[new Date().getMonth() + 1].padStart(2, "0");
+            start_date = "01";
+        }
+        let res = await fetch('/api/initDate/' + start_month + "/" + start_date);
     }
 
     getBackendCurriculumData = async () => {

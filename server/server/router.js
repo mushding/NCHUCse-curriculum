@@ -11,17 +11,12 @@ router.use(bodyParser.json());
 
 // try get start date of school and check is summer or winter
 let start_month, start_date;
-fetch('/api_flask/getStartSchoolDate').then((response) => {
-    console.log(response.json());
-    return response.json(); 
-}).then((jsonData) => {
-    let d = new Date();
-    start_month = startOfSchool[constData.isSummerWinter[d.getMonth() + 1]]["month"];
-    start_date = startOfSchool[constData.isSummerWinter[d.getMonth() + 1]]["date"];
-}).catch(e => {
-    console.log("No Internet Connection.");
-    start_month = constData.isSummerWinter[new Date().getMonth() + 1].padStart(2, "0");
-    start_date = "01";
+router.get('/api/initDate/:month/:date', (req, res) => {
+    let month = req.params.month;
+    let date = req.params.date;
+    start_month = month;
+    start_date = date;
+    res.json("init success");
 })
 
 router.get('/api/test', (req, res) => {

@@ -54,8 +54,24 @@ const messages = {
     everyLabel: '每',
 };
 
+const isSummerWinter = {
+    9: "9",
+    10: "9",
+    11: "9",
+    12: "9",
+    1: "9",
+    2: "2",
+    3: "2",
+    4: "2",
+    5: "2",
+    6: "2",
+    7: "2",
+    8: "9",
+};
+
 export default {
     classroomIndex,
     resourceData,
-    messages
+    messages,
+    isSummerWinter
 }

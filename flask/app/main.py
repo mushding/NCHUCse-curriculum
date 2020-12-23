@@ -1,5 +1,5 @@
 import requests
-from flask import Flask
+from flask import Flask, jsonify
 import json
 import sys
 from bs4 import BeautifulSoup
@@ -39,7 +39,7 @@ def home():
                     start_of_school["2"] = {"month": month_date_list[0].zfill(2), "date": month_date_list[1].zfill(2)}
 
     # return result to node.js
-    return json.dumps(start_of_school)
+    return jsonify(start_of_school)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=80)
