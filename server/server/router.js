@@ -11,7 +11,7 @@ router.use(bodyParser.json());
 
 // try get start date of school and check is summer or winter
 let start_month, start_date;
-router.get('/api/initDate/:month/:date', (req, res) => {
+router.get('/api/initStartOfSchoolDate/:month/:date', (req, res) => {
     let month = req.params.month;
     let date = req.params.date;
     start_month = month;
@@ -39,17 +39,18 @@ router.get('/api/getAllData', async (req, res) => {
     res.json(result);
 })
 
-router.get('/api/getWebsite/:classroom', async (req, res) => {
+router.get('/api/getWebsite/:classroom/:semester_year/:semester_type', async (req, res) => {
     let curriculum = [], result;
     let classroom = req.params.classroom;
+    let semester_year = req.params.semester_year;
+    let semester_type = req.params.semester_type;
 
     // try connect DB and select from DB
     try {
-        result = await DB.select_website_curriculum_classroom(classroom);
+        result = await DB.select_website_curriculum_classroom(classroom, semester_year, semester_type);
     } catch (err) {
         res.sendStatus(500);
     }
-
     for (let i = 0; i < result.length; i++){
         let start_time = constData.startTimestamps[result[i]["time"][0]];
         let end_time = constData.endTimestamps[result[i]["time"].slice(-1)];
@@ -68,13 +69,15 @@ router.get('/api/getWebsite/:classroom', async (req, res) => {
     res.json(curriculum);
 });
 
-router.get('/api/getStatic/:classroom', async (req, res) => {
+router.get('/api/getStatic/:classroom/:semester_year/:semester_type', async (req, res) => {
     let curriculum = [], result;
     let classroom = req.params.classroom;
+    let semester_year = req.params.semester_year;
+    let semester_type = req.params.semester_type;
     
     // try connect DB and select from DB
     try {
-        result = await DB.select_static_purpose_classroom(classroom);
+        result = await DB.select_static_purpose_classroom(classroom, semester_year, semester_type);
     } catch (err) {
         res.sendStatus(500);
     }
@@ -95,11 +98,14 @@ router.get('/api/getStatic/:classroom', async (req, res) => {
     res.json(curriculum);
 })
 
-router.get('/api/getTemporary/:classroom', async (req, res) => {
+router.get('/api/getTemporary/:classroom/:semester_year/:semester_type', async (req, res) => {
     let curriculum = [], result;    
     let classroom = req.params.classroom;
+    let semester_year = req.params.semester_year;
+    let semester_type = req.params.semester_type;
+
     try {
-        result = await DB.select_temporary_purpose_classroom(classroom);
+        result = await DB.select_temporary_purpose_classroom(classroom, semester_year, semester_type);
     } catch (err) {
         res.sendStatus(500);
     }
@@ -125,6 +131,7 @@ router.post('/api/addStatic', async (req, res) => {
     } catch (err) {
         res.sendStatus(500);
     }
+    res.json("add static success");
 })
 
 // add temporary data
@@ -134,6 +141,7 @@ router.post('/api/addTemporary', async (req, res) => {
     } catch (err) {
         res.sendStatus(500);
     }
+    res.json("add temporary success");
 })
 
 // drop static data
@@ -144,6 +152,7 @@ router.get('/api/dropStatic/:id', async (req, res) => {
     } catch (err) {
         res.sendStatus(500);
     }
+    res.json("drop static success");
 })
 
 // drop temporary data
@@ -154,6 +163,16 @@ router.get('/api/dropTemporary/:id', async (req, res) => {
     } catch (err) {
         res.sendStatus(500);
     }
+    res.json("drop temporary success");
+})
+
+router.get('/api/change', async (req, res) => {
+    try {
+        result = await DB.change();
+    } catch (err) {
+        res.sendStatus(500);
+    }
+    res.json("result");
 })
 
 export default router

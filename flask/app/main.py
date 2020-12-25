@@ -12,7 +12,7 @@ def home():
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
     }
-
+    
     session = requests.Session()
 
     try:
@@ -24,6 +24,11 @@ def home():
     soup = BeautifulSoup(resp.text, 'html.parser')
 
     start_of_school = dict()
+
+    top1 = soup.find('a', attrs={'id': "top1"})
+    spans = top1.findChildren("span")
+    semester_year = spans[0].text
+    start_of_school["year"] = int(semester_year)
 
     spans = soup.findAll('span', attrs={'style': 'letter-spacing: -.3pt'})
     for span in spans:

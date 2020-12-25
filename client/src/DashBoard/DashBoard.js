@@ -164,37 +164,51 @@ export default class DashBoard extends React.Component{
             currirulums: [],
             currentClassroom: '821',
             currentViewName: 'Week',
-            // screenHeight: window.innerHeight,
-            resources: constData.resourceData
+            resources: constData.resourceData,
+            semesterYear: '',
+            semesterType: ''
         };
     }
     
     async componentWillMount(){
-        await this.initDate();
+        await this.initStartOfSchoolDate();
         await this.getBackendCurriculumData();
     }
 
-    initDate = async () => {
+    initStartOfSchoolDate = async () => {
         let start_month, start_date;
         try {
             let response = await fetch('api_flask/getStartSchoolDate');
             let jsonData = await response.json();  
-            start_month = jsonData[constData.isSummerWinter[new Date().getMonth() + 1]]["month"];
-            start_date = jsonData[constData.isSummerWinter[new Date().getMonth() + 1]]["date"];
+            let today = new Date();
+            let summerDate = new Date(String(jsonData["year"] + 1911) + "-" + jsonData["9"]["month"] + "-" + jsonData["9"]["date"]);
+            let winterDate = new Date(String(jsonData["year"] + 1912) + "-" + jsonData["2"]["month"] + "-" + jsonData["2"]["date"]);
+            
+            // use before end of school to calculate the semester
+            this.setState({ semesterYear: String(jsonData["year"]) });
+            if (today <= summerDate.setDate(summerDate.getDate() + 18 * 7)){
+                start_month = jsonData["9"]["month"];
+                start_date = jsonData["9"]["date"];
+                this.setState({ semesterType: "上學期" });
+            } else if (today <= winterDate.setDate(winterDate.getDate() + 18 * 7)){
+                start_month = jsonData["2"]["month"];
+                start_date = jsonData["2"]["date"];
+                this.setState({ semesterType: "下學期" });
+            }
         } catch (e) {
             console.log(e);
             start_month = constData.isSummerWinter[new Date().getMonth() + 1].padStart(2, "0");
             start_date = "01";
         }
-        let res = await fetch('/api/initDate/' + start_month + "/" + start_date);
+        let res = await fetch('/api/initStartOfSchoolDate/' + start_month + "/" + start_date);
     }
 
     getBackendCurriculumData = async () => {
-        let res = await fetch('/api/getWebsite/' + this.state.currentClassroom);
+        let res = await fetch('/api/getWebsite/' + this.state.currentClassroom + "/" + this.state.semesterYear + "/" + this.state.semesterType);
         let currirulums = await res.json();
-        res = await fetch('/api/getStatic/' + this.state.currentClassroom);
+        res = await fetch('/api/getStatic/' + this.state.currentClassroom + "/" + this.state.semesterYear + "/" + this.state.semesterType);
         currirulums.push(...await res.json());
-        res = await fetch('/api/getTemporary/' + this.state.currentClassroom);
+        res = await fetch('/api/getTemporary/' + this.state.currentClassroom + "/" + this.state.semesterYear + "/" + this.state.semesterType);
         currirulums.push(...await res.json());
         this.setState({ currirulums });
     }
@@ -217,6 +231,8 @@ export default class DashBoard extends React.Component{
             added.startDate = new Date(added.startDate.getTime() - added.startDate.getTimezoneOffset()*60000);
             added.endDate = new Date(added.endDate.getTime() - added.endDate.getTimezoneOffset()*60000);
             added.classroom = this.state.currentClassroom;
+            added.semester_year = this.state.semesterYear;
+            added.semester_type = this.state.semesterType;
             // static 
             if (added.curriculumType === 2){
                 if (added.title === undefined || added.office === undefined){

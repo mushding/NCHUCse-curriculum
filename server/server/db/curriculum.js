@@ -43,9 +43,9 @@ const select_temporary_curriculum = async () => {
     })
 }
 
-const select_website_curriculum_classroom = async (classroom) => {
+const select_website_curriculum_classroom = async (classroom, semester_year, semester_type) => {
     return new Promise ((resolve, reject) => {
-        Pool.query('SELECT * FROM website_curriculum WHERE classroom = ' + classroom, (err, results) => {
+        Pool.query('SELECT * FROM website_curriculum WHERE classroom = ' + classroom + " and semester_year = " + semester_year + " and semester_type = '" + semester_type + "'", (err, results) => {
             if (err) {
                 return reject(err);
             }
@@ -54,9 +54,9 @@ const select_website_curriculum_classroom = async (classroom) => {
     })
 }
 
-const select_static_purpose_classroom = async (classroom) => {
+const select_static_purpose_classroom = async (classroom, semester_year, semester_type) => {
     return new Promise((resolve, reject) => {
-        Pool.query('SELECT * FROM static_purpose WHERE classroom = ' + classroom, (err, results) => {
+        Pool.query('SELECT * FROM static_purpose WHERE classroom = ' + classroom + " and semester_year = " + semester_year + " and semester_type = '" + semester_type + "'", (err, results) => {
             if (err) {
                 return reject(err);
             }
@@ -65,9 +65,9 @@ const select_static_purpose_classroom = async (classroom) => {
     })
 }
 
-const select_temporary_purpose_classroom = async (classroom) => {
+const select_temporary_purpose_classroom = async (classroom, semester_year, semester_type) => {
     return new Promise((resolve, reject) => {
-        Pool.query('SELECT * FROM temporary_purpose WHERE classroom = ' + classroom, (err, results) => {
+        Pool.query('SELECT * FROM temporary_purpose WHERE classroom = ' + classroom + " and semester_year = " + semester_year + " and semester_type = '" + semester_type + "'", (err, results) => {
             if (err) {
                 return reject(err);
             }
@@ -86,7 +86,7 @@ const insert_static_purpose_classroom = async (data) => {
     let startDate = data.startDate.split("T")[1].slice(0, 5);
     let endDate = data.endDate.split("T")[1].slice(0, 5);
     return new Promise((resolve, reject) => {
-        let sql_str = "INSERT INTO static_purpose(name, office, week, start_time, end_time, classroom) SELECT '{0}','{1}','{2}','{3}','{4}','{5}' FROM dual WHERE not exists (select * from static_purpose where static_purpose.classroom = '{6}' and static_purpose.week = '{7}' and static_purpose.start_time = '{8}' and static_purpose.end_time = '{9}');".format(data.title, data.office, week, startDate, endDate, data.classroom, data.classroom, week, startDate, endDate);
+        let sql_str = "INSERT INTO static_purpose(semester_year, semester_type, name, office, week, start_time, end_time, classroom) SELECT '{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}' FROM dual WHERE not exists (select * from static_purpose where static_purpose.classroom = '{6}' and static_purpose.week = '{7}' and static_purpose.start_time = '{8}' and static_purpose.end_time = '{9}');".format(data.semester_year, data.semester_type, data.title, data.office, week, startDate, endDate, data.classroom, data.classroom, week, startDate, endDate);
         Pool.query(sql_str, (err, results) => {
             if (err) {
                 return reject(err);
@@ -101,7 +101,7 @@ const insert_temporary_purpose_classroom = async (data) => {
     let startDate = data.startDate.split("T")[1].slice(0, 5);
     let endDate = data.endDate.split("T")[1].slice(0, 5);
     return new Promise((resolve, reject) => {
-        let sql_str = "INSERT INTO temporary_purpose(name, office, date, start_time, end_time, classroom) SELECT '{0}','{1}','{2}','{3}','{4}','{5}' FROM dual WHERE not exists (select * from temporary_purpose where temporary_purpose.classroom = '{6}' and temporary_purpose.date = '{7}' and temporary_purpose.start_time = '{8}' and temporary_purpose.end_time = '{9}');".format(data.title, data.office, date, startDate, endDate, data.classroom, data.classroom, date, startDate, endDate);
+        let sql_str = "INSERT INTO temporary_purpose(semester_year, semester_type, name, office, date, start_time, end_time, classroom) SELECT '{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}' FROM dual WHERE not exists (select * from temporary_purpose where temporary_purpose.classroom = '{6}' and temporary_purpose.date = '{7}' and temporary_purpose.start_time = '{8}' and temporary_purpose.end_time = '{9}');".format(data.semester_year, data.semester_type, data.title, data.office, date, startDate, endDate, data.classroom, data.classroom, date, startDate, endDate);
         Pool.query(sql_str, (err, results) => {
             if (err) {
                 return reject(err);
@@ -139,6 +139,20 @@ const drop_temporary_purpose_classroom = async (id) => {
     })
 }
 
+const change = async () => {
+    return new Promise((resolve, reject) => {
+        let sql_str = "ALTER TABLE static_purpose ALTER semester_year DROP DEFAULT;";
+        Pool.query(sql_str, (err, results) => {
+            if (err) {
+                return reject(err);
+            }
+            console.log("drop success");
+        })
+    }).catch(err => {
+        console.log(err)
+    })
+}
+
 export default {
     select_website_curriculum,
     select_static_curriculum,
@@ -147,5 +161,6 @@ export default {
     select_static_purpose_classroom,
     select_temporary_purpose_classroom,
     insert_static_purpose_classroom,
-    insert_temporary_purpose_classroom
+    insert_temporary_purpose_classroom,
+    change
 };
