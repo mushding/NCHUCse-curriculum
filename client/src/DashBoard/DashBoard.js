@@ -166,7 +166,8 @@ export default class DashBoard extends React.Component{
             currentViewName: 'Week',
             resources: constData.resourceData,
             semesterYear: '',
-            semesterType: ''
+            semesterType: '',
+            version: 'v2.01',
         };
     }
     
@@ -285,7 +286,7 @@ export default class DashBoard extends React.Component{
                     <div style={{ padding: "20px", float: 'right' }}>
                         <a target="_blank" rel="noopener noreferrer" href="https://github.com/mushding/NCHUCse-curriculum"><GitHubIcon/></a>
                     </div>
-                    <h4 style={{ float: 'right' }}>中興大學資工系教室借用表 v2.0</h4>
+                    <h4 style={{ float: 'right' }}>中興大學資工系教室借用表 {this.state.version}</h4>
                     <div style={{ paddingRight: '10px', paddingTop: '10px', float: 'right' }}>
                         <ExternalViewSwitcher
                             currentViewName={currentViewName}
