@@ -172,6 +172,7 @@ export default class DashBoard extends React.Component{
     
     async componentWillMount(){
         await this.initStartOfSchoolDate();
+        await this.updateWebsiteCurriculum();
         await this.getBackendCurriculumData();
     }
 
@@ -201,6 +202,10 @@ export default class DashBoard extends React.Component{
             start_date = "01";
         }
         let res = await fetch('/api/initStartOfSchoolDate/' + start_month + "/" + start_date);
+    }
+
+    updateWebsiteCurriculum = async () => {
+        let res = await fetch('/api/updateWebsite/' + this.state.semesterYear + "/" + this.state.semesterType);
     }
 
     getBackendCurriculumData = async () => {

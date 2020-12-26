@@ -76,7 +76,20 @@ const select_temporary_purpose_classroom = async (classroom, semester_year, seme
     })
 }
 
-const insert_static_purpose_classroom = async (data) => {
+const insert_website_curriculum = async (data) => {
+    return new Promise((resolve, reject) => {
+        let sql_str = "INSERT INTO website_curriculum(semester_year, semester_type, class_id, name, grade, week, time, classroom, teacher) SELECT '{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}' FROM dual WHERE not exists (select * from website_curriculum where website_curriculum.semester_year = '{0}' and website_curriculum.semester_type = '{1}' and website_curriculum.class_id = '{2}');".format(data.semester_year, data.semester_type, data.class_id, data.name, data.grade, data.week, data.time, data.classroom, data.teacher);
+        Pool.query(sql_str, (err, results) => {
+            if (err) {
+                return reject(err);
+            }
+            console.log("insert success");
+            resolve(results);
+        })
+    })
+}
+
+const insert_static_purpose = async (data) => {
     let week = new Date(data.startDate).getDay();
     // check if sunday
     if (week === 0)
@@ -92,11 +105,12 @@ const insert_static_purpose_classroom = async (data) => {
                 return reject(err);
             }
             console.log("insert success");
+            resolve(results);
         })
     })
 }
 
-const insert_temporary_purpose_classroom = async (data) => {
+const insert_temporary_purpose = async (data) => {
     let date = data.startDate.split("T")[0];
     let startDate = data.startDate.split("T")[1].slice(0, 5);
     let endDate = data.endDate.split("T")[1].slice(0, 5);
@@ -107,11 +121,12 @@ const insert_temporary_purpose_classroom = async (data) => {
                 return reject(err);
             }
             console.log("insert success");
+            resolve(results);
         })
     })
 }
 
-const drop_static_purpose_classroom = async (id) => {
+const drop_static_purpose = async (id) => {
     return new Promise((resolve, reject) => {
         let sql_str = "DELETE FROM static_purpose WHERE (`id` = '{0}');".format(id);
         Pool.query(sql_str, (err, results) => {
@@ -119,13 +134,14 @@ const drop_static_purpose_classroom = async (id) => {
                 return reject(err);
             }
             console.log("drop success");
+            resolve(results);
         })
     }).catch(err => {
         console.log(err)
     })
 }
 
-const drop_temporary_purpose_classroom = async (id) => {
+const drop_temporary_purpose = async (id) => {
     return new Promise((resolve, reject) => {
         let sql_str = "DELETE FROM temporary_purpose WHERE (`id` = '{0}');".format(id);
         Pool.query(sql_str, (err, results) => {
@@ -133,20 +149,7 @@ const drop_temporary_purpose_classroom = async (id) => {
                 return reject(err);
             }
             console.log("drop success");
-        })
-    }).catch(err => {
-        console.log(err)
-    })
-}
-
-const change = async () => {
-    return new Promise((resolve, reject) => {
-        let sql_str = "ALTER TABLE static_purpose ALTER semester_year DROP DEFAULT;";
-        Pool.query(sql_str, (err, results) => {
-            if (err) {
-                return reject(err);
-            }
-            console.log("drop success");
+            resolve(results);
         })
     }).catch(err => {
         console.log(err)
@@ -160,7 +163,7 @@ export default {
     select_website_curriculum_classroom,
     select_static_purpose_classroom,
     select_temporary_purpose_classroom,
-    insert_static_purpose_classroom,
-    insert_temporary_purpose_classroom,
-    change
+    insert_website_curriculum,
+    insert_static_purpose,
+    insert_temporary_purpose
 };

@@ -124,10 +124,29 @@ router.get('/api/getTemporary/:classroom/:semester_year/:semester_type', async (
     res.json(curriculum);
 })
 
+router.get('/api/updateWebsite/:semester_year/:semester_type', async (req, res) => {
+    let result, websites = [];
+    let semester_year = req.params.semester_year;
+    let semester_type = req.params.semester_type;
+    try {
+        result = await fetch('http://flask/api_flask/getWebsiteCurrculum/' + semester_year + '/' + constData.whichSemester[semester_type]);
+        websites = await result.json();
+        for (let i = 0; i < websites.length; i++){
+            websites[i].semester_year = semester_year;
+            websites[i].semester_type = semester_type;
+            result = await DB.insert_website_curriculum(websites[i]);
+        }
+    } catch (err) {
+        res.sendStatus(500);
+    }
+    res.json("update success");
+})
+
 // add static data
 router.post('/api/addStatic', async (req, res) => {
+    let result;
     try {
-        result = await DB.insert_static_purpose_classroom(req.body);
+        result = await DB.insert_static_purpose(req.body);
     } catch (err) {
         res.sendStatus(500);
     }
@@ -136,8 +155,9 @@ router.post('/api/addStatic', async (req, res) => {
 
 // add temporary data
 router.post('/api/addTemporary', async (req, res) => {
+    let result;
     try {
-        result = await DB.insert_temporary_purpose_classroom(req.body);
+        result = await DB.insert_temporary_purpose(req.body);
     } catch (err) {
         res.sendStatus(500);
     }
@@ -146,6 +166,7 @@ router.post('/api/addTemporary', async (req, res) => {
 
 // drop static data
 router.get('/api/dropStatic/:id', async (req, res) => {
+    let result;
     let id = req.params.id;
     try {
         result = await DB.drop_static_purpose_classroom(id);
@@ -157,6 +178,7 @@ router.get('/api/dropStatic/:id', async (req, res) => {
 
 // drop temporary data
 router.get('/api/dropTemporary/:id', async (req, res) => {
+    let result;
     let id = req.params.id;
     try {
         result = await DB.drop_temporary_purpose_classroom(id);
@@ -164,15 +186,6 @@ router.get('/api/dropTemporary/:id', async (req, res) => {
         res.sendStatus(500);
     }
     res.json("drop temporary success");
-})
-
-router.get('/api/change', async (req, res) => {
-    try {
-        result = await DB.change();
-    } catch (err) {
-        res.sendStatus(500);
-    }
-    res.json("result");
 })
 
 export default router
