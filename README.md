@@ -87,10 +87,10 @@ select * from website_curriculum;
 ```
 * 備份 .sql file
 ```
-回到 terminal
-mysqldump -u root -p database_name table_name > backup.sql;
-
-回到實體機
-exit
-docker cp <container_id>:/backup.sql ./sql/backup.sql
+設定排程
+crontab -e
+```
+```
+每天早上 6:00 備份
+00 06 * * * /home/cloud/Desktop/NCHUCse-curriculum/mysql-docker-backup.sh
 ```
