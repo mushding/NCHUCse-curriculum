@@ -1,7 +1,7 @@
-# .env
+.env
 
 server/node_modules
-# **/config
+**/config
 lib
 
 __pycache__/
