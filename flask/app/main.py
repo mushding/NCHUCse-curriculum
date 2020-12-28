@@ -1,8 +1,8 @@
+import re
 import requests
 from flask import Flask, jsonify
 import json
 import sys
-import re
 from bs4 import BeautifulSoup
 
 from const import index_to_grade, time_to_hour

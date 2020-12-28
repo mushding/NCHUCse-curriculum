@@ -45,7 +45,7 @@ const select_temporary_curriculum = async () => {
 
 const select_website_curriculum_classroom = async (classroom, semester_year, semester_type) => {
     return new Promise ((resolve, reject) => {
-        Pool.query('SELECT * FROM website_curriculum WHERE classroom = ' + classroom + " and semester_year = " + semester_year + " and semester_type = '" + semester_type + "'", (err, results) => {
+        Pool.query('SELECT * FROM website_curriculum WHERE classroom = ' + classroom + " and semester_year = " + semester_year, (err, results) => {
             if (err) {
                 return reject(err);
             }
@@ -56,7 +56,7 @@ const select_website_curriculum_classroom = async (classroom, semester_year, sem
 
 const select_static_purpose_classroom = async (classroom, semester_year, semester_type) => {
     return new Promise((resolve, reject) => {
-        Pool.query('SELECT * FROM static_purpose WHERE classroom = ' + classroom + " and semester_year = " + semester_year + " and semester_type = '" + semester_type + "'", (err, results) => {
+        Pool.query('SELECT * FROM static_purpose WHERE classroom = ' + classroom + " and semester_year = " + semester_year, (err, results) => {
             if (err) {
                 return reject(err);
             }
@@ -67,7 +67,7 @@ const select_static_purpose_classroom = async (classroom, semester_year, semeste
 
 const select_temporary_purpose_classroom = async (classroom, semester_year, semester_type) => {
     return new Promise((resolve, reject) => {
-        Pool.query('SELECT * FROM temporary_purpose WHERE classroom = ' + classroom + " and semester_year = " + semester_year + " and semester_type = '" + semester_type + "'", (err, results) => {
+        Pool.query('SELECT * FROM temporary_purpose WHERE classroom = ' + classroom + " and semester_year = " + semester_year, (err, results) => {
             if (err) {
                 return reject(err);
             }

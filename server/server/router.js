@@ -10,13 +10,15 @@ const router = express.Router();
 router.use(bodyParser.json());
 
 // try get start date of school and check is summer or winter
-let start_month, start_date;
-router.get('/api/initStartOfSchoolDate/:month/:date', (req, res) => {
-    let month = req.params.month;
-    let date = req.params.date;
-    start_month = month;
-    start_date = date;
-    res.json("init success");
+let startOfSchoolDate;
+router.get('/api/initStartOfSchoolDate', async (req, res) => {
+    try {
+        let response = await fetch('http://flask/api_flask/getStartSchoolDate');
+        startOfSchoolDate = await response.json();  
+    } catch (err) {
+        res.sendStatus(500);
+    }
+    res.json(startOfSchoolDate)
 })
 
 router.get('/api/test', (req, res) => {
@@ -52,13 +54,25 @@ router.get('/api/getWebsite/:classroom/:semester_year/:semester_type', async (re
         res.sendStatus(500);
     }
     for (let i = 0; i < result.length; i++){
+        let start_year, start_month, start_date;
         let start_time = constData.startTimestamps[result[i]["time"][0]];
         let end_time = constData.endTimestamps[result[i]["time"].slice(-1)];
+        
+        // whether is first or second semester
+        if (result[i]["semester_type"] === "上學期") {
+            start_year = String(startOfSchoolDate["year"] + 1911);
+            start_month = startOfSchoolDate["9"]["month"]; 
+            start_date = startOfSchoolDate["9"]["date"];
+        } else if (result[i]["semester_type"] === "下學期") {
+            start_year = String(startOfSchoolDate["year"] + 1912);
+            start_month = startOfSchoolDate["2"]["month"]; 
+            start_date = startOfSchoolDate["2"]["date"];
+        }
         curriculum.push({
             pkId: result[i]["id"],
             title: result[i]["name"] + "\n" + result[i]["grade"] + "\n" + result[i]["teacher"],
-            startDate: new Date('2020-' + start_month + '-' + start_date + 'T' + start_time + ":00"),
-            endDate: new Date('2020-' + start_month + '-' + start_date + 'T' + end_time + ":00"),
+            startDate: new Date(start_year + '-' + start_month + '-' + start_date + 'T' + start_time + ":00"),
+            endDate: new Date(start_year + '-' + start_month + '-' + start_date + 'T' + end_time + ":00"),
             rRule: 'RRULE:FREQ=WEEKLY;COUNT=18;WKST=MO;BYDAY=' + constData.weekIndex[result[i]["week"]],
             addtime: new Date(result[i]["timestamp"].getTime() - result[i]["timestamp"].getTimezoneOffset()*60000),
             name: result[i]["name"],
@@ -83,11 +97,23 @@ router.get('/api/getStatic/:classroom/:semester_year/:semester_type', async (req
     }
     
     for (let i = 0; i < result.length; i++){
+        let start_year, start_month, start_date;
+
+        // whether is first or second semester
+        if (result[i]["semester_type"] === "上學期") {
+            start_year = String(startOfSchoolDate["year"] + 1911);
+            start_month = startOfSchoolDate["9"]["month"]; 
+            start_date = startOfSchoolDate["9"]["date"];
+        } else if (result[i]["semester_type"] === "下學期") {
+            start_year = String(startOfSchoolDate["year"] + 1912);
+            start_month = startOfSchoolDate["2"]["month"]; 
+            start_date = startOfSchoolDate["2"]["date"];
+        }
         curriculum.push({
             pkId: result[i]["id"],
             title: result[i]["name"] + "\n" + result[i]["office"],
-            startDate: new Date('2020-' + start_month + '-' + start_date + 'T' + result[i]["start_time"]),
-            endDate: new Date('2020-' + start_month + '-' + start_date + 'T' + result[i]["end_time"]),
+            startDate: new Date(start_year + '-' + start_month + '-' + start_date + 'T' + result[i]["start_time"]),
+            endDate: new Date(start_year + '-' + start_month + '-' + start_date + 'T' + result[i]["end_time"]),
             rRule: 'RRULE:FREQ=WEEKLY;COUNT=18;WKST=MO;BYDAY=' + constData.weekIndex[result[i]["week"]],
             addtime: new Date(result[i]["timestamp"].getTime() - result[i]["timestamp"].getTimezoneOffset()*60000),
             name: result[i]["name"],
