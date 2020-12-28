@@ -3,6 +3,7 @@
 server/node_modules
 **/config
 lib
+backup
 
 __pycache__/
 *.py[cod]
