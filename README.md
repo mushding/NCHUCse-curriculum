@@ -11,15 +11,19 @@
 * 更好的視覺化管理課表
 * 方便新增課表
 * 用 docker 使系統在佈署時更方便
+* 每學期結束時自動更新新的課表
 
 ## 使用方法
 ### 啟動系統
-* 簡單法：
+* docker：
     * 進入課表系統資料夾
     ```
-    D: -> 0812 -> classroom -> 課表系統好讀版v2.0
+    cd NCHUCse-curriculum
     ```
-    * 雙擊 [執行系統.bat](執行系統.bat)
+    * 起動 docker 服務
+    ```
+    docker-compose up --build
+    ```
     * 課表系統就會開在 [http://localhost/](http://localhost/)
 
 ### 新增課表
@@ -58,3 +62,35 @@
     * 裡面存著各種課表更詳細的資訊
     * ID 為課表在資料庫中的 private key
     * 新增時間是會了要看是哪一個工讀生新增的，找戰犯用
+
+## 維護
+### 進入 database
+* 如果要進入 database 修改資料
+* 首先先找出 mysql 的 container id
+```
+docker container ls
+```
+* 接著進入 mysql container
+```
+docker exec -it <container_id> /bin/bash
+```
+* 進入 mysql
+* 密碼為系統管理員密碼
+```
+mysql -uroot -p
+```
+* mysql 操作
+```
+use curriculum;
+select * from website_curriculum;
+...
+```
+* 備份 .sql file
+```
+回到 terminal
+mysqldump -u root -p database_name table_name > backup.sql;
+
+回到實體機
+exit
+docker cp <container_id>:/backup.sql ./sql/backup.sql
+```
