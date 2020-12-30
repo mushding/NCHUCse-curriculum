@@ -168,6 +168,28 @@ router.get('/api/updateWebsite/:semester_year/:semester_type', async (req, res) 
     res.json("update success");
 })
 
+router.get('/api/getStaticByID/:id', async (req, res) => {
+    let result;
+    let id = req.params.id;
+    try {
+        result = await DB.select_static_purpose_id(id);
+    } catch (err) {
+        res.sendStatus(500);
+    }
+    res.json(result);
+})
+
+router.get('/api/getTemporaryByID/:id', async (req, res) => {
+    let result;
+    let id = req.params.id;
+    try {
+        result = await DB.select_temporary_purpose_id(id);
+    } catch (err) {
+        res.sendStatus(500);
+    }
+    res.json(result);
+})
+
 // add static data
 router.post('/api/addStatic', async (req, res) => {
     let result;
@@ -191,11 +213,10 @@ router.post('/api/addTemporary', async (req, res) => {
 })
 
 // drop static data
-router.get('/api/dropStatic/:id', async (req, res) => {
+router.post('/api/dropStatic', async (req, res) => {
     let result;
-    let id = req.params.id;
     try {
-        result = await DB.drop_static_purpose_classroom(id);
+        result = await DB.drop_static_purpose(req.body);
     } catch (err) {
         res.sendStatus(500);
     }
@@ -203,12 +224,12 @@ router.get('/api/dropStatic/:id', async (req, res) => {
 })
 
 // drop temporary data
-router.get('/api/dropTemporary/:id', async (req, res) => {
+router.post('/api/dropTemporary', async (req, res) => {
     let result;
-    let id = req.params.id;
     try {
-        result = await DB.drop_temporary_purpose_classroom(id);
+        result = await DB.drop_temporary_purpose(req.body);
     } catch (err) {
+        console.log(err)
         res.sendStatus(500);
     }
     res.json("drop temporary success");

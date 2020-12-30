@@ -210,10 +210,10 @@ export default class DashBoard extends React.Component{
             }
         } catch (e) {
             console.log(e);
-            // start_month = constData.isSummerWinter[new Date().getMonth() + 1].padStart(2, "0");
-            // start_date = "01";
+            start_month = constData.isSummerWinter[new Date().getMonth() + 1].padStart(2, "0");
+            start_date = "01";
         }
-        // let res = await fetch('/api/initStartOfSchoolDate');
+        let res = await fetch('/api/initStartOfSchoolDate');
     }
 
     updateWebsiteCurriculum = async () => {
