@@ -25,11 +25,16 @@ import {
     Grid,
     RadioGroup, 
     FormControlLabel,
-    Radio
+    Radio,
+    Button,
+    Popover
 } from '@material-ui/core';
 
 // import const data
 import constData from '../Data/const';
+
+// import Component
+import DeleteCurriculumButton from '../Component/DeleteCurriculumButton/DeleteCurriculumButton';
 
 const style = ({ palette }) => ({
     icon: {
@@ -161,12 +166,18 @@ export default class DashBoard extends React.Component{
     constructor(props){
         super(props);
         this.state = {
+            // component state
+            deletePopover: null,
+
+            // curriculum state
             currirulums: [],
             currentClassroom: '821',
             currentViewName: 'Week',
             resources: constData.resourceData,
             semesterYear: '',
             semesterType: '',
+
+            // other global state
             version: 'v2.01',
         };
     }
@@ -199,10 +210,10 @@ export default class DashBoard extends React.Component{
             }
         } catch (e) {
             console.log(e);
-            start_month = constData.isSummerWinter[new Date().getMonth() + 1].padStart(2, "0");
-            start_date = "01";
+            // start_month = constData.isSummerWinter[new Date().getMonth() + 1].padStart(2, "0");
+            // start_date = "01";
         }
-        let res = await fetch('/api/initStartOfSchoolDate');
+        // let res = await fetch('/api/initStartOfSchoolDate');
     }
 
     updateWebsiteCurriculum = async () => {
@@ -292,6 +303,9 @@ export default class DashBoard extends React.Component{
                             currentViewName={currentViewName}
                             onChange={this.currentViewNameChange}
                         />
+                    </div>
+                    <div style={{ padding: "20px", float: 'right' }}>
+                        <DeleteCurriculumButton/>
                     </div>
                 </Paper>
                 <Paper>
