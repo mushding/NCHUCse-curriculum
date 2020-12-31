@@ -26,8 +26,6 @@ import {
     RadioGroup, 
     FormControlLabel,
     Radio,
-    Button,
-    Popover
 } from '@material-ui/core';
 
 // import const data
@@ -189,7 +187,6 @@ export default class DashBoard extends React.Component{
     }
 
     initStartOfSchoolDate = async () => {
-        let start_month, start_date;
         try {
             let response = await fetch('api_flask/getStartSchoolDate');
             let jsonData = await response.json();  
@@ -200,18 +197,12 @@ export default class DashBoard extends React.Component{
             // use before end of school to calculate the semester
             this.setState({ semesterYear: String(jsonData["year"]) });
             if (today <= summerDate.setDate(summerDate.getDate() + 18 * 7)){
-                start_month = jsonData["9"]["month"];
-                start_date = jsonData["9"]["date"];
                 this.setState({ semesterType: "上學期" });
             } else if (today <= winterDate.setDate(winterDate.getDate() + 18 * 7)){
-                start_month = jsonData["2"]["month"];
-                start_date = jsonData["2"]["date"];
                 this.setState({ semesterType: "下學期" });
             }
         } catch (e) {
             console.log(e);
-            start_month = constData.isSummerWinter[new Date().getMonth() + 1].padStart(2, "0");
-            start_date = "01";
         }
         let res = await fetch('/api/initStartOfSchoolDate');
     }

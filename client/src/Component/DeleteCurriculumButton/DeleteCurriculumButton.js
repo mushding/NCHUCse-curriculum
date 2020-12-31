@@ -75,6 +75,9 @@ const useStyles = makeStyles((theme) => ({
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-around", 
+    },
+    curriculumContent: {
+        whiteSpace: "pre-wrap",
     }
 }));
 
@@ -111,7 +114,7 @@ const DeleteCurriculumButton = () => {
             result = await fetch('/api/getStaticByID/' + String(classID));
             result = await result.json();
             try{
-                await setDeleteConfirmText("課表借用目的：" + String(result[0]["name"]) + "\r\n單位：" + String(result[0]["office"]) + "\r\n時間：" + String(result[0]["start_time"]) + " ~ " + String(result[0]["end_time"]));
+                await setDeleteConfirmText("課表借用目的：" + String(result[0]["name"]) + "\n單位：" + String(result[0]["office"]) + "\n時間：" + String(result[0]["start_time"]) + " ~ " + String(result[0]["end_time"]));
             } catch (err) {
                 alert("沒有這個 ID！請重新輸入");
                 return;
@@ -120,7 +123,7 @@ const DeleteCurriculumButton = () => {
             result = await fetch('/api/getTemporaryByID/' + String(classID));
             result = await result.json();
             try{
-                await setDeleteConfirmText("課表借用目的：" + String(result[0]["name"]) + "\r\n單位：" + String(result[0]["office"]) + "\r\n日期：" + String(result[0]["date"]) + "\r\n時間：" + String(result[0]["start_time"]) + " ~ " + String(result[0]["end_time"]));
+                await setDeleteConfirmText("課表借用目的：" + String(result[0]["name"]) + "\n單位：" + String(result[0]["office"]) + "\n日期：" + String(result[0]["date"]) + "\n時間：" + String(result[0]["start_time"]) + " ~ " + String(result[0]["end_time"]));
             } catch (err) {
                 alert("沒有這個 ID！請重新輸入");
                 return;
@@ -132,6 +135,7 @@ const DeleteCurriculumButton = () => {
     };
     const closeDropOpen = () => {
         setBackdropOpen(false);
+        setClassID(null);
     };
     const selectCurriculumType = (event) => {
         setCurriculumType(event.target.value);
@@ -245,7 +249,7 @@ const DeleteCurriculumButton = () => {
                         <Typography variant="h4">確認是否要刪除課表？</Typography>
                     </div>
                     <div className={classes.paperText}>
-                        <Typography variant="h5">{deleteConfirmText}</Typography>
+                        <Typography variant="h5" className={classes.curriculumContent}>{deleteConfirmText}</Typography>
                     </div>
                     <div className={classes.paperButton}>
                         <Button
