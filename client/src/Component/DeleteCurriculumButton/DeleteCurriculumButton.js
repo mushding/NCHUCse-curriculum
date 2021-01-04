@@ -81,7 +81,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const DeleteCurriculumButton = () => {
+const DeleteCurriculumButton = (props) => {
     const classes = useStyles();
 
     // isOpen
@@ -155,7 +155,8 @@ const DeleteCurriculumButton = () => {
                     'Content-Type': 'application/json'
                 })
             });
-            window.location.reload();
+            await props.refresh();
+            // window.location.reload();
         } else if (curriculumType === 2){
             await fetch('/api/dropTemporary', {
                 method: 'POST',
@@ -164,7 +165,8 @@ const DeleteCurriculumButton = () => {
                     'Content-Type': 'application/json'
                 })
             });
-            window.location.reload();
+            await props.refresh();
+            // window.location.reload();
         }  
     };
 

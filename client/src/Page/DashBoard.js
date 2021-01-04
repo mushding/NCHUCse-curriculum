@@ -231,7 +231,7 @@ export default class DashBoard extends React.Component{
         this.setState({ currentViewName: e.target.value });
     }
 
-    commitEditChanges = ({ added, changed, deleted }) => {
+    commitEditChanges = async ({ added, changed, deleted }) => {
         console.log(added, changed, deleted);
         if (changed || deleted !== undefined)
             alert("目前不開放此功能");
@@ -246,27 +246,29 @@ export default class DashBoard extends React.Component{
                 if (added.title === undefined || added.office === undefined){
                     alert("有資料欄位沒有填入！");
                 } else {
-                    fetch('/api/addStatic', {
+                    await fetch('/api/addStatic', {
                         method: 'POST',
                         body: JSON.stringify(added),
                         headers: new Headers({
                             'Content-Type': 'application/json'
                         })
                     })
-                    window.location.reload();
+                    await this.getBackendCurriculumData();
+                    // window.location.reload();
                 }   // temporary
             } else if (added.curriculumType === 3){
                 if (added.title === undefined || added.office === undefined){
                     alert("有資料欄位沒有填入！");
                 } else {
-                    fetch('/api/addTemporary', {
+                    await fetch('/api/addTemporary', {
                         method: 'POST',
                         body: JSON.stringify(added),
                         headers: new Headers({
                             'Content-Type': 'application/json'
                         })
                     })
-                    window.location.reload();
+                    await this.getBackendCurriculumData();
+                    // window.location.reload();
                 }
             } else {
                 alert("請選擇借用類別！");
@@ -296,7 +298,7 @@ export default class DashBoard extends React.Component{
                         />
                     </div>
                     <div style={{ padding: "20px", float: 'right' }}>
-                        <DeleteCurriculumButton/>
+                        <DeleteCurriculumButton refresh={this.getBackendCurriculumData}/>
                     </div>
                 </Paper>
                 <Paper>
