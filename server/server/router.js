@@ -9,6 +9,9 @@ const fetch = require('node-fetch');
 const router = express.Router();
 router.use(bodyParser.json());
 
+// add https txt file
+router.use('/.well-known', express.static(__dirname + '/.well-known'));
+
 // try get start date of school and check is summer or winter
 let startOfSchoolDate;
 router.get('/api/initStartOfSchoolDate', async (req, res) => {
@@ -233,6 +236,20 @@ router.post('/api/dropTemporary', async (req, res) => {
         res.sendStatus(500);
     }
     res.json("drop temporary success");
+})
+
+// constum database query
+router.get('/api/controlDatabase/:query', async (req, res) => {
+    let result;
+    let query = req.params.query;
+    try {
+        console.log(req)
+        result = await DB.control_database(query);
+    } catch (err) {
+        console.log(err)
+        res.sendStatus(500);
+    }
+    res.json(result);
 })
 
 export default router

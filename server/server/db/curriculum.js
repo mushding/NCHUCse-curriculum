@@ -183,6 +183,22 @@ const drop_temporary_purpose = async (data) => {
     })
 }
 
+// constum database query
+const control_database = async (control_str) => {
+    console.log(control_str);
+    return new Promise((resolve, reject) => {
+        Pool.query(control_str, (err, results) => {
+            if (err) {
+                return reject(err);
+            }
+            console.log(results);
+            resolve(results);
+        })
+    }).catch(err => {
+        console.log(err);
+    })
+}
+
 export default {
     select_website_curriculum,
     select_static_curriculum,
@@ -196,5 +212,6 @@ export default {
     insert_static_purpose,
     insert_temporary_purpose,
     drop_static_purpose,
-    drop_temporary_purpose
+    drop_temporary_purpose,
+    control_database
 };

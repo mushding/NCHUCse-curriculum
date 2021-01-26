@@ -5,6 +5,10 @@ server/node_modules
 lib
 backup
 
+nginx/private.key
+nginx/certificate.crt
+nginx/.well-known
+
 __pycache__/
 *.py[cod]
 
