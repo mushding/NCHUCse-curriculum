@@ -298,7 +298,11 @@ export default class DashBoard extends React.Component{
                         />
                     </div>
                     <div style={{ padding: "20px", float: 'right' }}>
-                        <DeleteCurriculumButton refresh={this.getBackendCurriculumData}/>
+                        <DeleteCurriculumButton 
+                            refresh={this.getBackendCurriculumData}
+                            semesterYear={this.state.semesterYear}
+                            semesterType={this.state.semesterType}
+                        />
                     </div>
                 </Paper>
                 <Paper>

@@ -215,6 +215,19 @@ router.post('/api/addTemporary', async (req, res) => {
     res.json("add temporary success");
 })
 
+// drop website data (use get)
+router.get('/api/dropWebsite/:semester_year/:semester_type', async (req, res) => {
+    let result;
+    let semester_year = req.params.semester_year;
+    let semester_type = req.params.semester_type;
+    try {
+        result = await DB.drop_website_curriculum(semester_year, semester_type);
+    } catch (err) {
+        res.sendStatus(500);
+    }
+    res.json("drop website success");
+})
+
 // drop static data
 router.post('/api/dropStatic', async (req, res) => {
     let result;

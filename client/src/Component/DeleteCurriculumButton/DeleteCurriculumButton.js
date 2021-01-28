@@ -95,6 +95,9 @@ const DeleteCurriculumButton = (props) => {
     // text
     const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
+    // is enable test enter
+    const [enableTextFields, setEnableTextFields] = useState(true);
+
     const handdleDeleteCurriculum = (event) => {
         setDeletePopover(event.currentTarget);
     };
@@ -139,6 +142,10 @@ const DeleteCurriculumButton = (props) => {
     };
     const selectCurriculumType = (event) => {
         setCurriculumType(event.target.value);
+        setCurriculumType((type) => {
+            type != 0 ? setEnableTextFields(false) : setEnableTextFields(true);
+            return type;
+        })
     };
     const handdleTextField = (event) => {
         setClassID(event.target.value);
@@ -147,7 +154,15 @@ const DeleteCurriculumButton = (props) => {
         let idJSON = {
             id: classID
         }
-        if (curriculumType === 1){
+        if (curriculumType === 0){
+            await fetch('/api/dropWebsite/' + props.semesterYear + "/" + props.semesterType, {
+                method: 'GET',
+                headers: new Headers({
+                    'Content-Type': 'application/json'
+                })
+            });
+            await window.location.reload();
+        } else if (curriculumType === 1){
             await fetch('/api/dropStatic', {
                 method: 'POST',
                 body: JSON.stringify(idJSON),
@@ -156,7 +171,6 @@ const DeleteCurriculumButton = (props) => {
                 })
             });
             await props.refresh();
-            // window.location.reload();
         } else if (curriculumType === 2){
             await fetch('/api/dropTemporary', {
                 method: 'POST',
@@ -166,7 +180,6 @@ const DeleteCurriculumButton = (props) => {
                 })
             });
             await props.refresh();
-            // window.location.reload();
         }  
     };
 
@@ -194,17 +207,6 @@ const DeleteCurriculumButton = (props) => {
             >
                 <div className={classes.popoverPadding}>
                     <Typography className={classes.textPadding}>輸入要刪除的課表 ID：</Typography>
-                    <TextField
-                        id="outlined-number"
-                        className={classes.textPadding}
-                        label="Number"
-                        type="number"
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        variant="outlined"
-                        onChange={handdleTextField}
-                    />
                     <FormControl variant="outlined" className={classes.formControl}>
                         <InputLabel id="demo-simple-select-outlined-label">課表類型</InputLabel>
                         <Select
@@ -234,6 +236,18 @@ const DeleteCurriculumButton = (props) => {
                         </MenuItem>
                         </Select>
                     </FormControl>
+                    <TextField
+                        id="outlined-number"
+                        disabled={enableTextFields}
+                        className={classes.textPadding}
+                        label="Number"
+                        type="number"
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        variant="outlined"
+                        onChange={handdleTextField}
+                    />
                     <Button
                         variant="contained"
                         color="secondary"

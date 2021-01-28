@@ -151,6 +151,21 @@ const insert_temporary_purpose = async (data) => {
     })
 }
 
+const drop_website_curriculum = async (semester_year, semester_type) => {
+    return new Promise((resolve, reject) => {
+        let sql_str = "DELETE FROM website_curriculum WHERE semester_year = '{0}' AND semester_type = '{1}';".format(semester_year, semester_type);
+        Pool.query(sql_str, (err, results) => {
+            if (err) {
+                return reject(err);
+            }
+            console.log("drop success");
+            resolve(results);
+        })
+    }).catch(err => {
+        console.log(err)
+    })
+}
+
 const drop_static_purpose = async (data) => {
     let id = data.id;
     return new Promise((resolve, reject) => {
@@ -211,6 +226,7 @@ export default {
     insert_website_curriculum,
     insert_static_purpose,
     insert_temporary_purpose,
+    drop_website_curriculum,
     drop_static_purpose,
     drop_temporary_purpose,
     control_database
