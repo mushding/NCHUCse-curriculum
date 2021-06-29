@@ -44,14 +44,8 @@ const weekIndex = {
     "7": "SU",
 }
 
-const whichSemester = {
-    "上學期": "1",
-    "下學期": "2",
-}
-
 export default {
     startTimestamps,
     endTimestamps,
-    weekIndex,
-    whichSemester
+    weekIndex
 }

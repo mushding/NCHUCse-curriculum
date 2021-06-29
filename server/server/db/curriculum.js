@@ -47,7 +47,7 @@ const select_website_curriculum_classroom = async (classroom, semester_year, sem
     return new Promise ((resolve, reject) => {
         // use select this year and next year curriculum
         // to prevent cross semester curriculum won't show bug
-        Pool.query('SELECT * FROM website_curriculum WHERE classroom = ' + classroom + " and semester_year = " + semester_year + " or semester_year = " + String(Number(semester_year) + 1), (err, results) => {
+        Pool.query('SELECT * FROM website_curriculum WHERE classroom=' + classroom + " and (semester_year=" + semester_year + " or semester_year=" + String(Number(semester_year) - 1) + ")", (err, results) => {
             if (err) {
                 return reject(err);
             }
@@ -60,7 +60,7 @@ const select_static_purpose_classroom = async (classroom, semester_year, semeste
     return new Promise((resolve, reject) => {
         // use select this year and next year curriculum
         // to prevent cross semester curriculum won't show bug
-        Pool.query('SELECT * FROM static_purpose WHERE classroom = ' + classroom + " and semester_year = " + semester_year+ " or semester_year = " + String(Number(semester_year) + 1), (err, results) => {
+        Pool.query('SELECT * FROM static_purpose WHERE classroom = ' + classroom + " and (semester_year=" + semester_year + " or semester_year=" + String(Number(semester_year) - 1) + ")", (err, results) => {
             if (err) {
                 return reject(err);
             }
@@ -73,7 +73,7 @@ const select_temporary_purpose_classroom = async (classroom, semester_year, seme
     return new Promise((resolve, reject) => {
         // use select this year and next year curriculum
         // to prevent cross semester curriculum won't show bug
-        Pool.query('SELECT * FROM temporary_purpose WHERE classroom = ' + classroom + " and semester_year = " + semester_year+ " or semester_year = " + String(Number(semester_year) + 1), (err, results) => {
+        Pool.query('SELECT * FROM temporary_purpose WHERE classroom = ' + classroom + " and (semester_year=" + semester_year + " or semester_year=" + String(Number(semester_year) - 1) + ")", (err, results) => {
             if (err) {
                 return reject(err);
             }
@@ -214,6 +214,38 @@ const control_database = async (control_str) => {
     })
 }
 
+// update start date DB
+const update_curriculum_setting = async (data) => {
+    return new Promise((resolve, reject) => {
+        let sql_str = "UPDATE curriculum_setting SET semester_year='{0}', summer_date_month='{1}', summer_date_day='{2}', winter_date_month='{3}', winter_date_day='{4}';".format(data.semesterYear, data.summerDateMonth, data.summerDateDay, data.winterDateMonth, data.winterDateDay);
+        Pool.query(sql_str, (err, results) => {
+            if (err) {
+                return reject(err);
+            }
+            console.log("change start date success");
+            resolve(results);
+        })
+    }).catch(err => {
+        console.log(err)
+    })
+}
+
+// get start date DB
+const select_curriculum_setting = async () => {
+    return new Promise((resolve, reject) => {
+        let sql_str = "select * from curriculum_setting";
+        Pool.query(sql_str, (err, results) => {
+            if (err) {
+                return reject(err);
+            }
+            console.log("get start date success");
+            resolve(results);
+        })
+    }).catch(err => {
+        console.log(err)
+    })
+}
+
 export default {
     select_website_curriculum,
     select_static_curriculum,
@@ -229,5 +261,7 @@ export default {
     drop_website_curriculum,
     drop_static_purpose,
     drop_temporary_purpose,
-    control_database
+    control_database,
+    update_curriculum_setting,
+    select_curriculum_setting,
 };

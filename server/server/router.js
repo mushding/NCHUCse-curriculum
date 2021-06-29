@@ -14,15 +14,6 @@ router.use('/.well-known', express.static(__dirname + '/.well-known'));
 
 // try get start date of school and check is summer or winter
 let startOfSchoolDate;
-router.get('/api/initStartOfSchoolDate', async (req, res) => {
-    try {
-        let response = await fetch('http://flask/api_flask/getStartSchoolDate');
-        startOfSchoolDate = await response.json();  
-    } catch (err) {
-        res.sendStatus(500);
-    }
-    res.json(startOfSchoolDate)
-})
 
 router.get('/api/test', (req, res) => {
     res.json("TESTTEST");
@@ -62,14 +53,14 @@ router.get('/api/getWebsite/:classroom/:semester_year/:semester_type', async (re
         let end_time = constData.endTimestamps[result[i]["time"].slice(-1)];
         
         // whether is first or second semester
-        if (result[i]["semester_type"] === "上學期") {
-            start_year = String(startOfSchoolDate["year"] + 1911);
-            start_month = startOfSchoolDate["9"]["month"]; 
-            start_date = startOfSchoolDate["9"]["date"];
-        } else if (result[i]["semester_type"] === "下學期") {
-            start_year = String(startOfSchoolDate["year"] + 1912);
-            start_month = startOfSchoolDate["2"]["month"]; 
-            start_date = startOfSchoolDate["2"]["date"];
+        if (result[i]["semester_type"] === "1") {
+            start_year = String(parseInt(startOfSchoolDate["semester_year"]) + 1911);
+            start_month = startOfSchoolDate["summer_date_month"]; 
+            start_date = startOfSchoolDate["summer_date_day"];
+        } else if (result[i]["semester_type"] === "2") {
+            start_year = String(startOfSchoolDate["semester_year"] + 1912);
+            start_month = startOfSchoolDate["winter_date_month"]; 
+            start_date = startOfSchoolDate["winter_date_month"];
         }
         curriculum.push({
             pkId: result[i]["id"],
@@ -103,14 +94,14 @@ router.get('/api/getStatic/:classroom/:semester_year/:semester_type', async (req
         let start_year, start_month, start_date;
 
         // whether is first or second semester
-        if (result[i]["semester_type"] === "上學期") {
-            start_year = String(startOfSchoolDate["year"] + 1911);
-            start_month = startOfSchoolDate["9"]["month"]; 
-            start_date = startOfSchoolDate["9"]["date"];
-        } else if (result[i]["semester_type"] === "下學期") {
-            start_year = String(startOfSchoolDate["year"] + 1912);
-            start_month = startOfSchoolDate["2"]["month"]; 
-            start_date = startOfSchoolDate["2"]["date"];
+        if (result[i]["semester_type"] === "1") {
+            start_year = String(parseInt(startOfSchoolDate["semester_year"]) + 1911);
+            start_month = startOfSchoolDate["summer_date_month"]; 
+            start_date = startOfSchoolDate["summer_date_day"];
+        } else if (result[i]["semester_type"] === "2") {
+            start_year = String(startOfSchoolDate["semester_year"] + 1912);
+            start_month = startOfSchoolDate["winter_date_month"]; 
+            start_date = startOfSchoolDate["winter_date_month"];
         }
         curriculum.push({
             pkId: result[i]["id"],
@@ -153,12 +144,51 @@ router.get('/api/getTemporary/:classroom/:semester_year/:semester_type', async (
     res.json(curriculum);
 })
 
+router.post('/api/setStartSchoolDate', async (req, res) => {
+    let summerDateMonth = req.body["summerDate"].split('/')[0];
+    let summerDateDay = req.body["summerDate"].split('/')[1];
+    let winterDateMonth = req.body["winterDate"].split('/')[0];
+    let winterDateDay = req.body["winterDate"].split('/')[1];
+
+    const data = {
+        "semesterYear": req.body["semesterYear"],
+        "summerDateMonth": summerDateMonth,
+        "summerDateDay": summerDateDay,
+        "winterDateMonth": winterDateMonth,
+        "winterDateDay": winterDateDay,
+    }
+
+    try {
+        await DB.update_curriculum_setting(data);
+    } catch (err) {
+        res.sendStatus(500);
+    }
+    res.json("add static success");
+})
+
+router.get('/api/getStartSchoolDate', async (req, res) => {
+    let result;
+    try {
+        result = await DB.select_curriculum_setting();
+        startOfSchoolDate = {
+            "semester_year": result[0]["semester_year"],
+            "summer_date_month": ("0" + result[0]["summer_date_month"]).slice(-2),
+            "summer_date_day": ("0" + result[0]["summer_date_day"]).slice(-2),
+            "winter_date_month": ("0" + result[0]["winter_date_month"]).slice(-2),
+            "winter_date_day": ("0" + result[0]["winter_date_day"]).slice(-2),
+        }
+    } catch (err) {
+        res.sendStatus(500);
+    }
+    res.json(result);
+})
+
 router.get('/api/updateWebsite/:semester_year/:semester_type', async (req, res) => {
     let result, websites = [];
     let semester_year = req.params.semester_year;
     let semester_type = req.params.semester_type;
     try {
-        result = await fetch('http://flask/api_flask/getWebsiteCurrculum/' + semester_year + '/' + constData.whichSemester[semester_type]);
+        result = await fetch('http://flask/api_flask/getWebsiteCurrculum/' + semester_year + '/' + semester_type);
         websites = await result.json();
         for (let i = 0; i < websites.length; i++){
             websites[i].semester_year = semester_year;

@@ -57,6 +57,32 @@ function Navbar () {
                         </div>
                     </Popover>
                 </div>
+                <div style={{ padding: "20px", float: 'right' }}>
+                    <Button
+                        onClick={this.handdleSettingStartSchool}
+                        variant="contained"
+                        startIcon={<DeleteIcon />}
+                    >  
+                        設定開學時間
+                    </Button>
+                    <Popover
+                        open={Boolean(this.state.deletePopover)}
+                        anchorEl={this.state.deletePopover}
+                        onClose={this.closeDeleteCurriculum}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'center',
+                        }}
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'center',
+                        }}
+                    >
+                        <div>
+                            TEST
+                        </div>
+                    </Popover>
+                </div>
             </Paper>
         </div>
     );

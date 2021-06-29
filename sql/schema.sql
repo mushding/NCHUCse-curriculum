@@ -19,6 +19,16 @@
 -- Table structure for table `static_purpose`
 --
 
+DROP TABLE IF EXISTS `curriculum_setting`;
+CREATE TABLE `curriculum_setting` (
+  `semester_year` varchar(45) CHARACTER SET utf8 NOT NULL,
+  `summer_date_month` varchar(45) CHARACTER SET utf8 NOT NULL,
+  `summer_date_day` varchar(45) CHARACTER SET utf8 NOT NULL,
+  `winter_date_month` varchar(45) CHARACTER SET utf8 NOT NULL,
+  `winter_date_day` varchar(45) CHARACTER SET utf8 NOT NULL
+);
+INSERT INTO `curriculum_setting` (`semester_year`, `summer_date_month`, `summer_date_day`, `winter_date_month`, `winter_date_day`) VALUE ('109', '7', '1', '2', '15');
+
 DROP TABLE IF EXISTS `static_purpose`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;

@@ -33,6 +33,7 @@ import constData from '../Data/const';
 
 // import Component
 import DeleteCurriculumButton from '../Component/DeleteCurriculumButton/DeleteCurriculumButton';
+import SettingStartSchoolButton from '../Component/SettingStartSchoolButton/SettingStartSchoolButton'
 
 const style = ({ palette }) => ({
     icon: {
@@ -182,33 +183,35 @@ export default class DashBoard extends React.Component{
     
     async componentWillMount(){
         await this.initStartOfSchoolDate();
-        await this.updateWebsiteCurriculum();
         await this.getBackendCurriculumData();
     }
 
     initStartOfSchoolDate = async () => {
         try {
-            let response = await fetch('api_flask/getStartSchoolDate');
+            let response = await fetch('api/getStartSchoolDate');
             let jsonData = await response.json();  
             let today = new Date();
-            let summerDate = new Date(String(jsonData["year"] + 1911) + "-" + jsonData["9"]["month"] + "-" + jsonData["9"]["date"]);
-            let winterDate = new Date(String(jsonData["year"] + 1912) + "-" + jsonData["2"]["month"] + "-" + jsonData["2"]["date"]);
+            jsonData = jsonData[0];
+            console.log(jsonData);
+            let semester_year = parseInt(jsonData["semester_year"]);
+            let summerDate = new Date(String(semester_year + 1911));
+            let winterDate = new Date(String(semester_year + 1912));
             
+            summerDate.setMonth(parseInt(jsonData["summer_date_month"]), parseInt(jsonData["summer_date_day"]));
+            winterDate.setMonth(parseInt(jsonData["winter_date_month"]), parseInt(jsonData["winter_date_day"]));
+
             // use before end of school to calculate the semester
-            this.setState({ semesterYear: String(jsonData["year"]) });
-            if (today <= summerDate.setDate(summerDate.getDate() + 18 * 7)){
-                this.setState({ semesterType: "上學期" });
-            } else if (today <= winterDate.setDate(winterDate.getDate() + 18 * 7)){
-                this.setState({ semesterType: "下學期" });
-            }
+            // semesterType fiset is  1, second is 2
+            this.setState({ semesterYear: jsonData["semester_year"] });
+            this.setState({ semesterType: "1" });
+            // if (today <= summerDate.setDate(summerDate.getDate() + 18 * 7)){
+            //     this.setState({ semesterType: "1" });
+            // } else if (today <= winterDate.setDate(winterDate.getDate() + 18 * 7)){
+            //     this.setState({ semesterType: "2" });
+            // }
         } catch (e) {
             console.log(e);
         }
-        let res = await fetch('/api/initStartOfSchoolDate');
-    }
-
-    updateWebsiteCurriculum = async () => {
-        let res = await fetch('/api/updateWebsite/' + this.state.semesterYear + "/" + this.state.semesterType);
     }
 
     getBackendCurriculumData = async () => {
@@ -302,6 +305,11 @@ export default class DashBoard extends React.Component{
                             refresh={this.getBackendCurriculumData}
                             semesterYear={this.state.semesterYear}
                             semesterType={this.state.semesterType}
+                        />
+                    </div>
+                    <div style={{ padding: "20px", float: 'right' }}>
+                        <SettingStartSchoolButton 
+                            refresh={this.getBackendCurriculumData}
                         />
                     </div>
                 </Paper>

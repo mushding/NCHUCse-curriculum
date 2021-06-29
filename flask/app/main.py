@@ -4,6 +4,7 @@ from flask import Flask, jsonify
 import json
 import sys
 from bs4 import BeautifulSoup
+import time
 
 from const import index_to_grade, time_to_hour
 
@@ -40,26 +41,32 @@ def getWebsiteCurrculum(semester_year, semester_type):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
     }
+    
+    # init connect session
+    session = requests.Session()
+    
+    # get new year/semester (old: 1092, new: 109243284...)
+    resp = session.get('https://onepiece.nchu.edu.tw/cofsys/plsql/crseqry_home', headers = headers)
+    soup = BeautifulSoup(resp.text, 'lxml')
+    semester_num = soup.find(attrs={'value': re.compile('^' + semester_year + semester_type + '\d+$')})['value']
+    
     postdatas = [
         {
-            'v_year': semester_year + semester_type,
+            'v_year': semester_num,
             'v_career': 'U',
             'v_dept': 'U56',
         },
         {
-            'v_year': semester_year + semester_type,
+            'v_year': semester_num,
             'v_career': 'G',
             'v_dept': 'G56',
         },
         {
-            'v_year': semester_year + semester_type,
+            'v_year': semester_num,
             'v_career': 'W',
             'v_dept': 'W56',
         },
     ]
-
-    # init connect session
-    session = requests.Session()
 
     # init class list
     class_line_list = list()
@@ -69,6 +76,7 @@ def getWebsiteCurrculum(semester_year, semester_type):
         resp = session.post('https://onepiece.nchu.edu.tw/cofsys/plsql/crseqry_home', headers = headers, data = postdata)
         soup = BeautifulSoup(resp.text, 'html.parser')
         tables = soup.findAll('table', 'word_13')[1:]
+        time.sleep(1)
 
         # select column names
         column = [column.text for column in tables[1].find('tr').findAll('td')]
@@ -88,46 +96,6 @@ def getWebsiteCurrculum(semester_year, semester_type):
                     if len(re.split('(\d+)', classes[10])) == 3:
                         class_line_list.extend(store_and_website(classes[1], classes[2].split(" ")[0], classes[8].split(","), re.split('(\d+)', classes[10]), classes[12], career, grade))
     return jsonify(class_line_list)
-
-# get start of school date
-@app.route('/api_flask/getStartSchoolDate', methods=['GET'])
-def getStartSchoolDate():
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
-    }
-    
-    session = requests.Session()
-
-    try:
-        resp = session.get('https://www.nchu.edu.tw/calendar/', headers = headers)
-    except:
-        exit()
-
-    resp.encoding = 'utf-8'
-    soup = BeautifulSoup(resp.text, 'html.parser')
-
-    start_of_school = dict()
-
-    top1 = soup.find('a', attrs={'id': "top1"})
-    spans = top1.findChildren("span")
-    semester_year = spans[0].text
-    start_of_school["year"] = int(semester_year)
-
-    spans = soup.findAll('span', attrs={'style': 'letter-spacing: -.3pt'})
-    for span in spans:
-        for row in span.text.split('\r\n'):
-            text = row.split(':')[0]
-            if "全校學生開學、開始上課" in text:
-                date = row.split(':')[-1]
-                if date[0] == '9':
-                    month_date_list = date.split('/')
-                    start_of_school["9"] = {"month": month_date_list[0].zfill(2), "date": month_date_list[1].zfill(2)}
-                elif date[0] == '2':
-                    month_date_list = date.split('/')
-                    start_of_school["2"] = {"month": month_date_list[0].zfill(2), "date": month_date_list[1].zfill(2)}
-
-    # return result to node.js
-    return jsonify(start_of_school)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=80)
