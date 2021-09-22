@@ -161,7 +161,7 @@ const DeleteCurriculumButton = (props) => {
                     'Content-Type': 'application/json'
                 })
             });
-            await window.location.reload();
+            window.location.reload();
         } else if (curriculumType === 1){
             await fetch('/api/dropStatic', {
                 method: 'POST',

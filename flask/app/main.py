@@ -1,8 +1,7 @@
+import datetime
 import re
 import requests
-from flask import Flask, jsonify
-import json
-import sys
+from flask import Flask, jsonify, request
 from bs4 import BeautifulSoup
 import time
 
@@ -96,6 +95,59 @@ def getWebsiteCurrculum(semester_year, semester_type):
                     if len(re.split('(\d+)', classes[10])) == 3:
                         class_line_list.extend(store_and_website(classes[1], classes[2].split(" ")[0], classes[8].split(","), re.split('(\d+)', classes[10]), classes[12], career, grade))
     return jsonify(class_line_list)
+
+# database data to NCHUCse website
+@app.route('/api_flask/updateCseWebsite', methods=['POST'])
+def updateCseWebsite():
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
+    }
+
+    # init data list
+    datas = list()
+    for i in range(7):
+        datas.append({
+            "id": i + 1,
+            "password": 3345678,
+        })
+    session = requests.Session()
+    for curriculum in request.get_json(force=True)['website']:
+        week = curriculum["week"]
+        classroom = curriculum["classroom"]
+        times = curriculum["time"]
+        classDetail = (curriculum["name"] + "\r\n" + curriculum["teacher"] + "\r\n" + curriculum["grade"]).encode("Big5")
+        
+        # Cse website post format is: application_821_2_8 means 
+        # at room 821, week 2 (TuesDay), time 8 (08:00)
+        
+        # times is "234" where are multiple values
+        # in order to add them individually, add a for loop to "times"
+        for time in times:
+            datas[int(week) - 1]['application_' + classroom + "_" + week + "_" + time_to_hour[time]] = classDetail
+    
+    for curriculum in request.get_json(force=True)['static']:
+        week = curriculum["week"]
+        classroom = curriculum["classroom"]
+        startTime = time_to_hour[curriculum["start_time"].split(":")[0]]
+        endTime = time_to_hour[curriculum["end_time"].split(":")[0]]
+        classDetail = (curriculum["name"] + "\r\n" + curriculum["office"]).encode("Big5")
+        
+        # Cse website post format is: application_821_2_8 means 
+        # at room 821, week 2 (TuesDay), time 8 (08:00)
+        
+        # times is "234" where are multiple values
+        # in order to add them individually, add a for loop to "times"
+        for time in range(startTime, endTime + 1):
+            datas[int(week) - 1]['application_' + classroom + "_" + week + "_" + str(time)] = classDetail
+
+    # post oneweek data to website
+    for data in datas:
+        session.post('http://www.cs.nchu.edu.tw/class/update.php', headers = headers, data = data)
+
+    # post today again (bug)
+    session.post('http://www.cs.nchu.edu.tw/class/update.php', headers = headers, data = datas[datetime.datetime.today().weekday()])
+    
+    return "success upload"
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=80)

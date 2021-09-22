@@ -21,7 +21,6 @@ router.get('/api/test', (req, res) => {
 
 router.get('/api/getAllData', async (req, res) => {
     // try connect DB and select from DB
-    let result;
     try {
         result = await DB.select_website_curriculum();
         result.push(...await DB.select_static_curriculum());
@@ -33,6 +32,30 @@ router.get('/api/getAllData', async (req, res) => {
         res.sendStatus(500);
     }
     res.json(result);
+})
+
+router.get('/api/updateCseWebsite', async (req, res) => {
+    let website_curriculum = [];
+    let static_curriculum = [];
+    try {
+        website_curriculum = await DB.select_website_curriculum();
+        static_curriculum = await DB.select_static_curriculum();
+    } catch (err) {
+        res.sendStatus(500);
+    }
+
+    let resultJson = {};
+    resultJson.website = website_curriculum;
+    resultJson.static = static_curriculum;
+    
+    await fetch('http://flask/api_flask/updateCseWebsite', {
+        method: 'POST',
+        body: JSON.stringify(resultJson),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    return res.json("call flask api successfully")
 })
 
 router.get('/api/getWebsite/:classroom/:semester_year/:semester_type', async (req, res) => {
@@ -184,6 +207,24 @@ router.get('/api/getStartSchoolDate', async (req, res) => {
 })
 
 router.get('/api/updateWebsite/:semester_year/:semester_type', async (req, res) => {
+    let result, websites = [];
+    let semester_year = req.params.semester_year;
+    let semester_type = req.params.semester_type;
+    try {
+        result = await fetch('http://flask/api_flask/getWebsiteCurrculum/' + semester_year + '/' + semester_type);
+        websites = await result.json();
+        for (let i = 0; i < websites.length; i++){
+            websites[i].semester_year = semester_year;
+            websites[i].semester_type = semester_type;
+            result = await DB.insert_website_curriculum(websites[i]);
+        }
+    } catch (err) {
+        res.sendStatus(500);
+    }
+    res.json("update success");
+})
+
+router.get('/api/updateOfficeWebsite/:semester_year/:semester_type', async (req, res) => {
     let result, websites = [];
     let semester_year = req.params.semester_year;
     let semester_type = req.params.semester_type;

@@ -34,6 +34,7 @@ import constData from '../Data/const';
 // import Component
 import DeleteCurriculumButton from '../Component/DeleteCurriculumButton/DeleteCurriculumButton';
 import SettingStartSchoolButton from '../Component/SettingStartSchoolButton/SettingStartSchoolButton'
+import FetchCurriculumButtom from '../Component/FetchCurriculumButtom/FetchCurriculumButtom';
 
 const style = ({ palette }) => ({
     icon: {
@@ -192,7 +193,6 @@ export default class DashBoard extends React.Component{
             let jsonData = await response.json();  
             let today = new Date();
             jsonData = jsonData[0];
-            console.log(jsonData);
             let semester_year = parseInt(jsonData["semester_year"]);
             let summerDate = new Date(String(semester_year + 1911));
             let winterDate = new Date(String(semester_year + 1912));
@@ -310,6 +310,13 @@ export default class DashBoard extends React.Component{
                     <div style={{ padding: "20px", float: 'right' }}>
                         <SettingStartSchoolButton 
                             refresh={this.getBackendCurriculumData}
+                        />
+                    </div>
+                    <div style={{ padding: "20px", float: 'right' }}>
+                        <FetchCurriculumButtom 
+                            refresh={this.getBackendCurriculumData}
+                            semesterYear={this.state.semesterYear}
+                            semesterType={this.state.semesterType}
                         />
                     </div>
                 </Paper>

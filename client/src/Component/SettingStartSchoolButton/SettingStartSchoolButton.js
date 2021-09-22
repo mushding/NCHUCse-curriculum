@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
     Button,
+    Backdrop,
+    Paper,
     Popover,
     TextField,
     Typography,
@@ -15,7 +17,7 @@ import constData from '../../Data/const';
 
 const useStyles = makeStyles((theme) => ({
     popoverPadding: {
-        padding: theme.spacing(2),
+        padding: theme.spacing(3),
         display: 'flex',
         flexDirection: 'column',
     },
@@ -62,11 +64,24 @@ const SettingStartSchoolButton = (props) => {
 
     // isOpen
     const [settingStartPopover, setSettingStartPopover] = useState(null);
+    const [backdropOpen, setBackdropOpen] = useState(false);
+
+    // text
+    const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
     // semester date
     const [semesterYear, setSemesterYear] = useState('');
     const [summerDate, setSummerDate] = useState('');
     const [winterDate, setWinterDate] = useState('');
+
+    // database semester date
+    const [semesterYearDatabase, setSemesterYearDatabase] = useState('學年度');
+    const [summerDateDatabase, setSummerDateDatabase] = useState('上學期開學日期');
+    const [winterDateDatabase, setWinterDateDatabase] = useState('下學期開學日期');
+
+    useEffect(() => {
+        fetchSettingData();
+    })
 
     const handdleStartSchool = (event) => {
         setSettingStartPopover(event.currentTarget);
@@ -74,6 +89,24 @@ const SettingStartSchoolButton = (props) => {
     const closeStartSchool = () => {
         setSettingStartPopover(null);
     };
+    const openBackdrop = () => {
+        setDeleteConfirmText("本學期學年度：" + semesterYear + "\n上學期開學日期：" + summerDate + "\n下學期開學日期：" + winterDate);
+        
+        closeStartSchool();
+        setBackdropOpen(!backdropOpen);
+    };
+    const closeDropOpen = () => {
+        setBackdropOpen(false);
+    };
+
+    const fetchSettingData = async () => {
+        let res = await fetch('/api/getStartSchoolDate');
+        let data = (await res.json())[0];
+        setSemesterYearDatabase("目前設定資料：" + data["semester_year"]);
+        setSummerDateDatabase("目前設定資料：" + data["summer_date_month"] + "/" + data["summer_date_day"]);
+        setWinterDateDatabase("目前設定資料：" + data["winter_date_month"] + "/" + data["winter_date_day"]);
+    };
+
     const handdleSemesterYear = (e) => {
         setSemesterYear(e.target.value);
     }
@@ -104,14 +137,8 @@ const SettingStartSchoolButton = (props) => {
                 'Content-Type': 'application/json'
             })
         })
-        closeStartSchool();
-        updateWebsiteCurriculum();
         await props.refresh();
     };
-
-    const updateWebsiteCurriculum = async () => {
-        let res = await fetch('/api/updateWebsite/' + this.state.semesterYear + "/" + this.state.semesterType);
-    }
 
     return (
         <div>
@@ -140,10 +167,10 @@ const SettingStartSchoolButton = (props) => {
                     <form noValidate autoComplete="off">
                         <TextField 
                             id="outlined-basic" 
-                            label="學年度" 
+                            label={semesterYearDatabase} 
                             variant="outlined" 
                             className={classes.textPadding}
-                            placeholder="(ex: 110)"
+                            placeholder="學年度"
                             onChange={handdleSemesterYear}
                         />
                     </form>
@@ -151,10 +178,10 @@ const SettingStartSchoolButton = (props) => {
                     <form noValidate autoComplete="off">
                         <TextField 
                             id="outlined-basic" 
-                            label="上學期開學日期" 
+                            label={summerDateDatabase} 
                             variant="outlined" 
                             className={classes.textPadding}
-                            placeholder="(ex: 9/1)"
+                            placeholder="上學期開學日期"
                             onChange={handdleSummerDate}
                         />
                     </form>
@@ -162,10 +189,10 @@ const SettingStartSchoolButton = (props) => {
                     <form noValidate autoComplete="off">
                         <TextField 
                             id="outlined-basic" 
-                            label="下學期開學日期" 
+                            label={winterDateDatabase} 
                             variant="outlined" 
                             className={classes.textPadding}
-                            placeholder="(ex: 3/1)"
+                            placeholder="下學期開學日期"
                             onChange={handdleWinterDate}
                         />
                     </form>
@@ -173,12 +200,38 @@ const SettingStartSchoolButton = (props) => {
                         variant="contained"
                         color="secondary"
                         startIcon={<SettingsIcon />}
-                        onClick={handdleSettingStart}
+                        onClick={openBackdrop}
                     >
                         修改開學時間
                     </Button>
                 </div>
             </Popover>
+            <Backdrop className={classes.backdrop} open={backdropOpen} onClick={closeDropOpen}>
+                <Paper className={classes.paper}>
+                    <div className={classes.paperText}>
+                        <Typography variant="h4">確認學期資料無誤？</Typography>
+                    </div>
+                    <div className={classes.paperText}>
+                        <Typography variant="h5" className={classes.curriculumContent}>{deleteConfirmText}</Typography>
+                    </div>
+                    <div className={classes.paperButton}>
+                        <Button
+                            variant="contained"
+                            onClick={closeDropOpen}
+                        >
+                            取消 (或按其它地方)
+                        </Button>
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            startIcon={<SettingsIcon />}
+                            onClick={handdleSettingStart}
+                        >
+                            確認更新
+                        </Button>
+                    </div>
+                </Paper>
+            </Backdrop>
         </div>
     );
 }
