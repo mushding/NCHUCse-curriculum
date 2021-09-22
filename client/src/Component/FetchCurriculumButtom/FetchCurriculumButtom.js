@@ -127,7 +127,7 @@ const FetchCurriculumButtom = (props) => {
                         startIcon={<SettingsIcon />}
                         onClick={handdleUpdateCseWebsite}
                     >
-                        更新資工系課表
+                        同步更新至資工系網頁課表
                     </Button>
                 </div>
             </Popover>

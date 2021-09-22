@@ -178,7 +178,7 @@ export default class DashBoard extends React.Component{
             semesterType: '',
 
             // other global state
-            version: 'v2.1',
+            version: 'v2.2',
         };
     }
     
