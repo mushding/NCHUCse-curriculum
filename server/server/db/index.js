@@ -1,9 +1,9 @@
 import * as mysql from 'mysql';
-import config from '../config/index';
+import { mysql_config } from '../config/index';
 
 import curriculum from './curriculum';
 
-export const Pool = mysql.createPool(config.mysql);
+export const Pool = mysql.createPool(mysql_config);
 
 Pool.getConnection((err, connection) => {
     if (err) console.log(err);
