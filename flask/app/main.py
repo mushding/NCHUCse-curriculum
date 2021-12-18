@@ -125,7 +125,11 @@ def updateCseWebsite():
         for time in times:
             datas[int(week) - 1]['application_' + classroom + "_" + week + "_" + time_to_hour[time]] = classDetail
     
-    for curriculum in request.get_json(force=True)['static']:
+    static = request.get_json(force=True)['static']
+    temporary = request.get_json(force=True)['temporary']
+    purpose = static + temporary
+
+    for curriculum in purpose:
         week = curriculum["week"]
         classroom = curriculum["classroom"]
         startTime = time_to_hour[curriculum["start_time"].split(":")[0]]

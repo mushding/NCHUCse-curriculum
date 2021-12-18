@@ -185,6 +185,7 @@ export default class DashBoard extends React.Component{
     async componentWillMount(){
         await this.initStartOfSchoolDate();
         await this.getBackendCurriculumData();
+        await this.updateNCHUWebsiteData();
     }
 
     initStartOfSchoolDate = async () => {
@@ -215,13 +216,25 @@ export default class DashBoard extends React.Component{
     }
 
     getBackendCurriculumData = async () => {
-        let res = await fetch('/api/getWebsite/' + this.state.currentClassroom + "/" + this.state.semesterYear + "/" + this.state.semesterType);
-        let currirulums = await res.json();
-        res = await fetch('/api/getStatic/' + this.state.currentClassroom + "/" + this.state.semesterYear + "/" + this.state.semesterType);
-        currirulums.push(...await res.json());
-        res = await fetch('/api/getTemporary/' + this.state.currentClassroom + "/" + this.state.semesterYear + "/" + this.state.semesterType);
-        currirulums.push(...await res.json());
-        this.setState({ currirulums });
+        try {
+            let res = await fetch('/api/getWebsite/' + this.state.currentClassroom + "/" + this.state.semesterYear + "/" + this.state.semesterType);
+            let currirulums = await res.json();
+            res = await fetch('/api/getStatic/' + this.state.currentClassroom + "/" + this.state.semesterYear + "/" + this.state.semesterType);
+            currirulums.push(...await res.json());
+            res = await fetch('/api/getTemporary/' + this.state.currentClassroom + "/" + this.state.semesterYear + "/" + this.state.semesterType);
+            currirulums.push(...await res.json());
+            this.setState({ currirulums });
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    
+    updateNCHUWebsiteData = async () => {
+        try {
+            await fetch('/api/updateCseWebsite');
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     currentClassroomChange = async (e) => {

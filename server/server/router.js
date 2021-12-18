@@ -37,16 +37,24 @@ router.get('/api/getAllData', async (req, res) => {
 router.get('/api/updateCseWebsite', async (req, res) => {
     let website_curriculum = [];
     let static_curriculum = [];
+    let temporary_curriculum = [];
     try {
         website_curriculum = await DB.select_website_curriculum();
         static_curriculum = await DB.select_static_curriculum();
+        temporary_curriculum = await DB.select_temporary_curriculum_by_week();
     } catch (err) {
         res.sendStatus(500);
+    }
+
+    // add week day to temporary curriculum
+    for (let curriculum of temporary_curriculum) {
+        curriculum['week'] = String(new Date(curriculum['date']).getDay() || 7);
     }
 
     let resultJson = {};
     resultJson.website = website_curriculum;
     resultJson.static = static_curriculum;
+    resultJson.temporary = temporary_curriculum;
     
     await fetch('http://flask/api_flask/updateCseWebsite', {
         method: 'POST',
@@ -55,7 +63,8 @@ router.get('/api/updateCseWebsite', async (req, res) => {
             'Content-Type': 'application/json'
         }
     })
-    return res.json("call flask api successfully")
+    return res.json(resultJson);
+    // return res.json("call flask api successfully")
 })
 
 router.get('/api/getWebsite/:classroom/:semester_year/:semester_type', async (req, res) => {
@@ -320,20 +329,6 @@ router.post('/api/dropTemporary', async (req, res) => {
         res.sendStatus(500);
     }
     res.json("drop temporary success");
-})
-
-// constum database query
-router.get('/api/controlDatabase/:query', async (req, res) => {
-    let result;
-    let query = req.params.query;
-    try {
-        console.log(req)
-        result = await DB.control_database(query);
-    } catch (err) {
-        console.log(err)
-        res.sendStatus(500);
-    }
-    res.json(result);
 })
 
 export default router

@@ -43,6 +43,22 @@ const select_temporary_curriculum = async () => {
     })
 }
 
+const select_temporary_curriculum_by_week = async () => {
+    let today = new Date();
+    let seven_days_later = new Date();
+    seven_days_later.setDate(today.getDate() + 7);
+    today = today.toISOString().split('T')[0];
+    seven_days_later = seven_days_later.toISOString().split('T')[0];
+    return new Promise ((resolve, reject) => {
+        Pool.query("SELECT * FROM temporary_purpose WHERE date >= '{0}' and date <= '{1}'".format(today, seven_days_later), (err, results) => {
+            if (err) {
+                return reject(err);
+            }
+            resolve(results);
+        })
+    })
+}
+
 const select_website_curriculum_classroom = async (classroom, semester_year, semester_type) => {
     return new Promise ((resolve, reject) => {
         // use select this year and next year curriculum
@@ -250,6 +266,7 @@ export default {
     select_website_curriculum,
     select_static_curriculum,
     select_temporary_curriculum,
+    select_temporary_curriculum_by_week,
     select_website_curriculum_classroom,
     select_static_purpose_classroom,
     select_temporary_purpose_classroom,
