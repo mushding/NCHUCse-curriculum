@@ -6,7 +6,7 @@
 <img src="https://i.imgur.com/hRdt4iV.png" alt="image-20201027164029288" width="200" />
 </p>
 
-![](https://i.imgur.com/dJOLuJY.png)
+![](https://i.imgur.com/iYh042f.png)
 
 
 本系統僅限中興大學資工系系辦工讀生使用
@@ -112,14 +112,43 @@ use curriculum;
 select * from website_curriculum;
 ...
 ```
-* 備份 .sql file
+## 備份 & 復原
+### 備份
 ```
 設定排程
 crontab -e
 ```
 ```
-每天早上 6:00 備份
-00 06 * * * /home/cloud/Desktop/NCHUCse-curriculum/mysql-docker-backup.sh
+每天早上 00:00 備份
+00 00 * * * ${HOME}/NCHUCse-curriculum/backup/mysql-docker-backup.sh
 ```
 
+每天的 00:00 凌晨會自動備份一次，檔案格式為：`backup-西元年-月-日.sql`。例如：`backup-2022-03-12.sql`。而檔案會放在 backup 資料夾裡面
 
+### 復原
+
+如果今天課表有問題，或是網站打不開，可以把檔案復原至前幾天的資料
+
+登入課表 server 主機，進入課表資料夾，進入 backup 資料夾
+
+```
+cd ~/Desktop/NCHUCse-curriculum/backup
+```
+
+執行「指定日期檔案」復原指令
+
+```
+./mysql-docker-restore.sh 西元年 月 日
+
+例如：
+./mysql-docker-restore.sh 2022 03 12
+```
+注意：
+* 年月日彼此間用一個空白格分開
+* 如果月或是日不滿兩位數的話，前面補 0
+
+如果出現類似下列錯誤訓息，代表沒有這一天的備份檔案，換一天的試試看
+
+```
+cat: .../backup-2022-03-12.sql: No such file or directory
+```
