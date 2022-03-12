@@ -5,7 +5,7 @@ from flask import Flask, jsonify, request
 from bs4 import BeautifulSoup
 import time
 
-from const import index_to_grade, time_to_hour
+from const import index_to_grade, time_to_hour, start_time_to_hour, end_time_to_hour
 
 app = Flask(__name__)
 
@@ -18,12 +18,15 @@ def store_and_website(class_id, name, days, classroom, teacher, career, grade):
     for day in days:
         week = day[0]
         times = day[1:]
+        start_time = start_time_to_hour[times[0]] + ":00"
+        end_time = end_time_to_hour[times[-1]] + ":00"
         class_line = {
             "class_id": class_id,
             "name": name,
             "grade": index_to_grade[grade],
             "week": week,
-            "time": times,
+            "start_time": start_time,
+            "end_time": end_time,
             "classroom": classroom[1],
             "teacher": teacher,
         }
@@ -45,23 +48,23 @@ def getWebsiteCurrculum(semester_year, semester_type):
     session = requests.Session()
     
     # get new year/semester (old: 1092, new: 109243284...)
-    resp = session.get('https://onepiece.nchu.edu.tw/cofsys/plsql/crseqry_home', headers = headers)
-    soup = BeautifulSoup(resp.text, 'lxml')
-    semester_num = soup.find(attrs={'value': re.compile('^' + semester_year + semester_type + '\d+$')})['value']
+    # resp = session.get('https://onepiece.nchu.edu.tw/cofsys/plsql/crseqry_home', headers = headers)
+    # soup = BeautifulSoup(resp.text, 'lxml')
+    # semester_num = soup.find(attrs={'value': re.compile('^' + semester_year + semester_type + '\d+$')})['value']
     
     postdatas = [
         {
-            'v_year': semester_num,
+            # 'v_year': semester_num,
             'v_career': 'U',
             'v_dept': 'U56',
         },
         {
-            'v_year': semester_num,
+            # 'v_year': semester_num,
             'v_career': 'G',
             'v_dept': 'G56',
         },
         {
-            'v_year': semester_num,
+            # 'v_year': semester_num,
             'v_career': 'W',
             'v_dept': 'W56',
         },
@@ -72,7 +75,7 @@ def getWebsiteCurrculum(semester_year, semester_type):
 
     # for three classes (大學部 碩班 碩專)
     for career, postdata in enumerate(postdatas):    
-        resp = session.post('https://onepiece.nchu.edu.tw/cofsys/plsql/crseqry_home', headers = headers, data = postdata)
+        resp = session.post('https://onepiece.nchu.edu.tw/cofsys/plsql/crseqry_home_now', headers = headers, data = postdata)
         soup = BeautifulSoup(resp.text, 'html.parser')
         tables = soup.findAll('table', 'word_13')[1:]
         time.sleep(1)
@@ -82,7 +85,7 @@ def getWebsiteCurrculum(semester_year, semester_type):
         # each grade (1 2 3 4) (1 2) (1 2)
         for grade, table in enumerate(tables):
             # each classes
-            for row in table.findAll('tr')[1:]:
+            for row in table.findAll('tr')[2:]:
                 classes = [class_info.text.replace('\u3000', '') for class_info in row.findAll('td')]
             
                 # test if is 實習
@@ -114,7 +117,8 @@ def updateCseWebsite():
     for curriculum in request.get_json(force=True)['website']:
         week = curriculum["week"]
         classroom = curriculum["classroom"]
-        times = curriculum["time"]
+        startTime = time_to_hour[curriculum["start_time"].split(":")[0]]
+        endTime = time_to_hour[curriculum["end_time"].split(":")[0]]
         classDetail = (curriculum["name"] + "\r\n" + curriculum["teacher"] + "\r\n" + curriculum["grade"]).encode("Big5")
         
         # Cse website post format is: application_821_2_8 means 
@@ -122,8 +126,8 @@ def updateCseWebsite():
         
         # times is "234" where are multiple values
         # in order to add them individually, add a for loop to "times"
-        for time in times:
-            datas[int(week) - 1]['application_' + classroom + "_" + week + "_" + time_to_hour[time]] = classDetail
+        for time in range(startTime, endTime + 1):
+            datas[int(week) - 1]['application_' + classroom + "_" + week + "_" + str(time)] = classDetail
     
     static = request.get_json(force=True)['static']
     temporary = request.get_json(force=True)['temporary']

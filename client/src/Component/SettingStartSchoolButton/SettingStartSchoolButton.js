@@ -123,6 +123,11 @@ const SettingStartSchoolButton = (props) => {
             alert("請輸入開學的學期以及日期！");
             return;
         }
+        // check if C.E
+        if (parseInt(semesterYear) > 2000){
+            alert("請輸入民國年！");
+            return;
+        }
 
         const date = {
             'semesterYear': semesterYear,
@@ -163,7 +168,7 @@ const SettingStartSchoolButton = (props) => {
                 }}
             >
                 <div className={classes.popoverPadding}>
-                    <Typography className={classes.textPadding}>輸入本學期學年度：</Typography>
+                    <Typography className={classes.textPadding}>輸入本學期學年度 (民國年)：</Typography>
                     <form noValidate autoComplete="off">
                         <TextField 
                             id="outlined-basic" 

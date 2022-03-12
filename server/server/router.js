@@ -15,7 +15,7 @@ router.use('/.well-known', express.static(__dirname + '/.well-known'));
 // try get start date of school and check is summer or winter
 let startOfSchoolDate;
 
-router.get('/api/test', (req, res) => {
+router.get('/api/test', async (req, res) => {
     res.json("TESTTEST");
 })
 
@@ -68,7 +68,7 @@ router.get('/api/updateCseWebsite', async (req, res) => {
 })
 
 router.get('/api/getWebsite/:classroom/:semester_year/:semester_type', async (req, res) => {
-    let curriculum = [], result;
+    let curriculum = [], result = [];
     let classroom = req.params.classroom;
     let semester_year = req.params.semester_year;
     let semester_type = req.params.semester_type;
@@ -81,8 +81,8 @@ router.get('/api/getWebsite/:classroom/:semester_year/:semester_type', async (re
     }
     for (let i = 0; i < result.length; i++){
         let start_year, start_month, start_date;
-        let start_time = constData.startTimestamps[result[i]["time"][0]];
-        let end_time = constData.endTimestamps[result[i]["time"].slice(-1)];
+        let start_time = result[i]["start_time"];
+        let end_time = result[i]["end_time"]
         
         // whether is first or second semester
         if (result[i]["semester_type"] === "1") {
@@ -90,15 +90,15 @@ router.get('/api/getWebsite/:classroom/:semester_year/:semester_type', async (re
             start_month = startOfSchoolDate["summer_date_month"]; 
             start_date = startOfSchoolDate["summer_date_day"];
         } else if (result[i]["semester_type"] === "2") {
-            start_year = String(startOfSchoolDate["semester_year"] + 1912);
+            start_year = String(parseInt(startOfSchoolDate["semester_year"]) + 1912);
             start_month = startOfSchoolDate["winter_date_month"]; 
-            start_date = startOfSchoolDate["winter_date_month"];
+            start_date = startOfSchoolDate["winter_date_day"];
         }
         curriculum.push({
             pkId: result[i]["id"],
             title: result[i]["name"] + "\n" + result[i]["grade"] + "\n" + result[i]["teacher"],
-            startDate: new Date(start_year + '-' + start_month + '-' + start_date + 'T' + start_time + ":00"),
-            endDate: new Date(start_year + '-' + start_month + '-' + start_date + 'T' + end_time + ":00"),
+            startDate: new Date(start_year + '-' + start_month + '-' + start_date + 'T' + start_time),
+            endDate: new Date(start_year + '-' + start_month + '-' + start_date + 'T' + end_time),
             rRule: 'RRULE:FREQ=WEEKLY;COUNT=18;WKST=MO;BYDAY=' + constData.weekIndex[result[i]["week"]],
             addtime: new Date(result[i]["timestamp"].getTime() - result[i]["timestamp"].getTimezoneOffset()*60000),
             name: result[i]["name"],
@@ -110,7 +110,7 @@ router.get('/api/getWebsite/:classroom/:semester_year/:semester_type', async (re
 });
 
 router.get('/api/getStatic/:classroom/:semester_year/:semester_type', async (req, res) => {
-    let curriculum = [], result;
+    let curriculum = [], result = [];
     let classroom = req.params.classroom;
     let semester_year = req.params.semester_year;
     let semester_type = req.params.semester_type;
@@ -131,9 +131,9 @@ router.get('/api/getStatic/:classroom/:semester_year/:semester_type', async (req
             start_month = startOfSchoolDate["summer_date_month"]; 
             start_date = startOfSchoolDate["summer_date_day"];
         } else if (result[i]["semester_type"] === "2") {
-            start_year = String(startOfSchoolDate["semester_year"] + 1912);
+            start_year = String(parseInt(startOfSchoolDate["semester_year"]) + 1912);
             start_month = startOfSchoolDate["winter_date_month"]; 
-            start_date = startOfSchoolDate["winter_date_month"];
+            start_date = startOfSchoolDate["winter_date_day"];
         }
         curriculum.push({
             pkId: result[i]["id"],
@@ -151,7 +151,7 @@ router.get('/api/getStatic/:classroom/:semester_year/:semester_type', async (req
 })
 
 router.get('/api/getTemporary/:classroom/:semester_year/:semester_type', async (req, res) => {
-    let curriculum = [], result;    
+    let curriculum = [], result = [];    
     let classroom = req.params.classroom;
     let semester_year = req.params.semester_year;
     let semester_type = req.params.semester_type;
@@ -251,6 +251,17 @@ router.get('/api/updateOfficeWebsite/:semester_year/:semester_type', async (req,
     res.json("update success");
 })
 
+router.get('/api/getWebsiteByID/:id', async (req, res) => {
+    let result;
+    let id = req.params.id;
+    try {
+        result = await DB.select_website_curriculum_id(id);
+    } catch (err) {
+        res.sendStatus(500);
+    }
+    res.json(result);
+})
+
 router.get('/api/getStaticByID/:id', async (req, res) => {
     let result;
     let id = req.params.id;
@@ -271,6 +282,17 @@ router.get('/api/getTemporaryByID/:id', async (req, res) => {
         res.sendStatus(500);
     }
     res.json(result);
+})
+
+// add website data
+router.post('/api/addWebsite', async (req, res) => {
+    let result;
+    try {
+        result = await DB.insert_website_curriculum_manually(req.body);
+    } catch (err) {
+        res.sendStatus(500);
+    }
+    res.json("add website success");
 })
 
 // add static data
@@ -296,12 +318,10 @@ router.post('/api/addTemporary', async (req, res) => {
 })
 
 // drop website data (use get)
-router.get('/api/dropWebsite/:semester_year/:semester_type', async (req, res) => {
+router.post('/api/dropWebsite', async (req, res) => {
     let result;
-    let semester_year = req.params.semester_year;
-    let semester_type = req.params.semester_type;
     try {
-        result = await DB.drop_website_curriculum(semester_year, semester_type);
+        result = await DB.drop_website_curriculum(req.body);
     } catch (err) {
         res.sendStatus(500);
     }
@@ -325,7 +345,6 @@ router.post('/api/dropTemporary', async (req, res) => {
     try {
         result = await DB.drop_temporary_purpose(req.body);
     } catch (err) {
-        console.log(err)
         res.sendStatus(500);
     }
     res.json("drop temporary success");

@@ -113,7 +113,16 @@ const DeleteCurriculumButton = (props) => {
         }
 
         let result;
-        if (curriculumType === 1){
+        if (curriculumType === 0){
+            result = await fetch('/api/getWebsiteByID/' + String(classID));
+            result = await result.json();
+            try{
+                await setDeleteConfirmText("課表借用目的：" + String(result[0]["name"]) + "\n老師：" + String(result[0]["teacher"]) + "\n年級：" + String(result[0]["grade"]) + "\n時間：" + String(result[0]["start_time"]) + " ~ " + String(result[0]["end_time"]));
+            } catch (err) {
+                alert("沒有這個 ID！請重新輸入");
+                return;
+            }
+        } else if (curriculumType === 1){
             result = await fetch('/api/getStaticByID/' + String(classID));
             result = await result.json();
             try{
@@ -143,7 +152,7 @@ const DeleteCurriculumButton = (props) => {
     const selectCurriculumType = (event) => {
         setCurriculumType(event.target.value);
         setCurriculumType((type) => {
-            type != 0 ? setEnableTextFields(false) : setEnableTextFields(true);
+            setEnableTextFields(false);
             return type;
         })
     };
@@ -155,14 +164,15 @@ const DeleteCurriculumButton = (props) => {
             id: classID
         }
         if (curriculumType === 0){
-            await fetch('/api/dropWebsite/' + props.semesterYear + "/" + props.semesterType, {
-                method: 'GET',
+            await fetch('/api/dropWebsite', {
+                method: 'POST',
+                body: JSON.stringify(idJSON),
                 headers: new Headers({
                     'Content-Type': 'application/json'
                 })
             });
-            window.location.reload();
-        } else if (curriculumType === 1){
+            await props.refresh();
+        }else if (curriculumType === 1){
             await fetch('/api/dropStatic', {
                 method: 'POST',
                 body: JSON.stringify(idJSON),

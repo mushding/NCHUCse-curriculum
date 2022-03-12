@@ -198,18 +198,17 @@ export default class DashBoard extends React.Component{
             let summerDate = new Date(String(semester_year + 1911));
             let winterDate = new Date(String(semester_year + 1912));
             
-            summerDate.setMonth(parseInt(jsonData["summer_date_month"]), parseInt(jsonData["summer_date_day"]));
-            winterDate.setMonth(parseInt(jsonData["winter_date_month"]), parseInt(jsonData["winter_date_day"]));
+            summerDate.setMonth(parseInt(jsonData["summer_date_month"]) - 1, parseInt(jsonData["summer_date_day"]));
+            winterDate.setMonth(parseInt(jsonData["winter_date_month"]) - 1, parseInt(jsonData["winter_date_day"]));
 
             // use before end of school to calculate the semester
-            // semesterType fiset is  1, second is 2
+            // semesterType first is  1, second is 2
             this.setState({ semesterYear: jsonData["semester_year"] });
-            this.setState({ semesterType: "1" });
-            // if (today <= summerDate.setDate(summerDate.getDate() + 18 * 7)){
-            //     this.setState({ semesterType: "1" });
-            // } else if (today <= winterDate.setDate(winterDate.getDate() + 18 * 7)){
-            //     this.setState({ semesterType: "2" });
-            // }
+            if (today <= summerDate.setDate(summerDate.getDate() + 18 * 7)){
+                this.setState({ semesterType: "1" });
+            } else if (today <= winterDate.setDate(winterDate.getDate() + 18 * 7)){
+                this.setState({ semesterType: "2" });
+            }
         } catch (e) {
             console.log(e);
         }
@@ -257,8 +256,22 @@ export default class DashBoard extends React.Component{
             added.classroom = this.state.currentClassroom;
             added.semester_year = this.state.semesterYear;
             added.semester_type = this.state.semesterType;
-            // static 
-            if (added.curriculumType === 2){
+            // website
+            if (added.curriculumType === 1){
+                if (added.title === undefined || added.office === undefined){
+                    alert("有資料欄位沒有填入！");
+                } else {
+                    await fetch('/api/addWebsite', {
+                        method: 'POST',
+                        body: JSON.stringify(added),
+                        headers: new Headers({
+                            'Content-Type': 'application/json'
+                        })
+                    })
+                    await this.getBackendCurriculumData();
+                    // window.location.reload();
+                }   // static
+            } else if (added.curriculumType === 2){
                 if (added.title === undefined || added.office === undefined){
                     alert("有資料欄位沒有填入！");
                 } else {
