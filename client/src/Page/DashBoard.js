@@ -250,11 +250,13 @@ const DashBoard = () => {
         // delete -> (_, array id, change value, _)
         console.log(added, changed, deleted);
         if (added && !changed && !deleted){
+            console.log(added)
             added.startDate = new Date(added.startDate.getTime() - added.startDate.getTimezoneOffset()*60000);
             added.endDate = new Date(added.endDate.getTime() - added.endDate.getTimezoneOffset()*60000);
             added.classroom = currentClassroom;
             added.semester_year = semesterInfo['year'];
-            added.semester_type = semesterInfo['info'];
+            added.semester_type = semesterInfo['type'];
+            console.log(added)
             // website
             if (added.curriculumType === 1){
                 if (added.title === undefined || added.office === undefined){
@@ -304,18 +306,30 @@ const DashBoard = () => {
             let target = curriculums[target_id];
             // static deleted
             if (target['curriculumType'] === 2) {
-                await fetch('/api/addStatic', {
+                await fetch('/api/dropStatic', {
                     method: 'POST',
-                    body: JSON.stringify(added),
+                    body: JSON.stringify(target['pkId']),
                     headers: new Headers({
                         'Content-Type': 'application/json'
                     })
                 })
             // temporary changed
             } else if (target['curriculumType'] === 3) {
-                await fetch('/api/addStatic', {
+                console.log(target)
+                target = {
+                    ...target,
+                    ...changed[Object.keys(changed)]
+                }
+                console.log(target)
+                target.startDate = new Date(new Date(target.startDate).getTime() - new Date(target.startDate).getTimezoneOffset()*60000);
+                target.endDate = new Date(new Date(target.endDate).getTime() - new Date(target.endDate).getTimezoneOffset()*60000);
+                target.classroom = currentClassroom;
+                target.semester_year = semesterInfo['year'];
+                target.semester_type = semesterInfo['type'];
+                console.log(target)
+                await fetch('/api/updateTemporary', {
                     method: 'POST',
-                    body: JSON.stringify(added),
+                    body: JSON.stringify(target),
                     headers: new Headers({
                         'Content-Type': 'application/json'
                     })

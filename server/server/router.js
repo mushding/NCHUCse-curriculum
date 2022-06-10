@@ -350,4 +350,26 @@ router.post('/api/dropTemporary', async (req, res) => {
     res.json("drop temporary success");
 })
 
+// update static data
+router.post('/api/updateStatic', async (req, res) => {
+    let result;
+    try {
+        result = await DB.update_static_purpose(req.body);
+    } catch (err) {
+        res.sendStatus(500);
+    }
+    res.json("update static success");
+})
+
+// update temporary data
+router.post('/api/updateTemporary', async (req, res) => {
+    let result;
+    try {
+        result = await DB.update_temporary_purpose(req.body);
+    } catch (err) {
+        res.sendStatus(500);
+    }
+    res.json("update temporary success");
+})
+
 export default router

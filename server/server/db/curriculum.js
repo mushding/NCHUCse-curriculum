@@ -246,6 +246,39 @@ const drop_temporary_purpose = async (data) => {
     })
 }
 
+const update_static_purpose = async (data) => {
+    let week = new Date(data.startDate).getDay();
+    // check if sunday
+    if (week === 0)
+        week = 7;
+    
+    let startTime = data.startDate.split("T")[1].slice(0, 5);
+    let endTime = data.endDate.split("T")[1].slice(0, 5);
+    return new Promise((resolve, reject) => {
+        let sql_str = `UPDATE static_purpose SET semester_year='${data.semester_year}', semester_type='${data.semester_type}', name='${data.title}', office='${data.office}', week='${week}', start_time='${startTime}', end_time='${endTime}', classroom='${data.classroom}' WHERE id='${data.pkId}';`;
+        Pool.query(sql_str, (err, results) => {
+            if (err) {
+                return reject(err);
+            }
+            resolve(results);
+        })
+    })
+}
+const update_temporary_purpose = async (data) => {
+    let date = data.startDate.split("T")[0];
+    let startDate = data.startDate.split("T")[1].slice(0, 5);
+    let endDate = data.endDate.split("T")[1].slice(0, 5);
+    return new Promise((resolve, reject) => {
+        let sql_str = `UPDATE temporary_purpose SET semester_year='${data.semester_year}', semester_type='${data.semester_type}', name='${data.title}', office='${data.office}', date='${date}', start_time='${startDate}', end_time='${endDate}', classroom='${data.classroom}' WHERE id='${data.pkId}';`;
+        Pool.query(sql_str, (err, results) => {
+            if (err) {
+                return reject(err);
+            }
+            resolve(results);
+        })
+    })
+}
+
 // constum database query
 const control_database = async (control_str) => {
     console.log(control_str);
@@ -315,4 +348,6 @@ export default {
     control_database,
     update_curriculum_setting,
     select_curriculum_setting,
+    update_static_purpose,
+    update_temporary_purpose
 };
