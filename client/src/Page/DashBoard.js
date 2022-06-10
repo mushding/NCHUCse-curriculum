@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { ViewState, EditingState, IntegratedEditing } from '@devexpress/dx-react-scheduler';
 import {
     Scheduler,
@@ -9,6 +9,7 @@ import {
     ConfirmationDialog,
     Toolbar,
     DateNavigator,
+    EditRecurrenceMenu,
     TodayButton,
     Resources,
     AppointmentTooltip
@@ -109,18 +110,21 @@ const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
     };
     return (
         <AppointmentForm.BasicLayout
-            appointmentData={appointmentData}
+            appointmentData={appointmentData.title 
+                ? { ...appointmentData,
+                    title: appointmentData.title.split('\n')[0]
+                } : appointmentData}
             onFieldChange={onFieldChange}
             {...restProps}
         >
             <AppointmentForm.Label
-                text="借用單位"
+                text="借用單位"
                 type="title"
             />
             <AppointmentForm.TextEditor
                 value={appointmentData.office}
                 onValueChange={onOfficeChange}
-                placeholder="借用單位"
+                placeholder="借用單位"
             />
         </AppointmentForm.BasicLayout>
     );
@@ -161,35 +165,21 @@ const ExternalClassroomSelector = ({
     </RadioGroup>
 );
 
-export default class DashBoard extends React.Component{
-    
-    constructor(props){
-        super(props);
-        this.state = {
-            // component state
-            deletePopover: null,
+const DashBoard = () => {
+    const [curriculums, setCurriculums] = useState([]);
+    const [currentClassroom, setCurrentClassroom] = useState('821');
+    const [currentViewName, setCurrentViewName] = useState('Week');
+    const [semesterInfo, setSemesterInfo] = useState({});
 
-            // curriculum state
-            currirulums: [],
-            currentClassroom: '821',
-            currentViewName: 'Week',
-            resources: constData.resourceData,
-            semesterYear: '',
-            semesterType: '',
+    const [version, setVersion] = useState('v2.2');
 
-            // other global state
-            version: 'v2.2',
-        };
-    }
-    
-    async componentWillMount(){
-        await this.initStartOfSchoolDate();
-        await this.getBackendCurriculumData();
-        await this.updateNCHUWebsiteData();
-    }
+    useEffect(() => {
+        initData();
+    }, [currentClassroom])
 
-    initStartOfSchoolDate = async () => {
+    const initData = async () => {
         try {
+            // initStartOfSchoolDate part
             let response = await fetch('api/getStartSchoolDate');
             let jsonData = await response.json();  
             let today = new Date();
@@ -203,32 +193,37 @@ export default class DashBoard extends React.Component{
 
             // use before end of school to calculate the semester
             // semesterType first is  1, second is 2
-            this.setState({ semesterYear: jsonData["semester_year"] });
-            if (today <= summerDate.setDate(summerDate.getDate() + 18 * 7)){
-                this.setState({ semesterType: "1" });
-            } else if (today <= winterDate.setDate(winterDate.getDate() + 18 * 7)){
-                this.setState({ semesterType: "2" });
+            const info = {
+                ...jsonData,
+                year: jsonData["semester_year"],
+                type: (today <= summerDate.setDate(summerDate.getDate() + 18 * 7)) ? "1" : "2"
             }
+            
+            // getBackendCurriculumData part
+            let res = await fetch('/api/getWebsite/' + currentClassroom + "/" + info['year'] + "/" + info['type']);
+            let data = await res.json();
+            res = await fetch('/api/getStatic/' + currentClassroom + "/" + info['year'] + "/" + info['type']);
+            data.push(...await res.json());
+            res = await fetch('/api/getTemporary/' + currentClassroom + "/" + info['year'] + "/" + info['type']);
+            data.push(...await res.json());
+
+            // add id
+            data.forEach((data, index) => data["id"] = index)
+            
+            // init setState part (only call ones)
+            setSemesterInfo(info);
+
+            // clear curriculums prevData won't correctly...
+            // why...?
+            setCurriculums([]);
+            setCurriculums(data);
+            console.log(data)
         } catch (e) {
             console.log(e);
         }
     }
 
-    getBackendCurriculumData = async () => {
-        try {
-            let res = await fetch('/api/getWebsite/' + this.state.currentClassroom + "/" + this.state.semesterYear + "/" + this.state.semesterType);
-            let currirulums = await res.json();
-            res = await fetch('/api/getStatic/' + this.state.currentClassroom + "/" + this.state.semesterYear + "/" + this.state.semesterType);
-            currirulums.push(...await res.json());
-            res = await fetch('/api/getTemporary/' + this.state.currentClassroom + "/" + this.state.semesterYear + "/" + this.state.semesterType);
-            currirulums.push(...await res.json());
-            this.setState({ currirulums });
-        } catch (e) {
-            console.log(e);
-        }
-    }
-    
-    updateNCHUWebsiteData = async () => {
+    const updateNCHUWebsiteData = async () => {
         try {
             await fetch('/api/updateCseWebsite');
         } catch (e) {
@@ -236,26 +231,30 @@ export default class DashBoard extends React.Component{
         }
     }
 
-    currentClassroomChange = async (e) => {
+    const currentClassroomChange = (e) => {
         let classroom = e.target.value;
-        await this.setState({ currentClassroom: classroom });
-        this.getBackendCurriculumData();
+        setCurrentClassroom(classroom);
     }
 
-    currentViewNameChange = (e) => {
-        this.setState({ currentViewName: e.target.value });
+    const currentViewNameChange = (e) => {
+        setCurrentViewName(e.target.value);
     }
 
-    commitEditChanges = async ({ added, changed, deleted }) => {
+    const commitEditChanges = async ({ added, changed, deleted }) => {
+        // temporary
+        // change -> (_, array id, change value, _)
+        // delete -> (_, _, pkId type)
+
+        // static
+        // change -> (complete, array id, _)
+        // delete -> (_, array id, change value, _)
         console.log(added, changed, deleted);
-        if (changed || deleted !== undefined)
-            alert("目前不開放此功能");
-        else if (added){
+        if (added && !changed && !deleted){
             added.startDate = new Date(added.startDate.getTime() - added.startDate.getTimezoneOffset()*60000);
             added.endDate = new Date(added.endDate.getTime() - added.endDate.getTimezoneOffset()*60000);
-            added.classroom = this.state.currentClassroom;
-            added.semester_year = this.state.semesterYear;
-            added.semester_type = this.state.semesterType;
+            added.classroom = currentClassroom;
+            added.semester_year = semesterInfo['year'];
+            added.semester_type = semesterInfo['info'];
             // website
             if (added.curriculumType === 1){
                 if (added.title === undefined || added.office === undefined){
@@ -268,7 +267,6 @@ export default class DashBoard extends React.Component{
                             'Content-Type': 'application/json'
                         })
                     })
-                    await this.getBackendCurriculumData();
                     // window.location.reload();
                 }   // static
             } else if (added.curriculumType === 2){
@@ -282,7 +280,6 @@ export default class DashBoard extends React.Component{
                             'Content-Type': 'application/json'
                         })
                     })
-                    await this.getBackendCurriculumData();
                     // window.location.reload();
                 }   // temporary
             } else if (added.curriculumType === 3){
@@ -296,61 +293,87 @@ export default class DashBoard extends React.Component{
                             'Content-Type': 'application/json'
                         })
                     })
-                    await this.getBackendCurriculumData();
                     // window.location.reload();
                 }
             } else {
                 alert("請選擇借用類別！");
             }
-        } 
+        // temporary changed or static deleted
+        } else if (!added && changed && !deleted) {
+            let target_id = Object.keys(changed);
+            let target = curriculums[target_id];
+            // static deleted
+            if (target['curriculumType'] === 2) {
+                await fetch('/api/addStatic', {
+                    method: 'POST',
+                    body: JSON.stringify(added),
+                    headers: new Headers({
+                        'Content-Type': 'application/json'
+                    })
+                })
+            // temporary changed
+            } else if (target['curriculumType'] === 3) {
+                await fetch('/api/addStatic', {
+                    method: 'POST',
+                    body: JSON.stringify(added),
+                    headers: new Headers({
+                        'Content-Type': 'application/json'
+                    })
+                })
+            }
+        }
+        // magic way to trigger useEffect...
+        const refresh = currentClassroom;
+        setCurrentClassroom('0');
+        setCurrentClassroom(refresh);
     }
 
-    render(){
-        const { currirulums, currentViewName ,currentClassroom, resources } = this.state;
-        return(
+    return (
             <div>
                 <Paper>
                     <div style={{ paddingLeft: '20px', paddingTop: '10px', float: 'left' }}>
                         <ExternalClassroomSelector
                             currentClassroom={currentClassroom}
-                            onChange={this.currentClassroomChange}
+                            onChange={currentClassroomChange}
                         />
                     </div>
                     <div style={{ padding: "20px", float: 'right' }}>
                         <a target="_blank" rel="noopener noreferrer" href="https://github.com/mushding/NCHUCse-curriculum"><GitHubIcon/></a>
                     </div>
-                    <h4 style={{ float: 'right' }}>中興大學資工系教室借用表 {this.state.version}</h4>
+                    <h4 style={{ float: 'right' }}>中興大學資工系教室借用表 {version}</h4>
                     <div style={{ paddingRight: '10px', paddingTop: '10px', float: 'right' }}>
                         <ExternalViewSwitcher
                             currentViewName={currentViewName}
-                            onChange={this.currentViewNameChange}
+                            onChange={currentViewNameChange}
                         />
                     </div>
                     <div style={{ padding: "20px", float: 'right' }}>
                         <DeleteCurriculumButton 
-                            refresh={this.getBackendCurriculumData}
-                            semesterYear={this.state.semesterYear}
-                            semesterType={this.state.semesterType}
+                            // refresh={getBackendCurriculumData}
+                            semesterYear={semesterInfo['year']}
+                            semesterType={semesterInfo['type']}
                         />
                     </div>
                     <div style={{ padding: "20px", float: 'right' }}>
                         <SettingStartSchoolButton 
-                            refresh={this.getBackendCurriculumData}
+                            // refresh={getBackendCurriculumData}
+                            semesterInfo={semesterInfo}
                         />
                     </div>
                     <div style={{ padding: "20px", float: 'right' }}>
                         <FetchCurriculumButtom 
-                            refresh={this.getBackendCurriculumData}
-                            semesterYear={this.state.semesterYear}
-                            semesterType={this.state.semesterType}
+                            // refresh={getBackendCurriculumData}
+                            semesterYear={semesterInfo['year']}
+                            semesterType={semesterInfo['type']}
                         />
                     </div>
                 </Paper>
                 <Paper>
                     <Scheduler
-                        data={currirulums}
+                        data={curriculums}
                         // height={screenHeight}
                         firstDayOfWeek={1}
+                        locale={"zh-TW"}
                     >
                         <ViewState
                             currentViewName={currentViewName}
@@ -361,10 +384,15 @@ export default class DashBoard extends React.Component{
                         />
                         <MonthView/>
                         <EditingState
-                            onCommitChanges={this.commitEditChanges}
+                            onCommitChanges={commitEditChanges}
                         />
                         <IntegratedEditing/>
-                        <ConfirmationDialog />
+                        {/* <EditRecurrenceMenu
+                            messages={constData.editRecurrenceMenuMessage}
+                        /> */}
+                        <ConfirmationDialog 
+                            messages={constData.confirmationDialogMessage}
+                        />
                         <Toolbar />
                         <DateNavigator />
                         <TodayButton />
@@ -373,21 +401,24 @@ export default class DashBoard extends React.Component{
                         />
                         <AppointmentTooltip
                             contentComponent={Content}
+                            showOpenButton
+                            showDeleteButton
                             showCloseButton
                         />
                         <Resources
-                            data={resources}
+                            data={constData.resourceData}
                         />
                         <AppointmentForm
                             basicLayoutComponent={BasicLayout}
                             textEditorComponent={TextEditor}
-                            booleanEditorComponent={BooleanEditor}
-                            messages={constData.messages}
+                            // booleanEditorComponent={BooleanEditor}
+                            messages={constData.appointmentFormMessages}
                         />
                     </Scheduler>
                 </Paper>
                 <p style={{ textAlign: "center", color: "#808080", fontSize: "12px" }}>© 中興大學資工系教室借用表 - made by <a href="mailto:ajy1005464@gmail.com?subject=回報課表系統相關 bug" style={{ color: "#808080" }}>mushding</a></p>
             </div>
         )
-    }
 }
+
+export default DashBoard;

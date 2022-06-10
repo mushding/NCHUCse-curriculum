@@ -12,9 +12,6 @@ import { makeStyles } from '@material-ui/core/styles';
 // import icon
 import SettingsIcon from '@material-ui/icons/Settings';
 
-// import const data
-import constData from '../../Data/const';
-
 const useStyles = makeStyles((theme) => ({
     popoverPadding: {
         padding: theme.spacing(3),
@@ -59,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const SettingStartSchoolButton = (props) => {
+const SettingStartSchoolButton = ({ refresh, semesterInfo }) => {
     const classes = useStyles();
 
     // isOpen
@@ -74,14 +71,11 @@ const SettingStartSchoolButton = (props) => {
     const [summerDate, setSummerDate] = useState('');
     const [winterDate, setWinterDate] = useState('');
 
-    // database semester date
-    const [semesterYearDatabase, setSemesterYearDatabase] = useState('學年度');
-    const [summerDateDatabase, setSummerDateDatabase] = useState('上學期開學日期');
-    const [winterDateDatabase, setWinterDateDatabase] = useState('下學期開學日期');
-
     useEffect(() => {
-        fetchSettingData();
-    })
+        setSemesterYear("目前設定：" + semesterInfo['year']);
+        setSummerDate("目前設定：" + semesterInfo["summer_date_month"] + "/" + semesterInfo["summer_date_day"]);
+        setWinterDate("目前設定：" + semesterInfo["winter_date_month"] + "/" + semesterInfo["winter_date_day"]);
+    }, [semesterInfo]);
 
     const handdleStartSchool = (event) => {
         setSettingStartPopover(event.currentTarget);
@@ -97,14 +91,6 @@ const SettingStartSchoolButton = (props) => {
     };
     const closeDropOpen = () => {
         setBackdropOpen(false);
-    };
-
-    const fetchSettingData = async () => {
-        let res = await fetch('/api/getStartSchoolDate');
-        let data = (await res.json())[0];
-        setSemesterYearDatabase("目前設定資料：" + data["semester_year"]);
-        setSummerDateDatabase("目前設定資料：" + data["summer_date_month"] + "/" + data["summer_date_day"]);
-        setWinterDateDatabase("目前設定資料：" + data["winter_date_month"] + "/" + data["winter_date_day"]);
     };
 
     const handdleSemesterYear = (e) => {
@@ -142,7 +128,7 @@ const SettingStartSchoolButton = (props) => {
                 'Content-Type': 'application/json'
             })
         })
-        await props.refresh();
+        await refresh();
     };
 
     return (
@@ -172,7 +158,7 @@ const SettingStartSchoolButton = (props) => {
                     <form noValidate autoComplete="off">
                         <TextField 
                             id="outlined-basic" 
-                            label={semesterYearDatabase} 
+                            label={semesterYear} 
                             variant="outlined" 
                             className={classes.textPadding}
                             placeholder="學年度"
@@ -183,7 +169,7 @@ const SettingStartSchoolButton = (props) => {
                     <form noValidate autoComplete="off">
                         <TextField 
                             id="outlined-basic" 
-                            label={summerDateDatabase} 
+                            label={summerDate} 
                             variant="outlined" 
                             className={classes.textPadding}
                             placeholder="上學期開學日期"
@@ -194,7 +180,7 @@ const SettingStartSchoolButton = (props) => {
                     <form noValidate autoComplete="off">
                         <TextField 
                             id="outlined-basic" 
-                            label={winterDateDatabase} 
+                            label={winterDate} 
                             variant="outlined" 
                             className={classes.textPadding}
                             placeholder="下學期開學日期"

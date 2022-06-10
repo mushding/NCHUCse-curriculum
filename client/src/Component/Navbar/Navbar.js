@@ -8,9 +8,6 @@ import {
 // import icon
 import DeleteIcon from '@material-ui/icons/Delete';
 
-// import const data
-import constData from '../../Data/const';
-
 function Navbar () {
     return (
         <div>

@@ -27,7 +27,9 @@ const resourceData = [
     }
 ]
 
-const messages = {
+// Localization messages
+
+const appointmentFormMessages = {
     moreInformationLabel: '',
     titleLabel: '借用目的',
     detailsLabel: '借用目的',
@@ -37,12 +39,14 @@ const messages = {
     weekly: '以週為單位重複',
     monthly: '以月為單位重複',
     yearly: '以年為單位重複',
-    repeatEveryLabel: '以每',
+    repeatEveryLabel: '以每隔',
     daysLabel: '(天) 重複',
     endRepeatLabel: '結束重複的條件',
+    repeatLabel: '設定重複',
+    allDayLabel: '設定整天',
     onLabel: '重複',
     afterLabel: '直到…',
-    occurrencesLabel: '幾次',
+    occurrencesLabel: '次',
     weeksOnLabel: '(週) 重複',
     monthsLabel: '(月) 重複',
     ofEveryMonthLabel: '號開始重複',
@@ -57,8 +61,28 @@ const messages = {
     everyLabel: '每',
 };
 
+const confirmationDialogMessage = {
+    discardButton: '捨棄',
+    deleteButton: '刪除',
+    cancelButton: '取消',
+    confirmDeleteMessage: '確定要刪掉這個課表？',
+    confirmCancelMessage: '捨棄未儲存的變動？'
+};
+
+const editRecurrenceMenuMessage = {
+    current: '只刪除目前選取的課表',
+    currentAndFollowing: '90',
+    all: '刪除全部重覆的課表',
+    menuEditingTitle: '',
+    menuDeletingTitle: '刪除重複課表選項',
+    cancelButton: '取消',
+    commitButton: '確認'
+};
+
 export default {
     classroomIndex,
     resourceData,
-    messages
+    appointmentFormMessages,
+    confirmationDialogMessage,
+    editRecurrenceMenuMessage
 }

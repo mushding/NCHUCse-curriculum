@@ -137,13 +137,13 @@ router.get('/api/getStatic/:classroom/:semester_year/:semester_type', async (req
         }
         curriculum.push({
             pkId: result[i]["id"],
-            title: result[i]["name"] + "\n" + result[i]["office"],
+            title: result[i]["name"] + '\n' + result[i]["office"],
+            office: result[i]["office"],
             startDate: new Date(start_year + '-' + start_month + '-' + start_date + 'T' + result[i]["start_time"]),
             endDate: new Date(start_year + '-' + start_month + '-' + start_date + 'T' + result[i]["end_time"]),
             rRule: 'RRULE:FREQ=WEEKLY;COUNT=18;WKST=MO;BYDAY=' + constData.weekIndex[result[i]["week"]],
             addtime: new Date(result[i]["timestamp"].getTime() - result[i]["timestamp"].getTimezoneOffset()*60000),
             name: result[i]["name"],
-            otherFormat: result[i]["office"],
             curriculumType: 2
         })
     }
@@ -164,12 +164,12 @@ router.get('/api/getTemporary/:classroom/:semester_year/:semester_type', async (
     for (let i = 0; i < result.length; i++){
         curriculum.push({
             pkId: result[i]["id"],
-            title: result[i]["name"] + "\n" + result[i]["office"],
+            title: result[i]["name"] + '\n' + result[i]["office"],
+            office: result[i]["office"],
             startDate: new Date(result[i]["date"] + 'T' + result[i]["start_time"]),
             endDate: new Date(result[i]["date"] + 'T' + result[i]["end_time"]),
             addtime: new Date(result[i]["timestamp"].getTime() - result[i]["timestamp"].getTimezoneOffset()*60000),
             name: result[i]["name"],
-            otherFormat: result[i]["office"],
             curriculumType: 3
         })
     }
