@@ -1,88 +1,97 @@
-import React, { useState } from 'react';
-import { 
-    Paper,
-    Button,
-    Popover
-} from '@material-ui/core';
+import React from "react";
+
+import {
+  Paper,
+  Grid,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+} from "@material-ui/core";
 
 // import icon
-import DeleteIcon from '@material-ui/icons/Delete';
+import GitHubIcon from "@material-ui/icons/GitHub";
 
-function Navbar () {
-    return (
-        <div>
-            <Paper>
-                <div style={{ paddingLeft: '20px', paddingTop: '10px', float: 'left' }}>
-                    <ExternalClassroomSelector
-                        currentClassroom={currentClassroom}
-                        onChange={this.currentClassroomChange}
-                    />
-                </div>
-                <div style={{ padding: "20px", float: 'right' }}>
-                    <a target="_blank" rel="noopener noreferrer" href="https://github.com/mushding/NCHUCse-curriculum"><GitHubIcon/></a>
-                </div>
-                <h4 style={{ float: 'right' }}>中興大學資工系教室借用表 {this.state.version}</h4>
-                <div style={{ paddingRight: '10px', paddingTop: '10px', float: 'right' }}>
-                    <ExternalViewSwitcher
-                        currentViewName={currentViewName}
-                        onChange={this.currentViewNameChange}
-                    />
-                </div>
-                <div style={{ padding: "20px", float: 'right' }}>
-                    <Button
-                        onClick={this.handdleDeleteCurriculum}
-                        variant="contained"
-                        startIcon={<DeleteIcon />}
-                    >  
-                        刪除課表
-                    </Button>
-                    <Popover
-                        open={Boolean(this.state.deletePopover)}
-                        anchorEl={this.state.deletePopover}
-                        onClose={this.closeDeleteCurriculum}
-                        anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'center',
-                        }}
-                        transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'center',
-                        }}
-                    >
-                        <div>
-                            TEST
-                        </div>
-                    </Popover>
-                </div>
-                <div style={{ padding: "20px", float: 'right' }}>
-                    <Button
-                        onClick={this.handdleSettingStartSchool}
-                        variant="contained"
-                        startIcon={<DeleteIcon />}
-                    >  
-                        設定開學時間
-                    </Button>
-                    <Popover
-                        open={Boolean(this.state.deletePopover)}
-                        anchorEl={this.state.deletePopover}
-                        onClose={this.closeDeleteCurriculum}
-                        anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'center',
-                        }}
-                        transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'center',
-                        }}
-                    >
-                        <div>
-                            TEST
-                        </div>
-                    </Popover>
-                </div>
-            </Paper>
+import SettingStartSchoolButton from "../SettingStartSchoolButton/SettingStartSchoolButton";
+import FetchCurriculumButtom from "../FetchCurriculumButtom/FetchCurriculumButtom";
+
+// import const data
+import constData from "../../Data/const";
+
+const ExternalClassroomSelector = ({ currentClassroom, onChange }) => (
+  <RadioGroup
+    aria-label="Classrooms"
+    style={{ flexDirection: "row" }}
+    name="classrooms"
+    value={currentClassroom}
+    onChange={onChange}
+  >
+    {constData.classroomIndex.map((classroom, index) => {
+      return (
+        <FormControlLabel
+          value={classroom}
+          control={<Radio />}
+          label={classroom}
+          key={index}
+        />
+      );
+    })}
+  </RadioGroup>
+);
+
+function Navbar({ currentClassroom, setCurrentClassroom, semesterInfo, version }) {
+
+	const currentClassroomChange = (e) => {
+    let classroom = e.target.value;
+    setCurrentClassroom(classroom);
+  };
+
+  return (
+    <div>
+      <Paper style={{ paddingLeft: "20px" }}>
+        <Grid
+          container
+          direction="column"
+          justifyContent="center"
+          alignItems="flex-start"
+          columnSpacing={1}
+        >
+          <Grid container alignItems="center" spacing={2}>
+            <Grid item>
+              <h3>中興大學資工系教室借用表 {version}</h3>
+            </Grid>
+            <Grid item>
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://github.com/mushding/NCHUCse-curriculum"
+              >
+                <GitHubIcon />
+              </a>
+            </Grid>
+          </Grid>
+          <Grid item>
+            <ExternalClassroomSelector
+              currentClassroom={currentClassroom}
+              onChange={currentClassroomChange}
+            />
+          </Grid>
+        </Grid>
+        <div style={{ padding: "20px", float: "right" }}>
+          <SettingStartSchoolButton
+            // refresh={getBackendCurriculumData}
+            semesterInfo={semesterInfo}
+          />
         </div>
-    );
+        <div style={{ padding: "20px", float: "right" }}>
+          <FetchCurriculumButtom
+            // refresh={getBackendCurriculumData}
+            semesterYear={semesterInfo["year"]}
+            semesterType={semesterInfo["type"]}
+          />
+        </div>
+      </Paper>
+    </div>
+  );
 }
 
 export default Navbar;

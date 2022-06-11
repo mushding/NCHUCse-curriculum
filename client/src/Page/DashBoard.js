@@ -21,24 +21,19 @@ import {
 import { withStyles } from "@material-ui/core/styles";
 
 // import icon
-import GitHubIcon from "@material-ui/icons/GitHub";
 import AlarmAddIcon from "@material-ui/icons/AlarmAdd";
 import FormatListNumberedIcon from "@material-ui/icons/FormatListNumbered";
 
 import {
   Paper,
   Grid,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
 } from "@material-ui/core";
 
 // import const data
 import constData from "../Data/const";
 
 // import Component
-import SettingStartSchoolButton from "../Component/SettingStartSchoolButton/SettingStartSchoolButton";
-import FetchCurriculumButtom from "../Component/FetchCurriculumButtom/FetchCurriculumButtom";
+import Navbar from "../Component/Navbar/Navbar";
 
 const style = ({ palette }) => ({
   icon: {
@@ -129,27 +124,6 @@ const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
   );
 };
 
-const ExternalClassroomSelector = ({ currentClassroom, onChange }) => (
-  <RadioGroup
-    aria-label="Classrooms"
-    style={{ flexDirection: "row" }}
-    name="classrooms"
-    value={currentClassroom}
-    onChange={onChange}
-  >
-    {constData.classroomIndex.map((classroom, index) => {
-      return (
-        <FormControlLabel
-          value={classroom}
-          control={<Radio />}
-          label={classroom}
-          key={index}
-        />
-      );
-    })}
-  </RadioGroup>
-);
-
 const DashBoard = () => {
   const [curriculums, setCurriculums] = useState([]);
   const [currentClassroom, setCurrentClassroom] = useState("821");
@@ -227,11 +201,6 @@ const DashBoard = () => {
     } catch (e) {
       console.log(e);
     }
-  };
-
-  const currentClassroomChange = (e) => {
-    let classroom = e.target.value;
-    setCurrentClassroom(classroom);
   };
 
   const magicRefreshPage = () => {
@@ -420,51 +389,12 @@ const DashBoard = () => {
 
   return (
     <div>
-      <Paper style={{ paddingLeft: "20px" }}>
-        <Grid
-          container
-          direction="column"
-          justifyContent="center"
-          alignItems="flex-start"
-					columnSpacing={1}
-        >
-					<Grid container alignItems="center" spacing={2}>
-            <Grid item>
-              <h3>
-                中興大學資工系教室借用表 {version}
-              </h3>
-            </Grid>
-            <Grid item>
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://github.com/mushding/NCHUCse-curriculum"
-              >
-                <GitHubIcon />
-              </a>
-            </Grid>
-					</Grid>
-          <Grid item>
-            <ExternalClassroomSelector
-              currentClassroom={currentClassroom}
-              onChange={currentClassroomChange}
-            />
-          </Grid>
-        </Grid>
-        <div style={{ padding: "20px", float: "right" }}>
-          <SettingStartSchoolButton
-            // refresh={getBackendCurriculumData}
-            semesterInfo={semesterInfo}
-          />
-        </div>
-        <div style={{ padding: "20px", float: "right" }}>
-          <FetchCurriculumButtom
-            // refresh={getBackendCurriculumData}
-            semesterYear={semesterInfo["year"]}
-            semesterType={semesterInfo["type"]}
-          />
-        </div>
-      </Paper>
+      <Navbar 
+				currentClassroom={currentClassroom}
+				setCurrentClassroom={setCurrentClassroom}
+				semesterInfo={semesterInfo}
+				version={version}
+			/>
       <Paper>
         <Scheduler
           data={curriculums}
