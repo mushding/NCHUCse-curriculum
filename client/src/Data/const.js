@@ -12,7 +12,8 @@ const classroomIndex = [
     "336",
     "337",
     "338",
-    "350"
+    "350",
+    "318"
 ]
 
 const resourceData = [

@@ -17,6 +17,7 @@ import {
   TodayButton,
   Resources,
   AppointmentTooltip,
+  DragDropProvider,
 } from "@devexpress/dx-react-scheduler-material-ui";
 import { withStyles } from "@material-ui/core/styles";
 
@@ -130,7 +131,7 @@ const DashBoard = () => {
   const [currentClassroom, setCurrentClassroom] = useState("821");
   const [semesterInfo, setSemesterInfo] = useState({});
 
-  const [version, setVersion] = useState("v3.03 Beta");
+  const [version, setVersion] = useState("v3.04 Beta");
 
   useEffect(() => {
     initData();
@@ -433,6 +434,7 @@ const DashBoard = () => {
             booleanEditorComponent={BooleanEditor}
             messages={constData.appointmentFormMessages}
           />
+          <DragDropProvider />
         </Scheduler>
       </Paper>
       <Footer/>
