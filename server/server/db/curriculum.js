@@ -98,39 +98,6 @@ const select_temporary_purpose_classroom = async (classroom, semester_year, seme
     })
 }
 
-const select_website_curriculum_id = async (id) => {
-    return new Promise((resolve, reject) => {
-        Pool.query("SELECT * FROM website_curriculum WHERE id = '{0}'".format(id), (err, results) => {
-            if (err) {
-                return reject(err);
-            }
-            resolve(results);
-        })
-    })
-}
-
-const select_static_purpose_id = async (id) => {
-    return new Promise((resolve, reject) => {
-        Pool.query("SELECT * FROM static_purpose WHERE id = '{0}'".format(id), (err, results) => {
-            if (err) {
-                return reject(err);
-            }
-            resolve(results);
-        })
-    })
-}
-
-const select_temporary_purpose_id = async (id) => {
-    return new Promise((resolve, reject) => {
-        Pool.query("SELECT * FROM temporary_purpose WHERE id = '{0}'".format(id), (err, results) => {
-            if (err) {
-                return reject(err);
-            }
-            resolve(results);
-        })
-    })
-}
-
 const insert_website_curriculum = async (data) => {
     return new Promise((resolve, reject) => {
         let sql_str = "INSERT INTO website_curriculum(semester_year, semester_type, class_id, name, grade, week, start_time, end_time, classroom, teacher) SELECT '{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}' FROM dual WHERE not exists (select * from website_curriculum where website_curriculum.semester_year = '{0}' and website_curriculum.semester_type = '{1}' and website_curriculum.class_id = '{2}');".format(data.semester_year, data.semester_type, data.class_id, data.name, data.grade, data.week, data.start_time, data.end_time, data.classroom, data.teacher);
@@ -337,9 +304,6 @@ export default {
     select_website_curriculum_classroom,
     select_static_purpose_classroom,
     select_temporary_purpose_classroom,
-    select_website_curriculum_id,
-    select_static_purpose_id,
-    select_temporary_purpose_id,
     insert_website_curriculum,
     insert_website_curriculum_manually,
     insert_static_purpose,

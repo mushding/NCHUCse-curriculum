@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ViewState, EditingState, IntegratedEditing } from '@devexpress/dx-react-scheduler';
 import {
     Scheduler,
@@ -9,7 +9,6 @@ import {
     ConfirmationDialog,
     Toolbar,
     DateNavigator,
-    EditRecurrenceMenu,
     TodayButton,
     Resources,
     AppointmentTooltip
@@ -33,7 +32,6 @@ import {
 import constData from '../Data/const';
 
 // import Component
-import DeleteCurriculumButton from '../Component/DeleteCurriculumButton/DeleteCurriculumButton';
 import SettingStartSchoolButton from '../Component/SettingStartSchoolButton/SettingStartSchoolButton'
 import FetchCurriculumButtom from '../Component/FetchCurriculumButtom/FetchCurriculumButtom';
 
@@ -423,13 +421,6 @@ const DashBoard = () => {
                         <ExternalViewSwitcher
                             currentViewName={currentViewName}
                             onChange={currentViewNameChange}
-                        />
-                    </div>
-                    <div style={{ padding: "20px", float: 'right' }}>
-                        <DeleteCurriculumButton 
-                            // refresh={getBackendCurriculumData}
-                            semesterYear={semesterInfo['year']}
-                            semesterType={semesterInfo['type']}
                         />
                     </div>
                     <div style={{ padding: "20px", float: 'right' }}>

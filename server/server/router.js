@@ -252,39 +252,6 @@ router.get('/api/updateOfficeWebsite/:semester_year/:semester_type', async (req,
     res.json("update success");
 })
 
-router.get('/api/getWebsiteByID/:id', async (req, res) => {
-    let result;
-    let id = req.params.id;
-    try {
-        result = await DB.select_website_curriculum_id(id);
-    } catch (err) {
-        res.sendStatus(500);
-    }
-    res.json(result);
-})
-
-router.get('/api/getStaticByID/:id', async (req, res) => {
-    let result;
-    let id = req.params.id;
-    try {
-        result = await DB.select_static_purpose_id(id);
-    } catch (err) {
-        res.sendStatus(500);
-    }
-    res.json(result);
-})
-
-router.get('/api/getTemporaryByID/:id', async (req, res) => {
-    let result;
-    let id = req.params.id;
-    try {
-        result = await DB.select_temporary_purpose_id(id);
-    } catch (err) {
-        res.sendStatus(500);
-    }
-    res.json(result);
-})
-
 // add website data
 router.post('/api/addWebsite', async (req, res) => {
     let result;
