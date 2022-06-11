@@ -130,7 +130,7 @@ const DashBoard = () => {
   const [currentClassroom, setCurrentClassroom] = useState("821");
   const [semesterInfo, setSemesterInfo] = useState({});
 
-  const [version, setVersion] = useState("v3.0");
+  const [version, setVersion] = useState("v3.03 Beta");
 
   useEffect(() => {
     initData();
@@ -341,7 +341,6 @@ const DashBoard = () => {
     // static
     // change -> (complete, array id, _)
     // delete -> (_, array id, change value, _)
-    console.log(added, changed, deleted);
 
     // static, temporary add
     if (added && !changed && !deleted) {

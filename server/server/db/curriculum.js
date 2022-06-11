@@ -111,7 +111,6 @@ const insert_website_curriculum = async (data) => {
 }
 
 const insert_website_curriculum_manually = async (data) => {
-    console.log(data)
     let week = new Date(data.startDate).getDay();
     // check if sunday
     if (week === 0)
@@ -132,7 +131,8 @@ const insert_website_curriculum_manually = async (data) => {
 }
 
 const insert_static_purpose = async (data) => {
-    let week = new Date(data.startDate).getDay();
+    let weekDate = new Date(data.startDate);
+    let week = weekDate.getUTCDay();
     // check if sunday
     if (week === 0)
         week = 7;
@@ -215,7 +215,9 @@ const drop_temporary_purpose = async (data) => {
 }
 
 const update_static_purpose = async (data) => {
-    let week = new Date(data.startDate).getDay();
+    let weekDate = new Date(data.startDate);
+    let week = weekDate.getUTCDay();
+
     // check if sunday
     if (week === 0)
         week = 7;
@@ -236,7 +238,6 @@ const update_temporary_purpose = async (data) => {
     let date = data.startDate.split("T")[0];
     let startDate = data.startDate.split("T")[1].slice(0, 5);
     let endDate = data.endDate.split("T")[1].slice(0, 5);
-    console.log(data)
     return new Promise((resolve, reject) => {
         let sql_str = `UPDATE temporary_purpose SET semester_year='${data.semester_year}', semester_type='${data.semester_type}', name='${data.title}', office='${data.office}', date='${date}', start_time='${startDate}', end_time='${endDate}', classroom='${data.classroom}', rRule='${data.rRule}' WHERE id='${data.pkId}';`;
         Pool.query(sql_str, (err, results) => {
@@ -245,22 +246,6 @@ const update_temporary_purpose = async (data) => {
             }
             resolve(results);
         })
-    })
-}
-
-// constum database query
-const control_database = async (control_str) => {
-    console.log(control_str);
-    return new Promise((resolve, reject) => {
-        Pool.query(control_str, (err, results) => {
-            if (err) {
-                return reject(err);
-            }
-            console.log(results);
-            resolve(results);
-        })
-    }).catch(err => {
-        console.log(err);
     })
 }
 
@@ -311,7 +296,6 @@ export default {
     drop_website_curriculum,
     drop_static_purpose,
     drop_temporary_purpose,
-    control_database,
     update_curriculum_setting,
     select_curriculum_setting,
     update_static_purpose,
