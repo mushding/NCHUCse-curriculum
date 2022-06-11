@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.32, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.36, for Linux (x86_64)
 --
 -- Host: localhost    Database: curriculum
 -- ------------------------------------------------------
--- Server version	5.7.32
+-- Server version	5.7.36
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -16,18 +16,32 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `static_purpose`
+-- Current Database: `curriculum`
+--
+
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `curriculum` /*!40100 DEFAULT CHARACTER SET latin1 */;
+
+USE `curriculum`;
+
+--
+-- Table structure for table `curriculum_setting`
 --
 
 DROP TABLE IF EXISTS `curriculum_setting`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `curriculum_setting` (
   `semester_year` varchar(45) CHARACTER SET utf8 NOT NULL,
   `summer_date_month` varchar(45) CHARACTER SET utf8 NOT NULL,
   `summer_date_day` varchar(45) CHARACTER SET utf8 NOT NULL,
   `winter_date_month` varchar(45) CHARACTER SET utf8 NOT NULL,
   `winter_date_day` varchar(45) CHARACTER SET utf8 NOT NULL
-);
-INSERT INTO `curriculum_setting` (`semester_year`, `summer_date_month`, `summer_date_day`, `winter_date_month`, `winter_date_day`) VALUE ('109', '7', '1', '2', '15');
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `static_purpose`
+--
 
 DROP TABLE IF EXISTS `static_purpose`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -44,7 +58,7 @@ CREATE TABLE `static_purpose` (
   `end_time` varchar(45) CHARACTER SET utf8 NOT NULL,
   `classroom` varchar(45) CHARACTER SET utf8 NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=80 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -65,8 +79,9 @@ CREATE TABLE `temporary_purpose` (
   `start_time` varchar(45) CHARACTER SET utf8 NOT NULL,
   `end_time` varchar(45) CHARACTER SET utf8 NOT NULL,
   `classroom` varchar(45) CHARACTER SET utf8 NOT NULL,
+  `rRule` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=252 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=668 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -85,11 +100,12 @@ CREATE TABLE `website_curriculum` (
   `name` varchar(45) CHARACTER SET utf8 NOT NULL,
   `grade` varchar(45) CHARACTER SET utf8 NOT NULL,
   `week` varchar(45) CHARACTER SET utf8 NOT NULL,
-  `time` varchar(45) CHARACTER SET utf8 NOT NULL,
+  `start_time` varchar(45) DEFAULT NULL,
+  `end_time` varchar(45) DEFAULT NULL,
   `classroom` varchar(45) CHARACTER SET utf8 NOT NULL,
   `teacher` varchar(45) CHARACTER SET utf8 NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=371 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -101,4 +117,4 @@ CREATE TABLE `website_curriculum` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-12-25 14:47:02
+-- Dump completed on 2022-06-11 14:19:04
