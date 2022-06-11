@@ -52,7 +52,7 @@ function Navbar({
 
   return (
     <div>
-      <Paper style={{ paddingLeft: "20px" }}>
+      <Paper style={{ paddingLeft: "20px", paddingRight: "20px" }}>
         <Grid
           container
           direction="column"
@@ -74,25 +74,36 @@ function Navbar({
               </a>
             </Grid>
           </Grid>
-          <Grid item>
-            <ExternalClassroomSelector
-              currentClassroom={currentClassroom}
-              onChange={currentClassroomChange}
-            />
+          <Grid container alignItems="center" spacing={1}>
+            <Grid item xs={12} md={8}>
+              <ExternalClassroomSelector
+                currentClassroom={currentClassroom}
+                onChange={currentClassroomChange}
+              />
+            </Grid>
+            <Grid item xs={6} md={4} spacing={2}>
+              <Grid
+                container
+                alignItems="center"
+                justifyContent="flex-end"
+                spacing={1}
+              >
+                <Grid item>
+                  <SettingStartSchoolButton
+                    refresh={refresh}
+                    semesterInfo={semesterInfo}
+                  />
+                </Grid>
+                <Grid item>
+                  <FetchCurriculumButtom
+                    refresh={refresh}
+                    semesterInfo={semesterInfo}
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
-        <div style={{ padding: "20px", float: "right" }}>
-          <SettingStartSchoolButton
-            refresh={refresh}
-            semesterInfo={semesterInfo}
-          />
-        </div>
-        <div style={{ padding: "20px", float: "right" }}>
-          <FetchCurriculumButtom
-            refresh={refresh}
-            semesterInfo={semesterInfo}
-          />
-        </div>
       </Paper>
     </div>
   );
