@@ -39,6 +39,7 @@ const ExternalClassroomSelector = ({ currentClassroom, onChange }) => (
 );
 
 function Navbar({
+  refresh,
   currentClassroom,
   setCurrentClassroom,
   semesterInfo,
@@ -82,15 +83,14 @@ function Navbar({
         </Grid>
         <div style={{ padding: "20px", float: "right" }}>
           <SettingStartSchoolButton
-            // refresh={getBackendCurriculumData}
+            refresh={refresh}
             semesterInfo={semesterInfo}
           />
         </div>
         <div style={{ padding: "20px", float: "right" }}>
           <FetchCurriculumButtom
-            // refresh={getBackendCurriculumData}
-            semesterYear={semesterInfo["year"]}
-            semesterType={semesterInfo["type"]}
+            refresh={refresh}
+            semesterInfo={semesterInfo}
           />
         </div>
       </Paper>

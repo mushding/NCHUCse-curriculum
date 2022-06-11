@@ -58,7 +58,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-const FetchCurriculumButtom = (props) => {
+const FetchCurriculumButtom = ({ refresh, semesterInfo }) => {
     const classes = useStyles();
 
     // isOpen
@@ -77,9 +77,9 @@ const FetchCurriculumButtom = (props) => {
 
     const handdleFetchCurriculum = async () => {
         setSettingStartPopover(null);
-        await fetch('/api/updateWebsite/' + props.semesterYear + "/" + props.semesterType);
+        await fetch(`/api/updateWebsite/'${semesterInfo['year']}/${semesterInfo['type']}`);
         setSnackBarOpen(true);
-        await props.refresh();
+        await refresh();
     }
 
     const handdleUpdateCseWebsite = async () => {

@@ -391,6 +391,7 @@ const DashBoard = () => {
   return (
     <div>
       <Navbar 
+				refresh={magicRefreshPage}
 				currentClassroom={currentClassroom}
 				setCurrentClassroom={setCurrentClassroom}
 				semesterInfo={semesterInfo}
