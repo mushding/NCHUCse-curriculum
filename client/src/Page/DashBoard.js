@@ -34,6 +34,7 @@ import constData from "../Data/const";
 
 // import Component
 import Navbar from "../Component/Navbar/Navbar";
+import Footer from "../Component/Footer/Footer";
 
 const style = ({ palette }) => ({
   icon: {
@@ -434,15 +435,7 @@ const DashBoard = () => {
           />
         </Scheduler>
       </Paper>
-      <p style={{ textAlign: "center", color: "#808080", fontSize: "12px" }}>
-        © 中興大學資工系教室借用表 - made by{" "}
-        <a
-          href="mailto:ajy1005464@gmail.com?subject=回報課表系統相關 bug"
-          style={{ color: "#808080" }}
-        >
-          mushding
-        </a>
-      </p>
+      <Footer/>
     </div>
   );
 };

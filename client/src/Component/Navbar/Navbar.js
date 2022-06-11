@@ -38,9 +38,13 @@ const ExternalClassroomSelector = ({ currentClassroom, onChange }) => (
   </RadioGroup>
 );
 
-function Navbar({ currentClassroom, setCurrentClassroom, semesterInfo, version }) {
-
-	const currentClassroomChange = (e) => {
+function Navbar({
+  currentClassroom,
+  setCurrentClassroom,
+  semesterInfo,
+  version,
+}) {
+  const currentClassroomChange = (e) => {
     let classroom = e.target.value;
     setCurrentClassroom(classroom);
   };
