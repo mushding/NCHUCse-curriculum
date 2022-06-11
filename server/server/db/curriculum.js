@@ -187,8 +187,9 @@ const insert_temporary_purpose = async (data) => {
     let date = data.startDate.split("T")[0];
     let startDate = data.startDate.split("T")[1].slice(0, 5);
     let endDate = data.endDate.split("T")[1].slice(0, 5);
+    let rRule = data.rRule ? data.rRule : '';
     return new Promise((resolve, reject) => {
-        let sql_str = "INSERT INTO temporary_purpose(semester_year, semester_type, name, office, date, start_time, end_time, classroom) SELECT '{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}' FROM dual WHERE not exists (select * from temporary_purpose where temporary_purpose.classroom = '{6}' and temporary_purpose.date = '{7}' and temporary_purpose.start_time = '{8}' and temporary_purpose.end_time = '{9}');".format(data.semester_year, data.semester_type, data.title, data.office, date, startDate, endDate, data.classroom, data.classroom, date, startDate, endDate);
+        let sql_str = "INSERT INTO temporary_purpose(semester_year, semester_type, name, office, date, start_time, end_time, classroom, rRule) SELECT '{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}' FROM dual WHERE not exists (select * from temporary_purpose where temporary_purpose.classroom = '{6}' and temporary_purpose.date = '{7}' and temporary_purpose.start_time = '{8}' and temporary_purpose.end_time = '{9}');".format(data.semester_year, data.semester_type, data.title, data.office, date, startDate, endDate, data.classroom, rRule, data.classroom, date, startDate, endDate);
         Pool.query(sql_str, (err, results) => {
             if (err) {
                 return reject(err);
@@ -268,8 +269,9 @@ const update_temporary_purpose = async (data) => {
     let date = data.startDate.split("T")[0];
     let startDate = data.startDate.split("T")[1].slice(0, 5);
     let endDate = data.endDate.split("T")[1].slice(0, 5);
+    console.log(data)
     return new Promise((resolve, reject) => {
-        let sql_str = `UPDATE temporary_purpose SET semester_year='${data.semester_year}', semester_type='${data.semester_type}', name='${data.title}', office='${data.office}', date='${date}', start_time='${startDate}', end_time='${endDate}', classroom='${data.classroom}' WHERE id='${data.pkId}';`;
+        let sql_str = `UPDATE temporary_purpose SET semester_year='${data.semester_year}', semester_type='${data.semester_type}', name='${data.title}', office='${data.office}', date='${date}', start_time='${startDate}', end_time='${endDate}', classroom='${data.classroom}', rRule='${data.rRule}' WHERE id='${data.pkId}';`;
         Pool.query(sql_str, (err, results) => {
             if (err) {
                 return reject(err);

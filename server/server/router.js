@@ -170,7 +170,8 @@ router.get('/api/getTemporary/:classroom/:semester_year/:semester_type', async (
             endDate: new Date(result[i]["date"] + 'T' + result[i]["end_time"]),
             addtime: new Date(result[i]["timestamp"].getTime() - result[i]["timestamp"].getTimezoneOffset()*60000),
             name: result[i]["name"],
-            curriculumType: 3
+            curriculumType: 3,
+            rRule: result[i]["rRule"]
         })
     }
     res.json(curriculum);

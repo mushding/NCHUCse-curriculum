@@ -44,7 +44,7 @@ const appointmentFormMessages = {
     endRepeatLabel: '結束重複的條件',
     repeatLabel: '設定重複',
     allDayLabel: '設定整天',
-    onLabel: '重複',
+    onLabel: '總共',
     afterLabel: '直到…',
     occurrencesLabel: '次',
     weeksOnLabel: '(週) 重複',

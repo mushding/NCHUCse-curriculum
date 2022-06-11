@@ -95,10 +95,7 @@ const TextEditor = (props, { ...restProps }) => {
 };
 
 const BooleanEditor = (props, { ...restProps }) => {
-    if (props.label === "All Day") {
-        return null;
-    } 
-    if (props.label === "Repeat") {
+    if (props.label === "設定整天") {
         return null;
     }
     return <AppointmentForm.BooleanEditor {...props} />;
@@ -217,7 +214,6 @@ const DashBoard = () => {
             // why...?
             setCurriculums([]);
             setCurriculums(data);
-            console.log(data)
         } catch (e) {
             console.log(e);
         }
@@ -240,6 +236,121 @@ const DashBoard = () => {
         setCurrentViewName(e.target.value);
     }
 
+    const magicRefreshPage = () => {
+        // magic way to trigger useEffect...
+        const refresh = currentClassroom;
+        setCurrentClassroom('0');
+        setCurrentClassroom(refresh);
+    }
+
+    const allAddCurriculum = async (added) => {
+        added.startDate = new Date(added.startDate.getTime() - added.startDate.getTimezoneOffset()*60000);
+        added.endDate = new Date(added.endDate.getTime() - added.endDate.getTimezoneOffset()*60000);
+        added.classroom = currentClassroom;
+        added.semester_year = semesterInfo['year'];
+        added.semester_type = semesterInfo['type'];
+        // website
+        if (added.curriculumType === 1){
+            if (added.title === undefined || added.office === undefined){
+                alert("有資料欄位沒有填入！");
+            } else {
+                await fetch('/api/addWebsite', {
+                    method: 'POST',
+                    body: JSON.stringify(added),
+                    headers: new Headers({
+                        'Content-Type': 'application/json'
+                    })
+                })
+            }   // static
+        } else if (added.curriculumType === 2){
+            if (added.title === undefined || added.office === undefined){
+                alert("有資料欄位沒有填入！");
+            } else {
+                await fetch('/api/addStatic', {
+                    method: 'POST',
+                    body: JSON.stringify(added),
+                    headers: new Headers({
+                        'Content-Type': 'application/json'
+                    })
+                })
+            }   // temporary
+        } else if (added.curriculumType === 3){
+            if (added.title === undefined || added.office === undefined){
+                alert("有資料欄位沒有填入！");
+            } else {
+                await fetch('/api/addTemporary', {
+                    method: 'POST',
+                    body: JSON.stringify(added),
+                    headers: new Headers({
+                        'Content-Type': 'application/json'
+                    })
+                })
+            }
+        } else {
+            alert("請選擇借用類別！");
+        }
+        magicRefreshPage();
+    }
+
+    const staticChangeCurriculum = async (target) => {
+        target.startDate = new Date(target.startDate.getTime() - target.startDate.getTimezoneOffset()*60000);
+        target.endDate = new Date(target.endDate.getTime() - target.endDate.getTimezoneOffset()*60000);
+        target.classroom = currentClassroom;
+        target.semester_year = semesterInfo['year'];
+        target.semester_type = semesterInfo['type'];
+        target.title = target.title.split("\n")[0];
+        await fetch('/api/updateStatic', {
+            method: 'POST',
+            body: JSON.stringify(target),
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            })
+        })
+        magicRefreshPage();
+    }
+
+    const staticDeleteCurriculum = async (target) => {
+        const data = {
+            id: target.pkId
+        }
+        await fetch('/api/dropStatic', {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            })
+        })
+        magicRefreshPage();
+    }
+
+    const temporaryChangeCurriculum = async (target) => {
+        target.startDate = new Date(new Date(target.startDate).getTime() - new Date(target.startDate).getTimezoneOffset()*60000);
+        target.endDate = new Date(new Date(target.endDate).getTime() - new Date(target.endDate).getTimezoneOffset()*60000);
+        target.classroom = currentClassroom;
+        target.semester_year = semesterInfo['year'];
+        target.semester_type = semesterInfo['type'];
+        target.title = target.title.split("\n")[0];
+        await fetch('/api/updateTemporary', {
+            method: 'POST',
+            body: JSON.stringify(target),
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            })
+        })
+        magicRefreshPage();
+    }
+
+    const temporaryDeleteCurriculum = async (target) => {
+        await fetch('/api/dropTemporary', {
+            method: 'POST',
+            body: JSON.stringify(target),
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            })
+        })
+        magicRefreshPage();
+    }
+
     const commitEditChanges = async ({ added, changed, deleted }) => {
         // temporary
         // change -> (_, array id, change value, _)
@@ -249,97 +360,50 @@ const DashBoard = () => {
         // change -> (complete, array id, _)
         // delete -> (_, array id, change value, _)
         console.log(added, changed, deleted);
+
+        // static, temporary add
         if (added && !changed && !deleted){
-            console.log(added)
-            added.startDate = new Date(added.startDate.getTime() - added.startDate.getTimezoneOffset()*60000);
-            added.endDate = new Date(added.endDate.getTime() - added.endDate.getTimezoneOffset()*60000);
-            added.classroom = currentClassroom;
-            added.semester_year = semesterInfo['year'];
-            added.semester_type = semesterInfo['type'];
-            console.log(added)
-            // website
-            if (added.curriculumType === 1){
-                if (added.title === undefined || added.office === undefined){
-                    alert("有資料欄位沒有填入！");
-                } else {
-                    await fetch('/api/addWebsite', {
-                        method: 'POST',
-                        body: JSON.stringify(added),
-                        headers: new Headers({
-                            'Content-Type': 'application/json'
-                        })
-                    })
-                    // window.location.reload();
-                }   // static
-            } else if (added.curriculumType === 2){
-                if (added.title === undefined || added.office === undefined){
-                    alert("有資料欄位沒有填入！");
-                } else {
-                    await fetch('/api/addStatic', {
-                        method: 'POST',
-                        body: JSON.stringify(added),
-                        headers: new Headers({
-                            'Content-Type': 'application/json'
-                        })
-                    })
-                    // window.location.reload();
-                }   // temporary
-            } else if (added.curriculumType === 3){
-                if (added.title === undefined || added.office === undefined){
-                    alert("有資料欄位沒有填入！");
-                } else {
-                    await fetch('/api/addTemporary', {
-                        method: 'POST',
-                        body: JSON.stringify(added),
-                        headers: new Headers({
-                            'Content-Type': 'application/json'
-                        })
-                    })
-                    // window.location.reload();
-                }
-            } else {
-                alert("請選擇借用類別！");
-            }
+            allAddCurriculum(added)
         // temporary changed or static deleted
         } else if (!added && changed && !deleted) {
             let target_id = Object.keys(changed);
             let target = curriculums[target_id];
-            // static deleted
+            target = {
+                ...target,
+                ...changed[Object.keys(changed)]
+            }
             if (target['curriculumType'] === 2) {
-                await fetch('/api/dropStatic', {
-                    method: 'POST',
-                    body: JSON.stringify(target['pkId']),
-                    headers: new Headers({
-                        'Content-Type': 'application/json'
-                    })
-                })
-            // temporary changed
+                // static, temporary-repeat deleted
+                staticDeleteCurriculum(target);
             } else if (target['curriculumType'] === 3) {
-                console.log(target)
-                target = {
-                    ...target,
-                    ...changed[Object.keys(changed)]
+                if ('exDate' in changed[target_id]) {
+                    // temporary-repeat deleted
+                    target = {
+                        id: target['pkId']
+                    }
+                    temporaryDeleteCurriculum(target);
+                } else {
+                    // temporary-solo changed
+                    temporaryChangeCurriculum(target);
                 }
-                console.log(target)
-                target.startDate = new Date(new Date(target.startDate).getTime() - new Date(target.startDate).getTimezoneOffset()*60000);
-                target.endDate = new Date(new Date(target.endDate).getTime() - new Date(target.endDate).getTimezoneOffset()*60000);
-                target.classroom = currentClassroom;
-                target.semester_year = semesterInfo['year'];
-                target.semester_type = semesterInfo['type'];
-                console.log(target)
-                await fetch('/api/updateTemporary', {
-                    method: 'POST',
-                    body: JSON.stringify(target),
-                    headers: new Headers({
-                        'Content-Type': 'application/json'
-                    })
-                })
+            }
+        // temporary-solo delete
+        } else if (!added && !changed && deleted) {
+            temporaryDeleteCurriculum(deleted);
+        // static, temporary-repeat change TODO:
+        } else if (added && changed && !deleted) {
+            let target_id = Object.keys(changed);
+            let target = curriculums[target_id];
+            target = {
+                ...target,
+                ...added
+            }
+            if (target['curriculumType'] === 2) {
+                staticChangeCurriculum(target);
+            } else if (target['curriculumType'] === 3) {
+                temporaryChangeCurriculum(target);
             }
         }
-        // magic way to trigger useEffect...
-        const refresh = currentClassroom;
-        setCurrentClassroom('0');
-        setCurrentClassroom(refresh);
     }
 
     return (
@@ -425,7 +489,7 @@ const DashBoard = () => {
                         <AppointmentForm
                             basicLayoutComponent={BasicLayout}
                             textEditorComponent={TextEditor}
-                            // booleanEditorComponent={BooleanEditor}
+                            booleanEditorComponent={BooleanEditor}
                             messages={constData.appointmentFormMessages}
                         />
                     </Scheduler>
