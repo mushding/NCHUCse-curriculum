@@ -192,6 +192,7 @@ const DashBoard = () => {
       // why...?
       setCurriculums([]);
       setCurriculums(data);
+      await updateNCHUWebsiteData();
     } catch (e) {
       console.log(e);
     }
@@ -313,6 +314,7 @@ const DashBoard = () => {
     target.semester_year = semesterInfo["year"];
     target.semester_type = semesterInfo["type"];
     target.title = target.title.split("\n")[0];
+    target.rRule = target.rRule ? target.rRule : ""
     await fetch("/api/updateTemporary", {
       method: "POST",
       body: JSON.stringify(target),

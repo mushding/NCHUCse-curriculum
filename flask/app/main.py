@@ -133,6 +133,7 @@ def updateCseWebsite():
     temporary = request.get_json(force=True)['temporary']
     purpose = static + temporary
 
+
     for curriculum in purpose:
         week = curriculum["week"]
         classroom = curriculum["classroom"]
