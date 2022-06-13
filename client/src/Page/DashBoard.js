@@ -131,7 +131,7 @@ const DashBoard = () => {
   const [currentClassroom, setCurrentClassroom] = useState("821");
   const [semesterInfo, setSemesterInfo] = useState({});
 
-  const [version, setVersion] = useState("v3.04 Beta");
+  const [version, setVersion] = useState("v3.06 Beta");
 
   useEffect(() => {
     initData();
@@ -190,7 +190,6 @@ const DashBoard = () => {
 
       // clear curriculums prevData won't correctly...
       // why...?
-      setCurriculums([]);
       setCurriculums(data);
       await updateNCHUWebsiteData();
     } catch (e) {
@@ -206,10 +205,10 @@ const DashBoard = () => {
     }
   };
 
-  const magicRefreshPage = () => {
+  const magicRefreshPage = async () => {
     // magic way to trigger useEffect...
-    const refresh = currentClassroom;
     setCurrentClassroom("0");
+    const refresh = await currentClassroom;
     setCurrentClassroom(refresh);
   };
 

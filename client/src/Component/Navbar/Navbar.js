@@ -6,6 +6,7 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
+  Button,
 } from "@material-ui/core";
 
 // import icon
@@ -16,6 +17,7 @@ import FetchCurriculumButtom from "../FetchCurriculumButtom/FetchCurriculumButto
 
 // import const data
 import constData from "../../Data/const";
+import HistoryButton from "../HistoryButton/HistoryButton";
 
 const ExternalClassroomSelector = ({ currentClassroom, onChange }) => (
   <RadioGroup
@@ -88,6 +90,9 @@ function Navbar({
                 justifyContent="flex-end"
                 spacing={1}
               >
+                <Grid item>
+                  <HistoryButton/>
+                </Grid>
                 <Grid item>
                   <SettingStartSchoolButton
                     refresh={refresh}
