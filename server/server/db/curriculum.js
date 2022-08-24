@@ -63,7 +63,7 @@ const select_website_curriculum_classroom = async (classroom, semester_year, sem
     return new Promise ((resolve, reject) => {
         // use select this year and next year curriculum
         // to prevent cross semester curriculum won't show bug
-        Pool.query("SELECT * FROM website_curriculum WHERE classroom='{0}' and (semester_year='{1}' or semester_year='{2}')".format(classroom, semester_year, String(Number(semester_year) - 1)), (err, results) => {
+        Pool.query("SELECT * FROM website_curriculum WHERE classroom='{0}' and semester_year='{1}'".format(classroom, semester_year), (err, results) => {
             if (err) {
                 return reject(err);
             }
@@ -76,7 +76,7 @@ const select_static_purpose_classroom = async (classroom, semester_year, semeste
     return new Promise((resolve, reject) => {
         // use select this year and next year curriculum
         // to prevent cross semester curriculum won't show bug
-        Pool.query("SELECT * FROM static_purpose WHERE classroom='{0}' and (semester_year='{1}' or semester_year='{2}')".format(classroom, semester_year, String(Number(semester_year) - 1)), (err, results) => {
+        Pool.query("SELECT * FROM static_purpose WHERE classroom='{0}' and semester_year='{1}'".format(classroom, semester_year), (err, results) => {
             if (err) {
                 return reject(err);
             }

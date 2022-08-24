@@ -4,8 +4,9 @@ import requests
 from flask import Flask, jsonify, request
 from bs4 import BeautifulSoup
 import time
+import pandas as pd 
 
-from const import index_to_grade, time_to_hour, start_time_to_hour, end_time_to_hour
+from const import index_to_grade, time_to_hour, start_time_to_hour, end_time_to_hour, table_columns
 
 app = Flask(__name__)
 
@@ -47,11 +48,6 @@ def getWebsiteCurrculum(semester_year, semester_type):
     # init connect session
     session = requests.Session()
     
-    # get new year/semester (old: 1092, new: 109243284...)
-    # resp = session.get('https://onepiece.nchu.edu.tw/cofsys/plsql/crseqry_home', headers = headers)
-    # soup = BeautifulSoup(resp.text, 'lxml')
-    # semester_num = soup.find(attrs={'value': re.compile('^' + semester_year + semester_type + '\d+$')})['value']
-    
     postdatas = [
         {
             # 'v_year': semester_num,
@@ -75,28 +71,43 @@ def getWebsiteCurrculum(semester_year, semester_type):
 
     # for three classes (大學部 碩班 碩專)
     for career, postdata in enumerate(postdatas):    
-        resp = session.post('https://onepiece.nchu.edu.tw/cofsys/plsql/crseqry_home_now', headers = headers, data = postdata)
+        resp = session.post('https://onepiece.nchu.edu.tw/cofsys/plsql/crseqry_home_now', headers=headers, data=postdata, verify=False)
         soup = BeautifulSoup(resp.text, 'html.parser')
         tables = soup.findAll('table', 'word_13')[1:]
-        time.sleep(1)
 
-        # select column names
-        column = [column.text for column in tables[1].find('tr').findAll('td')]
-        # each grade (1 2 3 4) (1 2) (1 2)
+        # header: https://towardsdatascience.com/all-pandas-read-html-you-should-know-for-scraping-data-from-html-tables-a3cbb5ce8274
+        # fixed 15,245 -> 15245: https://stackoverflow.com/questions/59007856/pandas-read-html-converting-only-specific-columns-to-float
+        tables = pd.read_html(str(tables), header=1, keep_default_na=False, thousands=None)
+
         for grade, table in enumerate(tables):
-            # each classes
-            for row in table.findAll('tr')[2:]:
-                classes = [class_info.text.replace('\u3000', '') for class_info in row.findAll('td')]
-            
-                # test if is 實習
-                if classes[8] == "":
+            table.columns = table_columns
+            for i in range(len(table)):
+                # test if is not 實習
+                if table.loc[i, "times"] != "":
                     # test if is not 演講 服學
-                    if len(re.split('(\d+)', classes[11])) == 3:
-                        class_line_list.extend(store_and_website(classes[1], classes[2].split(" ")[0], classes[9].split(","), re.split('(\d+)', classes[11]), classes[13], career, grade))
+                    print(re.split('(\d+)', table.loc[i, "classroom"]))
+                    if len(re.split('(\d+)', table.loc[i, "classroom"])) == 3:
+                        class_line_list.extend(store_and_website(
+                            int(table.loc[i, "id"]), 
+                            table.loc[i, "name"].split(" ")[0], 
+                            str(table.loc[i, "times"]).split(","), 
+                            re.split('(\d+)', table.loc[i, "classroom"]), 
+                            table.loc[i, "teacher"], 
+                            career, 
+                            grade
+                        ))
                 else:
                     # test if is not 演講 服學
-                    if len(re.split('(\d+)', classes[10])) == 3:
-                        class_line_list.extend(store_and_website(classes[1], classes[2].split(" ")[0], classes[8].split(","), re.split('(\d+)', classes[10]), classes[12], career, grade))
+                    if len(re.split('(\d+)', table.loc[i, "practical_classroom"])) == 3:
+                        class_line_list.extend(store_and_website(
+                            int(table.loc[i, "id"]), 
+                            table.loc[i, "name"].split(" ")[0], 
+                            table.loc[i, "practical_times"].split(","), 
+                            re.split('(\d+)', table.loc[i, "practical_classroom"]), 
+                            table.loc[i, "practical_teacher"], 
+                            career, 
+                            grade
+                        ))
     return jsonify(class_line_list)
 
 # database data to NCHUCse website
@@ -151,10 +162,10 @@ def updateCseWebsite():
 
     # post oneweek data to website
     for data in datas:
-        session.post('http://www.cs.nchu.edu.tw/class/update.php', headers = headers, data = data)
+        session.post('http://www.cs.nchu.edu.tw/class/update.php', headers=headers, data=data)
 
     # post today again (bug)
-    session.post('http://www.cs.nchu.edu.tw/class/update.php', headers = headers, data = datas[datetime.datetime.today().weekday()])
+    session.post('http://www.cs.nchu.edu.tw/class/update.php', headers=headers, data=datas[datetime.datetime.today().weekday()])
     
     return "success upload"
 

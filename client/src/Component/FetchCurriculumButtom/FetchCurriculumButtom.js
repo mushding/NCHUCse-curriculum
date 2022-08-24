@@ -77,7 +77,7 @@ const FetchCurriculumButtom = ({ refresh, semesterInfo }) => {
 
     const handdleFetchCurriculum = async () => {
         setSettingStartPopover(null);
-        await fetch(`/api/updateWebsite/'${semesterInfo['year']}/${semesterInfo['type']}`);
+        await fetch(`/api/updateWebsite/${semesterInfo['year']}/${semesterInfo['type']}`);
         setSnackBarOpen(true);
         await refresh();
     }

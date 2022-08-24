@@ -191,7 +191,11 @@ const DashBoard = () => {
       // clear curriculums prevData won't correctly...
       // why...?
       setCurriculums(data);
-      await updateNCHUWebsiteData();
+    } catch (e) {
+      console.log(e);
+    }
+    try {
+      updateNCHUWebsiteData();
     } catch (e) {
       console.log(e);
     }

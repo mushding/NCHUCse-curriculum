@@ -71,3 +71,6 @@ end_time_to_hour = {
     "B": "20",
     "C": "21",
 }
+
+table_columns = ["subject_type","id","name","prerequisites","full_half_year","credit","hours","practical_hours","times","practical_times", "classroom", "practical_classroom", "teacher", "practical_teacher", "school_unit", "students", "other_students", "add_amount", "language", "note"
+]
