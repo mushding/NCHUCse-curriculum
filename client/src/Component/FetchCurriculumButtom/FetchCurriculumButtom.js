@@ -64,6 +64,7 @@ const FetchCurriculumButtom = ({ refresh, semesterInfo }) => {
     // isOpen
     const [settingStartPopover, setSettingStartPopover] = useState(null);
     const [snackBarOpen, setSnackBarOpen] = useState(false);
+    const [snackBarComponent, setSnackBarComponent] = useState(null);
 
     const handdleOpenPopover = (event) => {
         setSettingStartPopover(event.currentTarget);
@@ -75,11 +76,26 @@ const FetchCurriculumButtom = ({ refresh, semesterInfo }) => {
         setSnackBarOpen(false);
     }
 
-    const handdleFetchCurriculum = async () => {
+    const handdleFetchCurriculum = () => {
         setSettingStartPopover(null);
-        await fetch(`/api/updateWebsite/${semesterInfo['year']}/${semesterInfo['type']}`);
-        setSnackBarOpen(true);
-        await refresh();
+        fetch(`/api/updateWebsite/${semesterInfo['year']}/${semesterInfo['type']}`)
+            .then((response) => {
+                if (response.status === 500) {
+                    setSnackBarComponent(
+                        <Alert onClose={handdleCloseSnackBar} severity="error" sx={{ width: '100%' }}>
+                            更新課表錯誤！
+                        </Alert>
+                    )
+                } else {
+                    setSnackBarComponent(
+                        <Alert onClose={handdleCloseSnackBar} severity="success" sx={{ width: '100%' }}>
+                            成功更新課表！
+                        </Alert>
+                    )
+                }
+                setSnackBarOpen(true);
+            })
+        refresh();
     }
 
     const handdleUpdateCseWebsite = async () => {
@@ -135,12 +151,8 @@ const FetchCurriculumButtom = ({ refresh, semesterInfo }) => {
                 open={snackBarOpen} 
                 autoHideDuration={6000} 
                 onClose={handdleCloseSnackBar}
-                // anchorOrigin={ 'bottom', 'right' }
-                // key={'bottom' + 'right'}
             >
-                <Alert onClose={handdleCloseSnackBar} severity="success" sx={{ width: '100%' }}>
-                    成功更新課表！
-                </Alert>
+                {snackBarComponent}
             </Snackbar>
         </div>
     );
