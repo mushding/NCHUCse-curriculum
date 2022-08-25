@@ -18,6 +18,7 @@ import {
   Resources,
   AppointmentTooltip,
   DragDropProvider,
+  EditRecurrenceMenu,
 } from "@devexpress/dx-react-scheduler-material-ui";
 import { withStyles } from "@material-ui/core/styles";
 
@@ -280,13 +281,23 @@ const DashBoard = () => {
     target.semester_year = semesterInfo["year"];
     target.semester_type = semesterInfo["type"];
     target.title = target.title.split("\n")[0];
-    await fetch("/api/updateStatic", {
-      method: "POST",
-      body: JSON.stringify(target),
-      headers: new Headers({
-        "Content-Type": "application/json",
-      }),
-    });
+    if (target["curriculumType"] === 1) {
+      await fetch("/api/updateWebsite", {
+        method: "POST",
+        body: JSON.stringify(target),
+        headers: new Headers({
+          "Content-Type": "application/json",
+        }),
+      });
+    } else if (target["curriculumType"] === 2) {
+      await fetch("/api/updateStatic", {
+        method: "POST",
+        body: JSON.stringify(target),
+        headers: new Headers({
+          "Content-Type": "application/json",
+        }),
+      });
+    }
     magicRefreshPage();
   };
 
@@ -294,13 +305,24 @@ const DashBoard = () => {
     const data = {
       id: target.pkId,
     };
-    await fetch("/api/dropStatic", {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: new Headers({
-        "Content-Type": "application/json",
-      }),
-    });
+    if (target["curriculumType"] === 1) {
+      await fetch("/api/dropWebsite", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: new Headers({
+          "Content-Type": "application/json",
+        }),
+      });
+    } else if (target["curriculumType"] === 2) {
+      await fetch("/api/dropStatic", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: new Headers({
+          "Content-Type": "application/json",
+        }),
+      });
+    }
+    
     magicRefreshPage();
   };
 
@@ -344,14 +366,14 @@ const DashBoard = () => {
     // change -> (_, array id, change value, _)
     // delete -> (_, _, pkId type)
 
-    // static
+    // website/static
     // change -> (complete, array id, _)
     // delete -> (_, array id, change value, _)
 
     // static, temporary add
     if (added && !changed && !deleted) {
       allAddCurriculum(added);
-      // temporary changed or static deleted
+      // temporary changed or website/static deleted
     } else if (!added && changed && !deleted) {
       let target_id = Object.keys(changed);
       let target = curriculums[target_id];
@@ -359,8 +381,8 @@ const DashBoard = () => {
         ...target,
         ...changed[Object.keys(changed)],
       };
-      if (target["curriculumType"] === 2) {
-        // static, temporary-repeat deleted
+      if (target["curriculumType"] === 1 || target["curriculumType"] === 2) {
+        // website/static, temporary-repeat deleted
         staticDeleteCurriculum(target);
       } else if (target["curriculumType"] === 3) {
         if ("exDate" in changed[target_id]) {
@@ -377,7 +399,7 @@ const DashBoard = () => {
       // temporary-solo delete
     } else if (!added && !changed && deleted) {
       temporaryDeleteCurriculum(deleted);
-      // static, temporary-repeat change
+      // website/static, temporary-repeat change
     } else if (added && changed && !deleted) {
       let target_id = Object.keys(changed);
       let target = curriculums[target_id];
@@ -385,7 +407,7 @@ const DashBoard = () => {
         ...target,
         ...added,
       };
-      if (target["curriculumType"] === 2) {
+      if (target["curriculumType"] === 1 || target["curriculumType"] === 2) {
         staticChangeCurriculum(target);
       } else if (target["curriculumType"] === 3) {
         temporaryChangeCurriculum(target);
@@ -421,7 +443,9 @@ const DashBoard = () => {
           <MonthView displayName={"以月為單位顯示"} />
           <ViewSwitcher />
           <EditingState onCommitChanges={commitEditChanges} />
-          <IntegratedEditing />
+          <EditRecurrenceMenu 
+            messages={constData.editRecurrenceMenuMessage}
+          />
           <ConfirmationDialog messages={constData.confirmationDialogMessage} />
           <DateNavigator />
           <TodayButton />

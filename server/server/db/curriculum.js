@@ -117,7 +117,8 @@ const insert_website_curriculum_manually = async (data) => {
     let startTime = data.startDate.split("T")[1].slice(0, 5);
     let endTime = data.endDate.split("T")[1].slice(0, 5);
     return new Promise((resolve, reject) => {
-        let sql_str = "INSERT INTO website_curriculum(semester_year, semester_type, class_id, name, grade, week, start_time, end_time, classroom, teacher) SELECT '{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}' FROM dual WHERE not exists (select * from website_curriculum where website_curriculum.semester_year = '{0}' and website_curriculum.semester_type = '{1}' and website_curriculum.name = '{3}');".format(data.semester_year, data.semester_type, 0, data.title, '', week, startTime, endTime, data.classroom, '');
+        let title = data.title + "\n" + data.office;
+        let sql_str = "INSERT INTO website_curriculum(semester_year, semester_type, class_id, name, grade, week, start_time, end_time, classroom, teacher) SELECT '{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}' FROM dual WHERE not exists (select * from website_curriculum where website_curriculum.semester_year = '{0}' and website_curriculum.semester_type = '{1}' and website_curriculum.name = '{3}');".format(data.semester_year, data.semester_type, 0, title , '', week, startTime, endTime, data.classroom, '');
         console.log(sql_str)
         Pool.query(sql_str, (err, results) => {
             if (err) {
@@ -212,6 +213,28 @@ const drop_temporary_purpose = async (data) => {
     })
 }
 
+const update_website_curriculum = async (data) => {
+    let weekDate = new Date(data.startDate);
+    let week = weekDate.getUTCDay();
+
+    // check if sunday
+    if (week === 0)
+        week = 7;
+    
+    let startTime = data.startDate.split("T")[1].slice(0, 5);
+    let endTime = data.endDate.split("T")[1].slice(0, 5);
+    let name = data.title + "\n" + data.office
+    return new Promise((resolve, reject) => {
+        let sql_str = `UPDATE website_curriculum SET semester_year='${data.semester_year}', semester_type='${data.semester_type}', name='${name}', week='${week}', start_time='${startTime}', end_time='${endTime}', classroom='${data.classroom}' WHERE id='${data.pkId}';`;
+        Pool.query(sql_str, (err, results) => {
+            if (err) {
+                return reject(err);
+            }
+            resolve(results);
+        })
+    })
+}
+
 const update_static_purpose = async (data) => {
     let weekDate = new Date(data.startDate);
     let week = weekDate.getUTCDay();
@@ -296,6 +319,7 @@ export default {
     drop_temporary_purpose,
     update_curriculum_setting,
     select_curriculum_setting,
+    update_website_curriculum,
     update_static_purpose,
     update_temporary_purpose
 };

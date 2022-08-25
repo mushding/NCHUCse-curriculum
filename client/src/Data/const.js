@@ -71,10 +71,10 @@ const confirmationDialogMessage = {
 };
 
 const editRecurrenceMenuMessage = {
-    current: '只刪除目前選取的課表',
-    currentAndFollowing: '90',
-    all: '刪除全部重覆的課表',
-    menuEditingTitle: '',
+    current: '「一個」，只修改/刪除目前選取的課表',
+    currentAndFollowing: '「從此之後」，修改/刪除從此之後的課表',
+    all: '「全部」，修改/刪除全部的課表',
+    menuEditingTitle: '修改重複課表選項',
     menuDeletingTitle: '刪除重複課表選項',
     cancelButton: '取消',
     commitButton: '確認'

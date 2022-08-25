@@ -97,12 +97,11 @@ router.get('/api/getWebsite/:classroom/:semester_year/:semester_type', async (re
         curriculum.push({
             pkId: result[i]["id"],
             title: result[i]["name"] + "\n" + result[i]["grade"] + "\n" + result[i]["teacher"],
+            office: result[i]["name"].split('\n')[1],
             startDate: new Date(start_year + '-' + start_month + '-' + start_date + 'T' + start_time),
             endDate: new Date(start_year + '-' + start_month + '-' + start_date + 'T' + end_time),
             rRule: 'RRULE:FREQ=WEEKLY;COUNT=18;WKST=MO;BYDAY=' + constData.weekIndex[result[i]["week"]],
             addtime: new Date(result[i]["timestamp"].getTime() - result[i]["timestamp"].getTimezoneOffset()*60000),
-            name: result[i]["name"],
-            otherFormat: result[i]["grade"] + " " + result[i]["teacher"],
             curriculumType: 1
         })
     }
@@ -216,7 +215,7 @@ router.get('/api/getStartSchoolDate', async (req, res) => {
     res.json(result);
 })
 
-router.get('/api/updateWebsite/:semester_year/:semester_type', async (req, res) => {
+router.get('/api/getWebsiteCurrculum/:semester_year/:semester_type', async (req, res) => {
     let result, websites = [];
     let semester_year = req.params.semester_year;
     let semester_type = req.params.semester_type;
@@ -316,6 +315,18 @@ router.post('/api/dropTemporary', async (req, res) => {
         res.sendStatus(500);
     }
     res.json("drop temporary success");
+})
+
+// update static data
+router.post('/api/updateWebsite', async (req, res) => {
+    let result;
+    try {
+        result = await DB.update_website_curriculum(req.body);
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+    res.json("update static success");
 })
 
 // update static data

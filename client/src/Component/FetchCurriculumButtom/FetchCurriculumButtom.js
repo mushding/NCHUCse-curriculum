@@ -78,7 +78,7 @@ const FetchCurriculumButtom = ({ refresh, semesterInfo }) => {
 
     const handdleFetchCurriculum = () => {
         setSettingStartPopover(null);
-        fetch(`/api/updateWebsite/${semesterInfo['year']}/${semesterInfo['type']}`)
+        fetch(`/api/getWebsiteCurrculum/${semesterInfo['year']}/${semesterInfo['type']}`)
             .then((response) => {
                 if (response.status === 500) {
                     setSnackBarComponent(
