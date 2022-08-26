@@ -227,8 +227,9 @@ const DashBoard = () => {
     added.classroom = currentClassroom;
     added.semester_year = semesterInfo["year"];
     added.semester_type = semesterInfo["type"];
+    added.title = added.title.split('\n')[0]
     // website
-    if (added.curriculumType === 1) {
+    if (added["curriculumType"] === 1) {
       if (added.title === undefined || added.office === undefined) {
         alert("有資料欄位沒有填入！");
       } else {
@@ -240,7 +241,7 @@ const DashBoard = () => {
           }),
         });
       } // static
-    } else if (added.curriculumType === 2) {
+    } else if (added["curriculumType"] === 2) {
       if (added.title === undefined || added.office === undefined) {
         alert("有資料欄位沒有填入！");
       } else {
@@ -252,7 +253,7 @@ const DashBoard = () => {
           }),
         });
       } // temporary
-    } else if (added.curriculumType === 3) {
+    } else if (added["curriculumType"] === 3) {
       if (added.title === undefined || added.office === undefined) {
         alert("有資料欄位沒有填入！");
       } else {
@@ -270,17 +271,21 @@ const DashBoard = () => {
     magicRefreshPage();
   };
 
-  const staticChangeCurriculum = async (target) => {
+  const allChangeCurriculum = async (target) => {
     target.startDate = new Date(
-      target.startDate.getTime() - target.startDate.getTimezoneOffset() * 60000
+      new Date(target.startDate).getTime() -
+        new Date(target.startDate).getTimezoneOffset() * 60000
     );
     target.endDate = new Date(
-      target.endDate.getTime() - target.endDate.getTimezoneOffset() * 60000
+      new Date(target.endDate).getTime() -
+        new Date(target.endDate).getTimezoneOffset() * 60000
     );
     target.classroom = currentClassroom;
     target.semester_year = semesterInfo["year"];
     target.semester_type = semesterInfo["type"];
     target.title = target.title.split("\n")[0];
+    target.rRule = target.rRule ? target.rRule : ""
+
     if (target["curriculumType"] === 1) {
       await fetch("/api/updateWebsite", {
         method: "POST",
@@ -297,11 +302,19 @@ const DashBoard = () => {
           "Content-Type": "application/json",
         }),
       });
+    } else if (target["curriculumType"] === 3) {
+      await fetch("/api/updateTemporary", {
+        method: "POST",
+        body: JSON.stringify(target),
+        headers: new Headers({
+          "Content-Type": "application/json",
+        }),
+      });
     }
     magicRefreshPage();
-  };
+  }
 
-  const staticDeleteCurriculum = async (target) => {
+  const allDeleteCurriculum = async (target) => {
     const data = {
       id: target.pkId,
     };
@@ -321,97 +334,39 @@ const DashBoard = () => {
           "Content-Type": "application/json",
         }),
       });
+    } else if (target["curriculumType"] === 3) {
+      await fetch("/api/dropTemporary", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: new Headers({
+          "Content-Type": "application/json",
+        }),
+      });
     }
-    
     magicRefreshPage();
-  };
-
-  const temporaryChangeCurriculum = async (target) => {
-    target.startDate = new Date(
-      new Date(target.startDate).getTime() -
-        new Date(target.startDate).getTimezoneOffset() * 60000
-    );
-    target.endDate = new Date(
-      new Date(target.endDate).getTime() -
-        new Date(target.endDate).getTimezoneOffset() * 60000
-    );
-    target.classroom = currentClassroom;
-    target.semester_year = semesterInfo["year"];
-    target.semester_type = semesterInfo["type"];
-    target.title = target.title.split("\n")[0];
-    target.rRule = target.rRule ? target.rRule : ""
-    await fetch("/api/updateTemporary", {
-      method: "POST",
-      body: JSON.stringify(target),
-      headers: new Headers({
-        "Content-Type": "application/json",
-      }),
-    });
-    magicRefreshPage();
-  };
-
-  const temporaryDeleteCurriculum = async (target) => {
-    await fetch("/api/dropTemporary", {
-      method: "POST",
-      body: JSON.stringify(target),
-      headers: new Headers({
-        "Content-Type": "application/json",
-      }),
-    });
-    magicRefreshPage();
-  };
+  }
 
   const commitEditChanges = async ({ added, changed, deleted }) => {
-    // temporary
-    // change -> (_, array id, change value, _)
-    // delete -> (_, _, pkId type)
-
-    // website/static
-    // change -> (complete, array id, _)
-    // delete -> (_, array id, change value, _)
-
-    // static, temporary add
-    if (added && !changed && !deleted) {
+    // add
+    // add new curriculum, change recurrsive
+    // change
+    // a dict: {num: Object}
+    // delete
+    // just int number
+    if (added) {
       allAddCurriculum(added);
-      // temporary changed or website/static deleted
-    } else if (!added && changed && !deleted) {
-      let target_id = Object.keys(changed);
-      let target = curriculums[target_id];
+    }
+    if (changed) {
+      let target = curriculums[Object.keys(changed)];
       target = {
         ...target,
         ...changed[Object.keys(changed)],
       };
-      if (target["curriculumType"] === 1 || target["curriculumType"] === 2) {
-        // website/static, temporary-repeat deleted
-        staticDeleteCurriculum(target);
-      } else if (target["curriculumType"] === 3) {
-        if ("exDate" in changed[target_id]) {
-          // temporary-repeat deleted
-          target = {
-            id: target["pkId"],
-          };
-          temporaryDeleteCurriculum(target);
-        } else {
-          // temporary-solo changed
-          temporaryChangeCurriculum(target);
-        }
-      }
-      // temporary-solo delete
-    } else if (!added && !changed && deleted) {
-      temporaryDeleteCurriculum(deleted);
-      // website/static, temporary-repeat change
-    } else if (added && changed && !deleted) {
-      let target_id = Object.keys(changed);
-      let target = curriculums[target_id];
-      target = {
-        ...target,
-        ...added,
-      };
-      if (target["curriculumType"] === 1 || target["curriculumType"] === 2) {
-        staticChangeCurriculum(target);
-      } else if (target["curriculumType"] === 3) {
-        temporaryChangeCurriculum(target);
-      }
+      allChangeCurriculum(target);
+    }
+    if (deleted) {
+      let target = deleted.id ? {pkId: deleted.id, curriculumType: 3} : curriculums[deleted];
+      allDeleteCurriculum(target);
     }
   };
 

@@ -64,7 +64,6 @@ router.get('/api/updateCseWebsite', async (req, res) => {
         }
     })
     return res.json(resultJson);
-    // return res.json("call flask api successfully")
 })
 
 router.get('/api/getWebsite/:classroom/:semester_year/:semester_type', async (req, res) => {
@@ -170,7 +169,8 @@ router.get('/api/getTemporary/:classroom/:semester_year/:semester_type', async (
             addtime: new Date(result[i]["timestamp"].getTime() - result[i]["timestamp"].getTimezoneOffset()*60000),
             name: result[i]["name"],
             curriculumType: 3,
-            rRule: result[i]["rRule"]
+            rRule: result[i]["rRule"],
+            exDate: result[i]["exDate"]
         })
     }
     res.json(curriculum);
@@ -323,7 +323,6 @@ router.post('/api/updateWebsite', async (req, res) => {
     try {
         result = await DB.update_website_curriculum(req.body);
     } catch (err) {
-        console.log(err);
         res.sendStatus(500);
     }
     res.json("update static success");

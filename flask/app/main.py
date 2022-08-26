@@ -85,7 +85,6 @@ def getWebsiteCurrculum(semester_year, semester_type):
                 # test if is not 實習
                 if table.loc[i, "times"] != "":
                     # test if is not 演講 服學
-                    print(re.split('(\d+)', table.loc[i, "classroom"]))
                     if len(re.split('(\d+)', table.loc[i, "classroom"])) == 3:
                         class_line_list.extend(store_and_website(
                             int(table.loc[i, "id"]), 
