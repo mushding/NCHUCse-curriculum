@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const SettingStartSchoolButton = ({ refresh, semesterInfo }) => {
+const SettingStartSchoolButton = ({ semesterInfo }) => {
     const classes = useStyles();
 
     // isOpen
@@ -128,7 +128,7 @@ const SettingStartSchoolButton = ({ refresh, semesterInfo }) => {
                 'Content-Type': 'application/json'
             })
         })
-        await refresh();
+        window.location.reload();
     };
 
     return (

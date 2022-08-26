@@ -14,7 +14,9 @@
     "@testing-library/user-event": "^7.2.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "^3.4.4"
+    "react-scripts": "^3.4.4",
+    "moment": "^2.29.4",
+    "moment-timezone": "^0.5.37"
   },
   "scripts": {
     "start": "react-scripts start",

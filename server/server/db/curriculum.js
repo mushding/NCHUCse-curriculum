@@ -10,9 +10,9 @@ String.prototype.format = function() {
     return s;
 };
 
-const select_website_curriculum = async () => {
+const select_website_curriculum = async (semester_year) => {
     return new Promise ((resolve, reject) => {
-        Pool.query('SELECT * FROM website_curriculum', (err, results) => {
+        Pool.query(`SELECT * FROM website_curriculum WHERE semester_year='${semester_year}'`, (err, results) => {
             if (err) {
                 return reject(err);
             }
@@ -21,9 +21,9 @@ const select_website_curriculum = async () => {
     })
 }
 
-const select_static_curriculum = async () => {
+const select_static_purpose = async (semester_year) => {
     return new Promise ((resolve, reject) => {
-        Pool.query('SELECT * FROM static_purpose', (err, results) => {
+        Pool.query(`SELECT * FROM static_purpose WHERE semester_year='${semester_year}'`, (err, results) => {
             if (err) {
                 return reject(err);
             }
@@ -32,9 +32,9 @@ const select_static_curriculum = async () => {
     })
 }
 
-const select_temporary_curriculum = async () => {
+const select_temporary_purpose = async (semester_year) => {
     return new Promise ((resolve, reject) => {
-        Pool.query('SELECT * FROM temporary_purpose', (err, results) => {
+        Pool.query(`SELECT * FROM temporary_purpose WHERE semester_year='${semester_year}' or semester_year='${String(Number(semester_year) - 1)}'`, (err, results) => {
             if (err) {
                 return reject(err);
             }
@@ -43,51 +43,14 @@ const select_temporary_curriculum = async () => {
     })
 }
 
-const select_temporary_curriculum_by_week = async () => {
+const select_temporary_purpose_by_week = async (semester_year) => {
     let today = new Date();
     let seven_days_later = new Date();
     seven_days_later.setDate(today.getDate() + 7);
     today = today.toISOString().split('T')[0];
     seven_days_later = seven_days_later.toISOString().split('T')[0];
     return new Promise ((resolve, reject) => {
-        Pool.query("SELECT * FROM temporary_purpose WHERE date >= '{0}' and date <= '{1}'".format(today, seven_days_later), (err, results) => {
-            if (err) {
-                return reject(err);
-            }
-            resolve(results);
-        })
-    })
-}
-
-const select_website_curriculum_classroom = async (classroom, semester_year, semester_type) => {
-    return new Promise ((resolve, reject) => {
-        // only select this year
-        Pool.query("SELECT * FROM website_curriculum WHERE classroom='{0}' and semester_year='{1}'".format(classroom, semester_year), (err, results) => {
-            if (err) {
-                return reject(err);
-            }
-            resolve(results);
-        })
-    })
-}
-
-const select_static_purpose_classroom = async (classroom, semester_year, semester_type) => {
-    return new Promise((resolve, reject) => {
-        // only select this year
-        Pool.query("SELECT * FROM static_purpose WHERE classroom='{0}' and semester_year='{1}'".format(classroom, semester_year), (err, results) => {
-            if (err) {
-                return reject(err);
-            }
-            resolve(results);
-        })
-    })
-}
-
-const select_temporary_purpose_classroom = async (classroom, semester_year, semester_type) => {
-    return new Promise((resolve, reject) => {
-        // use select this year and prev year curriculum
-        // to prevent cross semester curriculum won't show bug
-        Pool.query("SELECT * FROM temporary_purpose WHERE classroom='{0}' and (semester_year='{1}' or semester_year='{2}')".format(classroom, semester_year, String(Number(semester_year) - 1)), (err, results) => {
+        Pool.query(`SELECT * FROM temporary_purpose WHERE semester_year='${semester_year}' AND date >= '${today}' and date <= '${seven_days_later}'`, (err, results) => {
             if (err) {
                 return reject(err);
             }
@@ -223,6 +186,8 @@ const update_website_curriculum = async (data) => {
     
     let startTime = data.startDate.split("T")[1].slice(0, 5);
     let endTime = data.endDate.split("T")[1].slice(0, 5);
+
+    data.title = data.title.split("\n")[0];
     let name = data.title + "\n" + data.office
     return new Promise((resolve, reject) => {
         let sql_str = `UPDATE website_curriculum SET semester_year='${data.semester_year}', semester_type='${data.semester_type}', name='${name}', week='${week}', start_time='${startTime}', end_time='${endTime}', classroom='${data.classroom}' WHERE id='${data.pkId}';`;
@@ -245,6 +210,7 @@ const update_static_purpose = async (data) => {
     
     let startTime = data.startDate.split("T")[1].slice(0, 5);
     let endTime = data.endDate.split("T")[1].slice(0, 5);
+    data.title = data.title.split("\n")[0];
     return new Promise((resolve, reject) => {
         let sql_str = `UPDATE static_purpose SET semester_year='${data.semester_year}', semester_type='${data.semester_type}', name='${data.title}', office='${data.office}', week='${week}', start_time='${startTime}', end_time='${endTime}', classroom='${data.classroom}' WHERE id='${data.pkId}';`;
         Pool.query(sql_str, (err, results) => {
@@ -259,6 +225,7 @@ const update_temporary_purpose = async (data) => {
     let date = data.startDate.split("T")[0];
     let startDate = data.startDate.split("T")[1].slice(0, 5);
     let endDate = data.endDate.split("T")[1].slice(0, 5);
+    data.title = data.title.split("\n")[0];
     return new Promise((resolve, reject) => {
         let sql_str = `UPDATE temporary_purpose SET semester_year='${data.semester_year}', semester_type='${data.semester_type}', name='${data.title}', office='${data.office}', date='${date}', start_time='${startDate}', end_time='${endDate}', classroom='${data.classroom}', rRule='${data.rRule}', exDate='${data.exDate}' WHERE id='${data.pkId}';`;
         Pool.query(sql_str, (err, results) => {
@@ -304,12 +271,9 @@ const select_curriculum_setting = async () => {
 
 export default {
     select_website_curriculum,
-    select_static_curriculum,
-    select_temporary_curriculum,
-    select_temporary_curriculum_by_week,
-    select_website_curriculum_classroom,
-    select_static_purpose_classroom,
-    select_temporary_purpose_classroom,
+    select_static_purpose,
+    select_temporary_purpose,
+    select_temporary_purpose_by_week,
     insert_website_curriculum,
     insert_website_curriculum_manually,
     insert_static_purpose,

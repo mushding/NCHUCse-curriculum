@@ -17,31 +17,18 @@ let startOfSchoolDate;
 
 router.get('/api/test', async (req, res) => {
     res.json("TESTTEST");
-})
+});
 
-router.get('/api/getAllData', async (req, res) => {
-    // try connect DB and select from DB
-    try {
-        result = await DB.select_website_curriculum();
-        result.push(...await DB.select_static_curriculum());
-        result.push(...await DB.select_temporary_curriculum());
-        for (let i = 0; i < result.length; i++){
-            result[i]["id"] = i;
-        }
-    } catch (err) {
-        res.sendStatus(500);
-    }
-    res.json(result);
-})
+router.get('/api/updateCseWebsite/:semester_year/:semester_type', async (req, res) => {
+    let semester_year = req.params.semester_year;
 
-router.get('/api/updateCseWebsite', async (req, res) => {
     let website_curriculum = [];
     let static_curriculum = [];
     let temporary_curriculum = [];
     try {
-        website_curriculum = await DB.select_website_curriculum();
-        static_curriculum = await DB.select_static_curriculum();
-        temporary_curriculum = await DB.select_temporary_curriculum_by_week();
+        website_curriculum = await DB.select_website_curriculum(semester_year);
+        static_curriculum = await DB.select_static_purpose(semester_year);
+        temporary_curriculum = await DB.select_temporary_purpose_by_week(semester_year);
     } catch (err) {
         res.sendStatus(500);
     }
@@ -66,15 +53,13 @@ router.get('/api/updateCseWebsite', async (req, res) => {
     return res.json(resultJson);
 })
 
-router.get('/api/getWebsite/:classroom/:semester_year/:semester_type', async (req, res) => {
+router.get('/api/getWebsite/:semester_year/:semester_type', async (req, res) => {
     let curriculum = [], result = [];
-    let classroom = req.params.classroom;
     let semester_year = req.params.semester_year;
-    let semester_type = req.params.semester_type;
 
     // try connect DB and select from DB
     try {
-        result = await DB.select_website_curriculum_classroom(classroom, semester_year, semester_type);
+        result = await DB.select_website_curriculum(semester_year);
     } catch (err) {
         res.sendStatus(500);
     }
@@ -99,23 +84,22 @@ router.get('/api/getWebsite/:classroom/:semester_year/:semester_type', async (re
             office: result[i]["name"].split('\n')[1],
             startDate: new Date(start_year + '-' + start_month + '-' + start_date + 'T' + start_time),
             endDate: new Date(start_year + '-' + start_month + '-' + start_date + 'T' + end_time),
-            rRule: 'RRULE:FREQ=WEEKLY;COUNT=18;WKST=MO;BYDAY=' + constData.weekIndex[result[i]["week"]],
             addtime: new Date(result[i]["timestamp"].getTime() - result[i]["timestamp"].getTimezoneOffset()*60000),
-            curriculumType: 1
+            classroom: result[i]["classroom"],
+            curriculumType: 1,
+            rRule: 'RRULE:FREQ=WEEKLY;COUNT=18;WKST=MO;BYDAY=' + constData.weekIndex[result[i]["week"]]
         })
     }
     res.json(curriculum);
 });
 
-router.get('/api/getStatic/:classroom/:semester_year/:semester_type', async (req, res) => {
+router.get('/api/getStatic/:semester_year/:semester_type', async (req, res) => {
     let curriculum = [], result = [];
-    let classroom = req.params.classroom;
     let semester_year = req.params.semester_year;
-    let semester_type = req.params.semester_type;
-    
+
     // try connect DB and select from DB
     try {
-        result = await DB.select_static_purpose_classroom(classroom, semester_year, semester_type);
+        result = await DB.select_static_purpose(semester_year);
     } catch (err) {
         res.sendStatus(500);
     }
@@ -139,23 +123,21 @@ router.get('/api/getStatic/:classroom/:semester_year/:semester_type', async (req
             office: result[i]["office"],
             startDate: new Date(start_year + '-' + start_month + '-' + start_date + 'T' + result[i]["start_time"]),
             endDate: new Date(start_year + '-' + start_month + '-' + start_date + 'T' + result[i]["end_time"]),
-            rRule: 'RRULE:FREQ=WEEKLY;COUNT=18;WKST=MO;BYDAY=' + constData.weekIndex[result[i]["week"]],
             addtime: new Date(result[i]["timestamp"].getTime() - result[i]["timestamp"].getTimezoneOffset()*60000),
-            name: result[i]["name"],
-            curriculumType: 2
+            classroom: result[i]["classroom"],
+            curriculumType: 2,
+            rRule: 'RRULE:FREQ=WEEKLY;COUNT=18;WKST=MO;BYDAY=' + constData.weekIndex[result[i]["week"]]
         })
     }
     res.json(curriculum);
 })
 
-router.get('/api/getTemporary/:classroom/:semester_year/:semester_type', async (req, res) => {
+router.get('/api/getTemporary/:semester_year/:semester_type', async (req, res) => {
     let curriculum = [], result = [];    
-    let classroom = req.params.classroom;
     let semester_year = req.params.semester_year;
-    let semester_type = req.params.semester_type;
 
     try {
-        result = await DB.select_temporary_purpose_classroom(classroom, semester_year, semester_type);
+        result = await DB.select_temporary_purpose(semester_year);
     } catch (err) {
         res.sendStatus(500);
     }
@@ -167,7 +149,7 @@ router.get('/api/getTemporary/:classroom/:semester_year/:semester_type', async (
             startDate: new Date(result[i]["date"] + 'T' + result[i]["start_time"]),
             endDate: new Date(result[i]["date"] + 'T' + result[i]["end_time"]),
             addtime: new Date(result[i]["timestamp"].getTime() - result[i]["timestamp"].getTimezoneOffset()*60000),
-            name: result[i]["name"],
+            classroom: result[i]["classroom"],
             curriculumType: 3,
             rRule: result[i]["rRule"],
             exDate: result[i]["exDate"]

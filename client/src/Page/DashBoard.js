@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   ViewState,
   EditingState,
-  IntegratedEditing,
 } from "@devexpress/dx-react-scheduler";
 import {
   Scheduler,
@@ -25,6 +24,10 @@ import { withStyles } from "@material-ui/core/styles";
 // import icon
 import AlarmAddIcon from "@material-ui/icons/AlarmAdd";
 import FormatListNumberedIcon from "@material-ui/icons/FormatListNumbered";
+
+// import moment
+import moment from 'moment'
+import 'moment-timezone'
 
 import {
   Paper,
@@ -128,83 +131,88 @@ const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
 };
 
 const DashBoard = () => {
-  const [curriculums, setCurriculums] = useState([]);
+  // there are two types of curriculum
+  // one for store all curriculum cache
+  // one for show at the frontend, filtered by <Navbar> ratio button
+  const [semesterInfo, setSemesterInfo] = useState([]);
+  const [showedCurriculums, setShowedCurriculums] = useState([]);
+  const [allCurriculums, setAllCurriculums] = useState([]);
   const [currentClassroom, setCurrentClassroom] = useState("821");
-  const [semesterInfo, setSemesterInfo] = useState({});
 
-  const [version, setVersion] = useState("v3.06 Beta");
-
+  const [version, setVersion] = useState("v3.2");
+  
   useEffect(() => {
     initData();
-  }, [currentClassroom]);
+  }, []);
+
+  useEffect(() => {
+    updateWebsite();
+  }, [currentClassroom, allCurriculums])
 
   const initData = async () => {
-    try {
-      // initStartOfSchoolDate part
-      let response = await fetch("api/getStartSchoolDate");
-      let jsonData = await response.json();
-      let today = new Date();
-      jsonData = jsonData[0];
-      let semester_year = parseInt(jsonData["semester_year"]);
-      let summerDate = new Date(String(semester_year + 1911));
-      let winterDate = new Date(String(semester_year + 1912));
+    // initStartOfSchoolDate part
+    let response = await fetch("api/getStartSchoolDate");
+    let jsonData = await response.json();
+    let today = new Date();
+    jsonData = jsonData[0];
+    let semester_year = parseInt(jsonData["semester_year"]);
+    let summerDate = new Date(String(semester_year + 1911));
+    let winterDate = new Date(String(semester_year + 1912));
+  
+    summerDate.setMonth(
+      parseInt(jsonData["summer_date_month"]) - 1,
+      parseInt(jsonData["summer_date_day"])
+    );
+    winterDate.setMonth(
+      parseInt(jsonData["winter_date_month"]) - 1,
+      parseInt(jsonData["winter_date_day"])
+    );
+  
+    // use before end of school to calculate the semester
+    // semesterType first is  1, second is 2
+    let info =  {
+      ...jsonData,
+      year: jsonData["semester_year"],
+      type:
+        today <= summerDate.setDate(summerDate.getDate() + 18 * 7)
+          ? "1"
+          : "2",
+    };
+    // getBackendCurriculumData part
+    let res = await fetch(
+      `/api/getWebsite/${info["year"]}/${info["type"]}`
+    );
+    let data = await res.json();
+    res = await fetch(
+      `/api/getStatic/${info["year"]}/${info["type"]}`
+    );
+    data.push(...(await res.json()));
+    res = await fetch(
+      `/api/getTemporary/${info["year"]}/${info["type"]}`
+    );
+    data.push(...(await res.json()));
+  
+    // add id
+    data.forEach((data, index) => (data["id"] = index));
+    setAllCurriculums(data);
+    let filtered = data.filter(data => data.classroom === currentClassroom);
+    setShowedCurriculums(filtered)
+    setSemesterInfo(info);
+    updateNCHUWebsiteData();
+  };
 
-      summerDate.setMonth(
-        parseInt(jsonData["summer_date_month"]) - 1,
-        parseInt(jsonData["summer_date_day"])
-      );
-      winterDate.setMonth(
-        parseInt(jsonData["winter_date_month"]) - 1,
-        parseInt(jsonData["winter_date_day"])
-      );
+  const updateWebsite = () => {
+    filterCurriculums();
+  }
 
-      // use before end of school to calculate the semester
-      // semesterType first is  1, second is 2
-      const info = {
-        ...jsonData,
-        year: jsonData["semester_year"],
-        type:
-          today <= summerDate.setDate(summerDate.getDate() + 18 * 7)
-            ? "1"
-            : "2",
-      };
-
-      // getBackendCurriculumData part
-      let res = await fetch(
-        `/api/getWebsite/${currentClassroom}/${info["year"]}/${info["type"]}`
-      );
-      let data = await res.json();
-      res = await fetch(
-        `/api/getStatic/${currentClassroom}/${info["year"]}/${info["type"]}`
-      );
-      data.push(...(await res.json()));
-      res = await fetch(
-        `/api/getTemporary/${currentClassroom}/${info["year"]}/${info["type"]}`
-      );
-      data.push(...(await res.json()));
-
-      // add id
-      data.forEach((data, index) => (data["id"] = index));
-
-      // init setState part (only call ones)
-      setSemesterInfo(info);
-
-      // clear curriculums prevData won't correctly...
-      // why...?
-      setCurriculums(data);
-    } catch (e) {
-      console.log(e);
-    }
-    try {
-      updateNCHUWebsiteData();
-    } catch (e) {
-      console.log(e);
-    }
+  const filterCurriculums = () => {
+    let filtered = allCurriculums.filter(data => data.classroom === currentClassroom);
+    setShowedCurriculums(filtered);
   };
 
   const updateNCHUWebsiteData = async () => {
     try {
-      await fetch("/api/updateCseWebsite");
+      await fetch(`/api/updateCseWebsite/${semesterInfo["year"]}/${semesterInfo["type"]}`);
     } catch (e) {
       console.log(e);
     }
@@ -218,16 +226,14 @@ const DashBoard = () => {
   };
 
   const allAddCurriculum = async (added) => {
-    added.startDate = new Date(
-      added.startDate.getTime() - added.startDate.getTimezoneOffset() * 60000
-    );
-    added.endDate = new Date(
-      added.endDate.getTime() - added.endDate.getTimezoneOffset() * 60000
-    );
+    added.startDate = moment(added.startDate).format();
+    added.endDate = moment(added.endDate).format();
     added.classroom = currentClassroom;
     added.semester_year = semesterInfo["year"];
     added.semester_type = semesterInfo["type"];
     added.title = added.title.split('\n')[0]
+    added.id = allCurriculums.length;
+    setAllCurriculums(prev => [...prev, added])
     // website
     if (added["curriculumType"] === 1) {
       if (added.title === undefined || added.office === undefined) {
@@ -268,24 +274,22 @@ const DashBoard = () => {
     } else {
       alert("請選擇借用類別！");
     }
-    magicRefreshPage();
+    window.location.reload();
   };
 
   const allChangeCurriculum = async (target) => {
-    target.startDate = new Date(
-      new Date(target.startDate).getTime() -
-        new Date(target.startDate).getTimezoneOffset() * 60000
-    );
-    target.endDate = new Date(
-      new Date(target.endDate).getTime() -
-        new Date(target.endDate).getTimezoneOffset() * 60000
-    );
+    target.startDate = moment(target.startDate).format();
+    target.endDate = moment(target.endDate).format();
     target.classroom = currentClassroom;
     target.semester_year = semesterInfo["year"];
     target.semester_type = semesterInfo["type"];
-    target.title = target.title.split("\n")[0];
-    target.rRule = target.rRule ? target.rRule : ""
-
+    target.rRule = target.rRule ? target.rRule : "";
+    target.title = target.title.split("\n")[0] + "\n" + target.office;
+    setAllCurriculums(prev => {
+      prev[target.id] = target;
+      return prev;
+    })
+    
     if (target["curriculumType"] === 1) {
       await fetch("/api/updateWebsite", {
         method: "POST",
@@ -314,7 +318,11 @@ const DashBoard = () => {
     magicRefreshPage();
   }
 
-  const allDeleteCurriculum = async (target) => {
+  const allDeleteCurriculum = async (target) => {   
+    setAllCurriculums(prev => {
+      prev.splice(target.id, 1);
+      return prev;
+    })
     const data = {
       id: target.pkId,
     };
@@ -357,15 +365,15 @@ const DashBoard = () => {
       allAddCurriculum(added);
     }
     if (changed) {
-      let target = curriculums[Object.keys(changed)];
-      target = {
+      let target = allCurriculums[Object.keys(changed)];
+      let data = {
         ...target,
         ...changed[Object.keys(changed)],
       };
-      allChangeCurriculum(target);
+      allChangeCurriculum(data);
     }
     if (deleted) {
-      let target = deleted.id ? {pkId: deleted.id, curriculumType: 3} : curriculums[deleted];
+      let target = deleted.id ? allCurriculums.find(data => data.pkId === deleted.id) : allCurriculums[deleted];
       allDeleteCurriculum(target);
     }
   };
@@ -373,7 +381,6 @@ const DashBoard = () => {
   return (
     <div>
       <Navbar 
-				refresh={magicRefreshPage}
 				currentClassroom={currentClassroom}
 				setCurrentClassroom={setCurrentClassroom}
 				semesterInfo={semesterInfo}
@@ -381,7 +388,7 @@ const DashBoard = () => {
 			/>
       <Paper>
         <Scheduler
-          data={curriculums}
+          data={showedCurriculums}
           // height={screenHeight}
           firstDayOfWeek={1}
           locale={"zh-TW"}

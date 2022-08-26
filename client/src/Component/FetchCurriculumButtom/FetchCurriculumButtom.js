@@ -58,7 +58,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-const FetchCurriculumButtom = ({ refresh, semesterInfo }) => {
+const FetchCurriculumButtom = ({ semesterInfo }) => {
     const classes = useStyles();
 
     // isOpen
@@ -95,7 +95,7 @@ const FetchCurriculumButtom = ({ refresh, semesterInfo }) => {
                 }
                 setSnackBarOpen(true);
             })
-        refresh();
+        window.location.reload();
     }
 
     const handdleUpdateCseWebsite = async () => {

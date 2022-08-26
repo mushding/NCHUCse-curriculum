@@ -6,7 +6,6 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
-  Button,
 } from "@material-ui/core";
 
 // import icon
@@ -41,7 +40,6 @@ const ExternalClassroomSelector = ({ currentClassroom, onChange }) => (
 );
 
 function Navbar({
-  refresh,
   currentClassroom,
   setCurrentClassroom,
   semesterInfo,
@@ -95,13 +93,11 @@ function Navbar({
                 </Grid>
                 <Grid item>
                   <SettingStartSchoolButton
-                    refresh={refresh}
                     semesterInfo={semesterInfo}
                   />
                 </Grid>
                 <Grid item>
                   <FetchCurriculumButtom
-                    refresh={refresh}
                     semesterInfo={semesterInfo}
                   />
                 </Grid>
