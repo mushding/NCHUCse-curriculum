@@ -139,15 +139,19 @@ const DashBoard = () => {
   const [allCurriculums, setAllCurriculums] = useState([]);
   const [currentClassroom, setCurrentClassroom] = useState("821");
 
+  // update state to refresh
+  const [updateAdding, setUpdateAdding] = useState(true);
+  const [updateChangeDelete, setUpdateChangeDelete] = useState(true);
+
   const [version, setVersion] = useState("v3.2");
   
   useEffect(() => {
     initData();
-  }, []);
+  }, [updateAdding]);
 
   useEffect(() => {
     updateWebsite();
-  }, [currentClassroom, allCurriculums])
+  }, [currentClassroom, updateChangeDelete])
 
   const initData = async () => {
     // initStartOfSchoolDate part
@@ -218,11 +222,13 @@ const DashBoard = () => {
     }
   };
 
-  const magicRefreshPage = async () => {
+  const addRefreshPage = async () => {
     // magic way to trigger useEffect...
-    setCurrentClassroom("0");
-    const refresh = await currentClassroom;
-    setCurrentClassroom(refresh);
+    setUpdateAdding(prev => !prev);
+  };
+  const changeDeleteRefreshPage = async () => {
+    // magic way to trigger useEffect...
+    setUpdateChangeDelete(prev => !prev);
   };
 
   const allAddCurriculum = async (added) => {
@@ -274,7 +280,7 @@ const DashBoard = () => {
     } else {
       alert("請選擇借用類別！");
     }
-    window.location.reload();
+    addRefreshPage();
   };
 
   const allChangeCurriculum = async (target) => {
@@ -315,7 +321,7 @@ const DashBoard = () => {
         }),
       });
     }
-    magicRefreshPage();
+    changeDeleteRefreshPage();
   }
 
   const allDeleteCurriculum = async (target) => {   
@@ -351,7 +357,7 @@ const DashBoard = () => {
         }),
       });
     }
-    magicRefreshPage();
+    changeDeleteRefreshPage();
   }
 
   const commitEditChanges = async ({ added, changed, deleted }) => {
