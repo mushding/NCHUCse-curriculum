@@ -16,14 +16,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Current Database: `curriculum`
---
-
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `curriculum` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-
-USE `curriculum`;
-
---
 -- Table structure for table `curriculum_setting`
 --
 
@@ -58,7 +50,7 @@ CREATE TABLE `static_purpose` (
   `end_time` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8_general_ci NOT NULL,
   `classroom` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8_general_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=105 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=130 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -80,8 +72,9 @@ CREATE TABLE `temporary_purpose` (
   `end_time` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8_general_ci NOT NULL,
   `classroom` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8_general_ci NOT NULL,
   `rRule` varchar(255) NOT NULL,
+  `exDate` varchar(4000) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=681 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1070 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -105,7 +98,7 @@ CREATE TABLE `website_curriculum` (
   `classroom` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8_general_ci NOT NULL,
   `teacher` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8_general_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=371 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=412 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -117,4 +110,4 @@ CREATE TABLE `website_curriculum` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-06-12  1:35:44
+-- Dump completed on 2022-09-16 14:03:12

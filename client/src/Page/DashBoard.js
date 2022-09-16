@@ -202,7 +202,7 @@ const DashBoard = () => {
     let filtered = data.filter(data => data.classroom === currentClassroom);
     setShowedCurriculums(filtered)
     setSemesterInfo(info);
-    updateNCHUWebsiteData();
+    updateNCHUWebsiteData(info);
   };
 
   const updateWebsite = () => {
@@ -214,9 +214,9 @@ const DashBoard = () => {
     setShowedCurriculums(filtered);
   };
 
-  const updateNCHUWebsiteData = async () => {
+  const updateNCHUWebsiteData = async (info) => {
     try {
-      await fetch(`/api/updateCseWebsite/${semesterInfo["year"]}/${semesterInfo["type"]}`);
+      await fetch(`/api/updateCseWebsite/${info["year"]}/${info["type"]}`);
     } catch (e) {
       console.log(e);
     }
@@ -325,10 +325,6 @@ const DashBoard = () => {
   }
 
   const allDeleteCurriculum = async (target) => {   
-    setAllCurriculums(prev => {
-      prev.splice(target.id, 1);
-      return prev;
-    })
     const data = {
       id: target.pkId,
     };
@@ -357,7 +353,7 @@ const DashBoard = () => {
         }),
       });
     }
-    changeDeleteRefreshPage();
+    addRefreshPage();
   }
 
   const commitEditChanges = async ({ added, changed, deleted }) => {
@@ -379,6 +375,8 @@ const DashBoard = () => {
       allChangeCurriculum(data);
     }
     if (deleted) {
+      console.log(deleted)
+      console.log(allCurriculums)
       let target = deleted.id ? allCurriculums.find(data => data.pkId === deleted.id) : allCurriculums[deleted];
       allDeleteCurriculum(target);
     }
