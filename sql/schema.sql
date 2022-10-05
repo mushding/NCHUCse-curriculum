@@ -32,6 +32,16 @@ CREATE TABLE `curriculum_setting` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `curriculum_setting`
+--
+
+LOCK TABLES `curriculum_setting` WRITE;
+/*!40000 ALTER TABLE `curriculum_setting` DISABLE KEYS */;
+INSERT INTO `curriculum_setting` VALUES ('111','9','1','1','1');
+/*!40000 ALTER TABLE `curriculum_setting` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `static_purpose`
 --
 

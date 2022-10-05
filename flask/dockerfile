@@ -1,8 +1,8 @@
 # Base image versions
-FROM python:3.8-alpine
+FROM python:3.9.14-buster
 
 # install lxml
-RUN apk add --update --no-cache g++ gcc libxslt-dev
+RUN apt-get install g++ gcc libxslt-dev
 
 # copy indevidual file, ensure that each step’s build cache is only invalidated 
 COPY ./app/requirements.txt /app/requirements.txt
