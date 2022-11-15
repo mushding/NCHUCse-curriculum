@@ -231,7 +231,33 @@ const DashBoard = () => {
     setUpdateChangeDelete(prev => !prev);
   };
 
+  const isValidDateMessage = (startDate, endDate) => {
+    let isValid = true;
+    let startDay = startDate.days();
+    let startHour = startDate.hours();
+    let startMinute = startDate.minutes();
+    let endDay = endDate.days();
+    let endHour = endDate.hours();
+    let endMinute = endDate.minutes();
+    let errorMessage = "";
+
+    if (startDay !== endDay) {
+      isValid = false;
+      errorMessage = "預約時間不能超過一天";
+    } else if ((startHour * 60 + startMinute) >= (endHour * 60 + endMinute)) {
+      isValid = false;
+      errorMessage = "開始時間晚於結束時間";
+    } else if ((startHour * 60 + startMinute) < (8 * 60) || (endHour * 60 + endMinute) > (23 * 60)) {
+      isValid = false;
+      errorMessage = "設定時間超過限定範圍\n(08:00 ~ 23:00)";
+    }
+    return [isValid, errorMessage];
+  }
+
   const allAddCurriculum = async (added) => {
+    let startDate = moment(added.startDate);
+    let endDate = moment(added.endDate);
+    let isValidDate = isValidDateMessage(startDate, endDate);
     added.startDate = moment(added.startDate).format();
     added.endDate = moment(added.endDate).format();
     added.classroom = currentClassroom;
@@ -241,34 +267,28 @@ const DashBoard = () => {
     added.id = allCurriculums.length;
     setAllCurriculums(prev => [...prev, added])
     // website
-    if (added["curriculumType"] === 1) {
-      if (added.title === undefined || added.office === undefined) {
-        alert("有資料欄位沒有填入！");
-      } else {
+    if (added.title === undefined || added.office === undefined) {
+      alert("有資料欄位沒有填入！");
+    } else if (!isValidDate[0]) {
+      alert(isValidDate[1]);
+    } else {
+      if (added["curriculumType"] === 1) {
         await fetch("/api/addWebsite", {
           method: "POST",
           body: JSON.stringify(added),
           headers: new Headers({
             "Content-Type": "application/json",
           }),
-        });
-      } // static
-    } else if (added["curriculumType"] === 2) {
-      if (added.title === undefined || added.office === undefined) {
-        alert("有資料欄位沒有填入！");
-      } else {
+        }); // static
+      } else if (added["curriculumType"] === 2) {
         await fetch("/api/addStatic", {
           method: "POST",
           body: JSON.stringify(added),
           headers: new Headers({
             "Content-Type": "application/json",
           }),
-        });
-      } // temporary
-    } else if (added["curriculumType"] === 3) {
-      if (added.title === undefined || added.office === undefined) {
-        alert("有資料欄位沒有填入！");
-      } else {
+        }); // temporary
+      } else if (added["curriculumType"] === 3) {
         await fetch("/api/addTemporary", {
           method: "POST",
           body: JSON.stringify(added),
@@ -276,9 +296,9 @@ const DashBoard = () => {
             "Content-Type": "application/json",
           }),
         });
+      } else {
+        alert("請選擇借用類別！");
       }
-    } else {
-      alert("請選擇借用類別！");
     }
     addRefreshPage();
   };
